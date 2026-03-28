@@ -41,11 +41,12 @@ public class ROTrader(
     {
         var assembly = Assembly.GetExecutingAssembly();
         var pathToMod = helper.GetAbsolutePathToModFolder(assembly);
-        var questPath = Path.Combine(pathToMod, "Assets", "db", "questFilesWithBoss");
-        var questPathNoBoss = Path.Combine(pathToMod, "Assets", "db", "questFilesNoBoss");
-        var traderImagePath = Path.Combine(pathToMod, "Assets/res/Reqs.jpg");
-        var traderBase = helper.GetJsonDataFromFile<TraderBase>(pathToMod, "Assets/db/base.json");
-        var traderBaseNoBoss = helper.GetJsonDataFromFile<TraderBase>(pathToMod, "Assets/db/baseNoBoss.json");
+        var databasePath = Path.Combine(pathToMod, "db");
+        var questPath = Path.Combine(databasePath, "questFiles", "bossEnabled");
+        var questPathNoBoss = Path.Combine(databasePath, "questFiles", "bossDisabled");
+        var traderImagePath = Path.Combine(databasePath, "res", "Reqs.jpg");
+        var traderBase = helper.GetJsonDataFromFile<TraderBase>(databasePath, "baseBossEnabled.json");
+        var traderBaseNoBoss = helper.GetJsonDataFromFile<TraderBase>(databasePath, "baseBossDisabled.json");
 
         if (_config.EnableRequisitionOffice)
         {

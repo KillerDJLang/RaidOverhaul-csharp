@@ -72,16 +72,4 @@ public class ROTraderHelper(ISptLogger<ROTraderHelper> logger, ICloner cloner, D
             });
         }
     }
-
-    public void OverwriteTraderAssort(string traderId, TraderAssort newAssorts)
-    {
-        if (!databaseService.GetTables().Traders.TryGetValue(traderId, out var traderToEdit))
-        {
-            ROLogger.LogWarning(logger, $"Unable to update assorts for trader: {traderId}, they couldn't be found on the server");
-
-            return;
-        }
-
-        traderToEdit.Assort = newAssorts;
-    }
 }

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using BepInEx.Logging;
@@ -11,7 +10,6 @@ using EFT.Weather;
 using HarmonyLib;
 using Newtonsoft.Json;
 using SPT.Common.Http;
-using UnityEngine;
 
 namespace RaidOverhaul.Helpers
 {
@@ -120,27 +118,6 @@ namespace RaidOverhaul.Helpers
             EquipmentSlot.Eyewear,
             EquipmentSlot.ArmBand,
         };
-
-        public static void LoadLegionSettings()
-        {
-            if (File.Exists(Plugin.LegionJsonPath))
-            {
-                try
-                {
-                    var legionSettingsJson = File.ReadAllText(Plugin.LegionJsonPath);
-                    Plugin._legionText = new TextAsset(legionSettingsJson);
-                    Plugin._log.LogInfo("Legion settings loaded successfully");
-                }
-                catch (Exception ex)
-                {
-                    Plugin._log.LogError($"Error loading Legion settings from {Plugin.LegionJsonPath}: {ex.Message}");
-                }
-            }
-            else
-            {
-                Plugin._log.LogError($"Legion settings file not found at {Plugin.LegionJsonPath}");
-            }
-        }
 
         public static void GetWeatherFields()
         {

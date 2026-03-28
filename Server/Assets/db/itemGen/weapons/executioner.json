@@ -1,7 +1,8 @@
 {
   "6628f96fd59ab54dedb55801": {
-    "ItemToClone": "SNIPERRIFLE_M700",
-    "OverrideProperties": {
+    "itemTplToClone": "5bfea6e90db834001b7347f3",
+    "parentId": "5447b6254bdc2dc3278b4568",
+    "overrideProperties": {
       "Chambers": [
         {
           "_name": "patron_in_weapon",
@@ -10,7 +11,10 @@
           "_props": {
             "filters": [
               {
-                "Filter": ["66281ab7fca966e5021f81b5", "66281ac038f9aebf6f914138"]
+                "Filter": [
+                  "66281ab7fca966e5021f81b5",
+                  "66281ac038f9aebf6f914138"
+                ]
               }
             ]
           },
@@ -23,32 +27,127 @@
       "defAmmo": "66281ab7fca966e5021f81b5",
       "ammoCaliber": "Caliber762x51"
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "The Executioner",
         "shortName": "Executioner",
         "description": "The Executioner. This is the final stop for many scavs and PMCs. It truly does live up to its name."
       }
     },
-    "HandbookParent": "BoltActionRifles",
-    "HandbookPrice": 91999,
-    "PushMastery": true,
-    "CloneToFilters": true,
-    "LootPush": {
-      "LootContainersToAdd": [
-        "5909d89086f77472591234a0",
-        "5909d7cf86f77470ee57d75a",
-        "5909d76c86f77471e53d2adf",
-        "5909d5ef86f77467974efbd8",
-        "578f87ad245977356274f2cc"
-      ],
-      "StaticLootProbability": 5
-    },
-    "PushToFleaBlacklist": true
+    "handbookParentId": "5b5f798886f77447ed5636b5",
+    "handbookPriceRoubles": 91999,
+    "fleaPriceRoubles": 91999,
+    "addCaliberToAllCloneLocations": true,
+    "masteries": true,
+    "masterySections": [
+      {
+        "Level3": 900,
+        "Level2": 450,
+        "Templates": [
+          "6628f96fd59ab54dedb55801"
+        ],
+        "Name": "The Executioner"
+      }
+    ],
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ],
+    "addWeaponPreset": true,
+    "weaponPresets": [
+      {
+        "_changeWeaponName": false,
+        "_encyclopedia": "6628f96fd59ab54dedb55801",
+        "_id": "67801a6df18b3307ff78608c",
+        "_items": [
+          {
+            "_id": "66282dd1143c620e3be2729f",
+            "_tpl": "6628f96fd59ab54dedb55801"
+          },
+          {
+            "_id": "66282dd6e550612bc9ef07f4",
+            "_tpl": "6628f973b21453a8afc0db68",
+            "parentId": "66282dd1143c620e3be2729f",
+            "slotId": "mod_magazine"
+          },
+          {
+            "_id": "66282ddbc21944f42f764069",
+            "_tpl": "5d25d0ac8abbc3054f3e61f7",
+            "parentId": "66282dd1143c620e3be2729f",
+            "slotId": "mod_stock"
+          },
+          {
+            "_id": "66282de03beaf4499b270dbd",
+            "_tpl": "5d2703038abbc3105103d94c",
+            "parentId": "66282dd1143c620e3be2729f",
+            "slotId": "mod_barrel"
+          },
+          {
+            "_id": "66282de64a67a013ab7f85e5",
+            "_tpl": "5bfebc5e0db834001a6694e5",
+            "parentId": "66282dd1143c620e3be2729f",
+            "slotId": "mod_mount"
+          },
+          {
+            "_id": "66282df07457cb23c1f6f4d3",
+            "_tpl": "5a9d6d00a2750c5c985b5305",
+            "parentId": "66282ddbc21944f42f764069",
+            "slotId": "mod_mount_000"
+          },
+          {
+            "_id": "66282df478f3fba092ba3d9e",
+            "_tpl": "6130c43c67085e45ef1405a1",
+            "parentId": "66282de03beaf4499b270dbd",
+            "slotId": "mod_muzzle"
+          },
+          {
+            "_id": "66282df8e362c6a8f0d14105",
+            "_tpl": "5b3b99475acfc432ff4dcbee",
+            "parentId": "66282de64a67a013ab7f85e5",
+            "slotId": "mod_scope"
+          },
+          {
+            "_id": "66282dfc1b487f5832e0d102",
+            "_tpl": "544909bb4bdc2d6f028b4577",
+            "parentId": "66282df07457cb23c1f6f4d3",
+            "slotId": "mod_tactical"
+          },
+          {
+            "_id": "66282dff45f1a1ab1ced592c",
+            "_tpl": "5dfa3d2b0dee1b22f862eade",
+            "parentId": "66282df478f3fba092ba3d9e",
+            "slotId": "mod_muzzle"
+          }
+        ],
+        "_name": "Dread",
+        "_parent": "66282dd1143c620e3be2729f",
+        "_type": "Preset"
+      }
+    ]
   },
   "6628f973b21453a8afc0db68": {
-    "ItemToClone": "MAGAZINE_762X51_WYATT_5RND",
-    "OverrideProperties": {
+    "itemTplToClone": "5bfea7ad0db834001c38f1ee",
+    "parentId": "5448bc234bdc2d3c308b4569",
+    "overrideProperties": {
       "Cartridges": [
         {
           "_name": "cartridges",
@@ -58,7 +157,10 @@
           "_props": {
             "filters": [
               {
-                "Filter": ["66281ab7fca966e5021f81b5", "66281ac038f9aebf6f914138"]
+                "Filter": [
+                  "66281ab7fca966e5021f81b5",
+                  "66281ac038f9aebf6f914138"
+                ]
               }
             ]
           },
@@ -66,19 +168,44 @@
         }
       ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Executioner Wyatt Magazine",
         "shortName": "Executioner Mag",
         "description": "A custom Wyatt outdoor magazine for the Executioner sniper rifle. With the stopping power loaded inside, you probably only need one of these."
       }
     },
-    "HandbookParent": "Magazines",
-    "HandbookPrice": 14999
+    "handbookParentId": "5b5f754a86f774094242f19b",
+    "handbookPriceRoubles": 14999,
+    "fleaPriceRoubles": 14999,
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ]
   },
   "6628f977030da8d4c028f5c7": {
-    "ItemToClone": "MAGAZINE_762X51_AICS_5RND",
-    "OverrideProperties": {
+    "itemTplToClone": "5d25a4a98abbc30b917421a4",
+    "parentId": "5448bc234bdc2d3c308b4569",
+    "overrideProperties": {
       "Cartridges": [
         {
           "_name": "cartridges",
@@ -88,7 +215,10 @@
           "_props": {
             "filters": [
               {
-                "Filter": ["66281ab7fca966e5021f81b5", "66281ac038f9aebf6f914138"]
+                "Filter": [
+                  "66281ab7fca966e5021f81b5",
+                  "66281ac038f9aebf6f914138"
+                ]
               }
             ]
           },
@@ -96,19 +226,44 @@
         }
       ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Executioner AICS Magazine",
         "shortName": "Executioner AICS",
         "description": "A custom AICS magazine for the Executioner sniper rifle. With the stopping power loaded inside, you probably only need one of these."
       }
     },
-    "HandbookParent": "Magazines",
-    "HandbookPrice": 14999
+    "handbookParentId": "5b5f754a86f774094242f19b",
+    "handbookPriceRoubles": 14999,
+    "fleaPriceRoubles": 14999,
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ]
   },
   "6628f979c3da61a625d97d69": {
-    "ItemToClone": "MAGAZINE_762X51_PMAG_AC_5RND",
-    "OverrideProperties": {
+    "itemTplToClone": "5ce69cbad7f00c00b61c5098",
+    "parentId": "5448bc234bdc2d3c308b4569",
+    "overrideProperties": {
       "Cartridges": [
         {
           "_name": "cartridges",
@@ -118,7 +273,10 @@
           "_props": {
             "filters": [
               {
-                "Filter": ["66281ab7fca966e5021f81b5", "66281ac038f9aebf6f914138"]
+                "Filter": [
+                  "66281ab7fca966e5021f81b5",
+                  "66281ac038f9aebf6f914138"
+                ]
               }
             ]
           },
@@ -126,15 +284,38 @@
         }
       ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Executioner PMAG",
         "shortName": "Executioner PMAG",
         "description": "A custom PMAG for the Executioner sniper rifle. With the stopping power loaded inside, you probably only need one of these."
       }
     },
-    "HandbookParent": "Magazines",
-    "HandbookPrice": 14999
+    "handbookParentId": "5b5f754a86f774094242f19b",
+    "handbookPriceRoubles": 14999,
+    "fleaPriceRoubles": 14999,
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ]
   }
 }
-

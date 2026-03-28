@@ -1,0 +1,976 @@
+<Window
+    x:Class="ROConfig.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ROConfig"
+    Title="Raid Overhaul Config by nameless ♥"
+    Height="1020"
+    Width="1020"
+    MinHeight="700"
+    MinWidth="820"
+    Background="{StaticResource WindowBg}"
+    WindowStartupLocation="CenterScreen"
+>
+    <DockPanel>
+        <!-- ── Title / Version bar ── -->
+        <Border DockPanel.Dock="Top" Background="{StaticResource PanelBg}" Padding="12,7">
+            <DockPanel>
+                <TextBlock
+                    x:Name="VersionLabel"
+                    Foreground="{StaticResource AccentGold}"
+                    FontSize="14"
+                    FontWeight="Bold"
+                    VerticalAlignment="Center"
+                />
+                <TextBlock
+                    x:Name="StatusLabel"
+                    DockPanel.Dock="Right"
+                    FontSize="13"
+                    FontWeight="Bold"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                />
+            </DockPanel>
+        </Border>
+
+        <!-- ── Error panel (shown only when config files are missing) ── -->
+        <Border x:Name="ErrorPanel" DockPanel.Dock="Top" Background="#5C0000" Padding="14,10" Visibility="Collapsed">
+            <TextBlock x:Name="ErrorText" Foreground="White" TextWrapping="Wrap" FontSize="13" />
+        </Border>
+
+        <!-- ── Save / Revert bar (always visible at bottom) ── -->
+        <Border DockPanel.Dock="Bottom" Background="{StaticResource PanelBg}" Padding="12,8" BorderBrush="#444" BorderThickness="0,1,0,0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                <Button Content="SAVE" Style="{StaticResource SaveBtn}" Click="Save_Click" Margin="0,0,8,0" />
+                <Button Content="REVERT" Style="{StaticResource RevertBtn}" Click="Revert_Click" />
+            </StackPanel>
+        </Border>
+
+        <!-- ── Main tab control ── -->
+        <TabControl x:Name="MainTabControl">
+            <!-- ════════════════════════════════════════════════════════
+                 TAB 0 : WELCOME
+                 ════════════════════════════════════════════════════════ -->
+            <TabItem Header="Welcome">
+                <Grid>
+                    <Image Source="ROConfigGUI.JPG" Stretch="UniformToFill" Opacity="0.18" />
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Background="Transparent">
+                        <StackPanel Margin="20">
+                            <TextBlock Foreground="{StaticResource TextLight}" FontSize="24" TextWrapping="Wrap">
+                                <Run Text="Welcome to Raid Overhaul!&#x0a;Thanks for downloading!&#x0a;&#x0a;If you're unsure what any config option does check the tooltip by hovering over it or check the mod page at " />
+                                <Hyperlink
+                                    NavigateUri="https://forge.sp-tarkov.com/mod/1192/raid-overhaul"
+                                    RequestNavigate="Hyperlink_RequestNavigate"
+                                    Foreground="{StaticResource AccentGold}"
+                                    >https://forge.sp-tarkov.com/mod/1192/raid-overhaul</Hyperlink
+                                >
+                                <Run Text="&#x0a;&#x0a;Happy hunting \(~,~)/" />
+                            </TextBlock>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </TabItem>
+
+            <!-- ════════════════════════════════════════════════════════
+                 TAB 1 : RAID
+                 ════════════════════════════════════════════════════════ -->
+            <TabItem Header="Raid">
+                <Grid>
+                    <Image Source="ROConfigGUI.JPG" Stretch="UniformToFill" Opacity="0.18" />
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Background="Transparent">
+                        <StackPanel Margin="12">
+                            <!-- Boss & Spawns -->
+                            <GroupBox Header="Boss &amp; Spawns">
+                                <StackPanel>
+                                    <CheckBox
+                                        Content="Enable Custom Boss"
+                                        IsChecked="{Binding Config.EnableCustomBoss, Mode=TwoWay}"
+                                        ToolTip="Enable the custom boss &quot;Legion&quot; to spawn in your raids. Beating and turning in his headgear is required to unlock the Requisitions Office trader.&#x0a;&#x0a;If disabled, the trader quest will be changed to be completeable without Legion."
+                                    />
+                                    <CheckBox
+                                        Content="Enable Requisitions Office"
+                                        IsChecked="{Binding Config.EnableRequisitionOffice, Mode=TwoWay}"
+                                        ToolTip="Enables the new trader. The Req Office uses new currencies to trade for almost any item in the game.&#x0a;The trader assort is randomly generated each server start and item prices are all either the flea or handbook price of the item to keep in line with base game balance."
+                                    />
+                                    <CheckBox
+                                        Content="Use Legion Global Spawn Chance"
+                                        IsChecked="{Binding Config.UseLegionGlobalSpawnChance, Mode=TwoWay}"
+                                        ToolTip="This lets you set a custom percent chance that Legion will spawn in your raids as opposed to using a progressive spawn chance.&#x0a;If disabled, the spawn chance will slowly tick up until you eventually beat the boss and it resets to it's base spawn percentage."
+                                    />
+                                    <DockPanel Margin="4,4">
+                                        <TextBlock
+                                            Style="{StaticResource FieldLabel}"
+                                            Text="Legion Global Spawn Chance"
+                                            ToolTip="The chance that Legion will spawn in raid if &quot;Use Legion Global Spawn Chance&quot; is enabled."
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.GlobalSpawnChance, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                            ToolTip="The chance that Legion will spawn in raid if &quot;Use Legion Global Spawn Chance&quot; is enabled."
+                                        />
+                                    </DockPanel>
+                                    <CheckBox
+                                        Content="Enable Custom Items"
+                                        IsChecked="{Binding Config.EnableCustomItems, Mode=TwoWay}"
+                                        ToolTip="Enables the custom items I've created in your game. These are available as a mix of in raid loot and trader purchases.&#x0a;Legions gear and the custom currency/containers are not affected by this option."
+                                    />
+                                </StackPanel>
+                            </GroupBox>
+
+                            <!-- Quality of Life -->
+                            <GroupBox Header="Quality of Life">
+                                <StackPanel>
+                                    <CheckBox
+                                        Content="Backup Profile"
+                                        IsChecked="{Binding Config.BackupProfile, Mode=TwoWay}"
+                                        ToolTip="Let this mod save a backup of your profile into a folder in the mod folder in the case of a game breaking issue or if you just want to revert to a previous point in your playthrough."
+                                    />
+                                    <CheckBox
+                                        Content="Save Quest Items"
+                                        IsChecked="{Binding Config.SaveQuestItems, Mode=TwoWay}"
+                                        ToolTip="Allow your character to save quest items on death. This counts for all items that go into the quest items box in your inventory."
+                                    />
+                                    <CheckBox
+                                        Content="No Run Through"
+                                        IsChecked="{Binding Config.NoRunThrough, Mode=TwoWay}"
+                                        ToolTip="Disables the run through status in your raids."
+                                    />
+                                    <CheckBox
+                                        Content="Lootable Melee"
+                                        IsChecked="{Binding Config.LootableMelee, Mode=TwoWay}"
+                                        ToolTip="Allows you to loot melee weapons off of dead players/scavs etc."
+                                    />
+                                    <CheckBox
+                                        Content="Lootable Armbands"
+                                        IsChecked="{Binding Config.LootableArmbands, Mode=TwoWay}"
+                                        ToolTip="Allows you to loot armbands off of dead players/scavs etc."
+                                    />
+                                    <CheckBox
+                                        Content="Enable Extended Raids"
+                                        IsChecked="{Binding Config.EnableExtendedRaids, Mode=TwoWay}"
+                                        ToolTip="Lets you set a custom max time limit for you raids."
+                                    />
+                                    <DockPanel Margin="4,4">
+                                        <TextBlock
+                                            Style="{StaticResource FieldLabel}"
+                                            Text="Raid Time Limit"
+                                            ToolTip="The max length of your raids in minutes if &quot;Enable Extended Raids&quot; is enabled."
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.TimeLimit, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                            ToolTip="The max length of your raids in minutes if &quot;Enable Extended Raids&quot; is enabled."
+                                        />
+                                    </DockPanel>
+                                    <CheckBox
+                                        Content="Holster Anything"
+                                        IsChecked="{Binding Config.HolsterAnything, Mode=TwoWay}"
+                                        ToolTip="Allows you to holster any weapon in your sidearm slot."
+                                    />
+                                    <CheckBox Content="Lower Examine Time" IsChecked="{Binding Config.LowerExamineTime, Mode=TwoWay}" />
+                                    <CheckBox
+                                        Content="Special Slot Changes"
+                                        IsChecked="{Binding Config.SpecialSlotChanges, Mode=TwoWay}"
+                                        ToolTip="Lets you put anything into your special slots. A bit game breaking but great if you want to be the biggest loot goblin around."
+                                    />
+                                    <CheckBox
+                                        Content="Change Backpack Sizes"
+                                        IsChecked="{Binding Config.ChangeBackpackSizes, Mode=TwoWay}"
+                                        ToolTip="Changes the internal sizes of most of the backpacks in the game. Makes them all slightly (massively for boss backpacks) bigger.&#x0a;Useful if you intend on staying and looting in raid a lot longer with Extended Raids enabled."
+                                    />
+                                    <CheckBox
+                                        Content="Modify Enemy Bot Health"
+                                        IsChecked="{Binding Config.ModifyEnemyBotHealth, Mode=TwoWay}"
+                                        ToolTip="Changes all enemy bot health to be the same as the player. Makes life less stressful when you run into a boss or raiders an hour + into a raid."
+                                    />
+                                </StackPanel>
+                            </GroupBox>
+
+                            <!-- Energy and Hydration Settings -->
+                            <GroupBox Header="Energy and Hydration Settings">
+                                <StackPanel>
+                                    <CheckBox
+                                        Content="Enable Hunger and Hydration Degrade Changes"
+                                        IsChecked="{Binding Config.ReduceFoodAndHydroDegradeEnabled, Mode=TwoWay}"
+                                        ToolTip="Enables the multipliers for Hydration and Energy decay."
+                                    />
+                                    <DockPanel Margin="4,4">
+                                        <TextBlock
+                                            Style="{StaticResource FieldLabel}"
+                                            Text="Energy Decay"
+                                            ToolTip="Energy decay will be multipled by this amount.&#x0a;Ie. 1.5 will be 50% more energy loss while 0.5 will be 50% less."
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.EnergyDecay, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat={}{0:0.##}}"
+                                            ToolTip="Energy decay will be multipled by this amount.&#x0a;Ie. 1.5 will be 50% more energy loss while 0.5 will be 50% less."
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,4">
+                                        <TextBlock
+                                            Style="{StaticResource FieldLabel}"
+                                            Text="Hydration Decay"
+                                            ToolTip="Hydration decay will be multipled by this amount.&#x0a;Ie. 1.5 will be 50% more hydration loss while 0.5 will be 50% less."
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.HydroDecay, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat={}{0:0.##}}"
+                                            ToolTip="Hydration decay will be multipled by this amount.&#x0a;Ie. 1.5 will be 50% more hydration loss while 0.5 will be 50% less."
+                                        />
+                                    </DockPanel>
+                                </StackPanel>
+                            </GroupBox>
+
+                            <!-- Weather and Season Settings -->
+                            <GroupBox Header="Weather and Season Settings">
+                                <StackPanel>
+                                    <CheckBox
+                                        Content="Enable Weather and Season Changes"
+                                        IsChecked="{Binding Config.WeatherChangesEnabled, Mode=TwoWay}"
+                                        ToolTip="Enables the weather and season options below."
+                                    />
+                                    <CheckBox
+                                        Content="Randomize All Seasons"
+                                        IsChecked="{Binding Config.AllSeasons, Mode=TwoWay}"
+                                        ToolTip="Randomizes the weather/season each time you start the game."
+                                    />
+                                    <CheckBox
+                                        Content="All Seasons Minus Winter"
+                                        IsChecked="{Binding Config.NoWinter, Mode=TwoWay}"
+                                        ToolTip="Randomizes the weather/season each time you start the game EXCLUDING winter."
+                                    />
+                                    <CheckBox
+                                        Content="Seasonal Progression"
+                                        IsChecked="{Binding Config.SeasonalProgression, Mode=TwoWay}"
+                                        ToolTip="Progresses through each season in sequence. The mod keeps track of how many raids you've completed and will progress to the next season every couple raids."
+                                    />
+                                    <CheckBox
+                                        Content="All Winter All The Time"
+                                        IsChecked="{Binding Config.WinterWonderland, Mode=TwoWay}"
+                                        ToolTip="Sets the in game season to Winter."
+                                    />
+                                </StackPanel>
+                            </GroupBox>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </TabItem>
+
+            <!-- ════════════════════════════════════════════════════════
+                 TAB 2 : MAP/LOOT
+                 ════════════════════════════════════════════════════════ -->
+            <TabItem Header="Map/Loot">
+                <Grid>
+                    <Image Source="ROConfigGUI.JPG" Stretch="UniformToFill" Opacity="0.18" />
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Background="Transparent">
+                        <StackPanel Margin="12">
+                            <!-- Loot Changes -->
+                            <GroupBox Header="Loot Changes">
+                                <StackPanel>
+                                    <CheckBox
+                                        Content="Enable Loot Value Changes"
+                                        IsChecked="{Binding Config.LootChangesEnabled, Mode=TwoWay}"
+                                        ToolTip="Enable the Loot multipliers for each type of loot on all maps."
+                                    />
+                                    <DockPanel Margin="4,4">
+                                        <TextBlock
+                                            Style="{StaticResource FieldLabel}"
+                                            Text="Static Loot Multiplier"
+                                            ToolTip="The multiplier for loot found in containers."
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.StaticLootMultiplier, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat={}{0:0.##}}"
+                                            ToolTip="The multiplier for loot found in containers."
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,4">
+                                        <TextBlock
+                                            Style="{StaticResource FieldLabel}"
+                                            Text="Loose Loot Multiplier"
+                                            ToolTip="The multiplier for Loot found on the ground/out in the world on the map."
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.LooseLootMultiplier, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat={}{0:0.##}}"
+                                            ToolTip="The multiplier for Loot found on the ground/out in the world on the map."
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,4">
+                                        <TextBlock
+                                            Style="{StaticResource FieldLabel}"
+                                            Text="Marked Room Loot Multiplier"
+                                            ToolTip="The multiplier for Loot found in marked rooms."
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.MarkedRoomLootMultiplier, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat={}{0:0.##}}"
+                                            ToolTip="The multiplier for Loot found in marked rooms."
+                                        />
+                                    </DockPanel>
+                                </StackPanel>
+                            </GroupBox>
+
+                            <!-- Airdrop Changes -->
+                            <GroupBox Header="Airdrop Changes">
+                                <StackPanel>
+                                    <CheckBox
+                                        Content="Enable Airdrop Value Changes"
+                                        IsChecked="{Binding Config.ChangeAirdropValuesEnabled, Mode=TwoWay}"
+                                        ToolTip="Enable the changes to airdrop chances."
+                                    />
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock
+                                            Style="{StaticResource SmallFieldLabel}"
+                                            Text="Customs"
+                                            ToolTip="The percent chance to get an airdrop on Customs."
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.Customs, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                            ToolTip="The percent chance to get an airdrop on Customs."
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock
+                                            Style="{StaticResource SmallFieldLabel}"
+                                            Text="Woods"
+                                            ToolTip="The percent chance to get an airdrop on Woods."
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.Woods, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                            ToolTip="The percent chance to get an airdrop on Woods."
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock
+                                            Style="{StaticResource SmallFieldLabel}"
+                                            Text="Lighthouse"
+                                            ToolTip="The percent chance to get an airdrop on Lighthouse."
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.Lighthouse, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                            ToolTip="The percent chance to get an airdrop on Lighthouse."
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock
+                                            Style="{StaticResource SmallFieldLabel}"
+                                            Text="Interchange"
+                                            ToolTip="The percent chance to get an airdrop on Interchange."
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.Interchange, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                            ToolTip="The percent chance to get an airdrop on Interchange."
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock
+                                            Style="{StaticResource SmallFieldLabel}"
+                                            Text="Shoreline"
+                                            ToolTip="The percent chance to get an airdrop on Shoreline."
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.Shoreline, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                            ToolTip="The percent chance to get an airdrop on Shoreline."
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock
+                                            Style="{StaticResource SmallFieldLabel}"
+                                            Text="Reserve"
+                                            ToolTip="The percent chance to get an airdrop on Reserve."
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.Reserve, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                            ToolTip="The percent chance to get an airdrop on Reserve."
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock
+                                            Style="{StaticResource SmallFieldLabel}"
+                                            Text="Streets"
+                                            ToolTip="The percent chance to get an airdrop on Streets."
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.Streets, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                            ToolTip="The percent chance to get an airdrop on Streets."
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock
+                                            Style="{StaticResource SmallFieldLabel}"
+                                            Text="GroundZero"
+                                            ToolTip="The percent chance to get an airdrop on Ground Zero."
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.GroundZero, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                            ToolTip="The percent chance to get an airdrop on Ground Zero."
+                                        />
+                                    </DockPanel>
+                                </StackPanel>
+                            </GroupBox>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </TabItem>
+
+            <!-- ════════════════════════════════════════════════════════
+                 TAB 3 : TRADERS
+                 ════════════════════════════════════════════════════════ -->
+            <TabItem Header="Traders">
+                <Grid>
+                    <Image Source="ROConfigGUI.JPG" Stretch="UniformToFill" Opacity="0.18" />
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Background="Transparent">
+                        <StackPanel Margin="12">
+                            <CheckBox
+                                Content="Disable Flea Blacklist"
+                                IsChecked="{Binding Config.DisableFleaBlacklist, Mode=TwoWay}"
+                                ToolTip="Disable the flea blacklist which allows all items to be bought and sold on the flea."
+                                Margin="4,4"
+                            />
+                            <CheckBox
+                                Content="Loyalty Level 1 Items"
+                                IsChecked="{Binding Config.Ll1Items, Mode=TwoWay}"
+                                ToolTip="Set all of the Requisition Shops items to available at Loyalty Level 1 as opposed to being spread across all tiers."
+                                Margin="4,4"
+                            />
+                            <CheckBox
+                                Content="Remove FIR Requirements For Quests"
+                                IsChecked="{Binding Config.RemoveFirRequirementsForQuests, Mode=TwoWay}"
+                                ToolTip="Remove the found in raid requirements to turn items in for all quests (not just for the Req Shop)."
+                                Margin="4,4"
+                            />
+
+                            <!-- Insurance Changes -->
+                            <GroupBox Header="Insurance Changes">
+                                <StackPanel>
+                                    <CheckBox
+                                        Content="Enable Insurance Time Changes"
+                                        IsChecked="{Binding Config.InsuranceChangesEnabled, Mode=TwoWay}"
+                                        ToolTip="Enable the Trader insurance time tweaks."
+                                    />
+                                    <DockPanel Margin="4,4">
+                                        <TextBlock
+                                            Style="{StaticResource FieldLabel}"
+                                            Text="Prapor Minimum Return Time"
+                                            ToolTip="The minimum time for Prapor to return your insurance items."
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.PraporMinReturn, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                            ToolTip="The minimum time for Prapor to return your insurance items."
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,4">
+                                        <TextBlock
+                                            Style="{StaticResource FieldLabel}"
+                                            Text="Prapor Maximum Return Time"
+                                            ToolTip="The maximum time for Prapor to return your insurance items."
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.PraporMaxReturn, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                            ToolTip="The maximum time for Prapor to return your insurance items."
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,4">
+                                        <TextBlock
+                                            Style="{StaticResource FieldLabel}"
+                                            Text="Therapist Minimum Return Time"
+                                            ToolTip="The minimum time for Therapist to return your insurance items."
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.TherapistMinReturn, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                            ToolTip="The minimum time for Therapist to return your insurance items."
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,4">
+                                        <TextBlock
+                                            Style="{StaticResource FieldLabel}"
+                                            Text="Therapist Maximum Return Time"
+                                            ToolTip="The maximum time for Therapist to return your insurance items."
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.TherapistMaxReturn, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                            ToolTip="The maximum time for Therapist to return your insurance items."
+                                        />
+                                    </DockPanel>
+                                </StackPanel>
+                            </GroupBox>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </TabItem>
+
+            <!-- ════════════════════════════════════════════════════════
+                 TAB 4 : STACK TUNING
+                 ════════════════════════════════════════════════════════ -->
+            <TabItem Header="Stack Tuning">
+                <Grid>
+                    <Image Source="ROConfigGUI.JPG" Stretch="UniformToFill" Opacity="0.18" />
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Background="Transparent">
+                        <StackPanel Margin="12">
+                            <!-- Basic Stack Changes -->
+                            <GroupBox Header="Basic Stack Changes">
+                                <StackPanel>
+                                    <CheckBox
+                                        Content="Enable Basic Stack Tuning"
+                                        IsChecked="{Binding Config.BasicStackTuningEnabled, Mode=TwoWay}"
+                                        ToolTip="Enable the basic changes to ammo stack size.&#x0a;&#x0a;CANNOT BE USED WITH ADVANCED STACK CHANGES.&#x0a;ONLY HAVE ONE ENABLED."
+                                    />
+                                    <DockPanel Margin="4,4">
+                                        <TextBlock
+                                            Style="{StaticResource FieldLabel}"
+                                            Text="Stack Multiplier"
+                                            ToolTip="The multiplier for ammo max stack size.&#x0a;&#x0a;The vanilla stack size for all ammo will be multiplied by this number."
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.StackMultiplier, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                            ToolTip="The multiplier for ammo max stack size.&#x0a;&#x0a;The vanilla stack size for all ammo will be multiplied by this number."
+                                        />
+                                    </DockPanel>
+                                </StackPanel>
+                            </GroupBox>
+
+                            <!-- Advanced Stack Changes -->
+                            <GroupBox Header="Advanced Stack Changes">
+                                <StackPanel>
+                                    <CheckBox
+                                        Content="Enable Advanced Stack Tuning"
+                                        IsChecked="{Binding Config.AdvancedStackTuningEnabled, Mode=TwoWay}"
+                                        ToolTip="Enable the advanced changes to ammo stack size.&#x0a;&#x0a;CANNOT BE USED WITH BASIC STACK CHANGES.&#x0a;ONLY HAVE ONE ENABLED."
+                                    />
+                                    <DockPanel Margin="4,4">
+                                        <TextBlock
+                                            Style="{StaticResource FieldLabel}"
+                                            Text="Shotgun Stack Size"
+                                            ToolTip="The total max stack size for shotgun ammo.&#x0a;&#x0a;NOT A MULTIPLIER"
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.ShotgunStack, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                            ToolTip="The total max stack size for shotgun ammo.&#x0a;&#x0a;NOT A MULTIPLIER"
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,4">
+                                        <TextBlock
+                                            Style="{StaticResource FieldLabel}"
+                                            Text="Flares and UBGL Stack Size"
+                                            ToolTip="The total max stack size for Flare and UBGL ammo.&#x0a;&#x0a;NOT A MULTIPLIER"
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.FlaresAndUbgl, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                            ToolTip="The total max stack size for Flare and UBGL ammo.&#x0a;&#x0a;NOT A MULTIPLIER"
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,4">
+                                        <TextBlock
+                                            Style="{StaticResource FieldLabel}"
+                                            Text="Sniper Stack Size"
+                                            ToolTip="The total max stack size for sniper ammo.&#x0a;&#x0a;NOT A MULTIPLIER"
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.SniperStack, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                            ToolTip="The total max stack size for sniper ammo.&#x0a;&#x0a;NOT A MULTIPLIER"
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,4">
+                                        <TextBlock
+                                            Style="{StaticResource FieldLabel}"
+                                            Text="SMG Stack Size"
+                                            ToolTip="The total max stack size for SMG ammo.&#x0a;&#x0a;NOT A MULTIPLIER"
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.SmgStack, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                            ToolTip="The total max stack size for SMG ammo.&#x0a;&#x0a;NOT A MULTIPLIER"
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,4">
+                                        <TextBlock
+                                            Style="{StaticResource FieldLabel}"
+                                            Text="Rifle Stack Size"
+                                            ToolTip="The total max stack size for rifle ammo.&#x0a;&#x0a;NOT A MULTIPLIER"
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.RifleStack, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                            ToolTip="The total max stack size for rifle ammo.&#x0a;&#x0a;NOT A MULTIPLIER"
+                                        />
+                                    </DockPanel>
+                                </StackPanel>
+                            </GroupBox>
+
+                            <!-- Money Stack Changes -->
+                            <GroupBox Header="Money Stack Changes">
+                                <StackPanel>
+                                    <CheckBox
+                                        Content="Enable Money Stack Tuning"
+                                        IsChecked="{Binding Config.MoneyStackMultiplierEnabled, Mode=TwoWay}"
+                                        ToolTip="Enable the changes to money stack size."
+                                    />
+                                    <DockPanel Margin="4,4">
+                                        <TextBlock
+                                            Style="{StaticResource FieldLabel}"
+                                            Text="Money Multiplier"
+                                            ToolTip="The multiplier for money max stack size.&#x0a;&#x0a;The vanilla stack size will be multiplied by this number."
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.MoneyMultiplier, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                            ToolTip="The multiplier for money max stack size.&#x0a;&#x0a;The vanilla stack size will be multiplied by this number."
+                                        />
+                                    </DockPanel>
+                                </StackPanel>
+                            </GroupBox>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </TabItem>
+
+            <!-- ════════════════════════════════════════════════════════
+                 TAB 5 : PLAYER
+                 ════════════════════════════════════════════════════════ -->
+            <TabItem Header="Player">
+                <Grid>
+                    <Image Source="ROConfigGUI.JPG" Stretch="UniformToFill" Opacity="0.18" />
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Background="Transparent">
+                        <StackPanel Margin="12">
+                            <!-- Weight Changes -->
+                            <GroupBox Header="Weight Changes">
+                                <StackPanel>
+                                    <CheckBox
+                                        Content="Enable Weight Changes"
+                                        IsChecked="{Binding Config.WeightChangesEnabled, Mode=TwoWay}"
+                                        ToolTip="Enable the weight multiplier."
+                                    />
+                                    <DockPanel Margin="4,4">
+                                        <TextBlock
+                                            Style="{StaticResource FieldLabel}"
+                                            Text="Weight Multiplier"
+                                            ToolTip="The multiplier for your total PMC weight."
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.WeightMultiplier, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat={}{0:0.##}}"
+                                            ToolTip="The multiplier for your total PMC weight."
+                                        />
+                                    </DockPanel>
+                                </StackPanel>
+                            </GroupBox>
+
+                            <!-- Pocket Changes -->
+                            <GroupBox Header="Pocket Changes">
+                                <StackPanel>
+                                    <CheckBox
+                                        Content="Enable Pocket Size Changes"
+                                        IsChecked="{Binding Config.PocketChangesEnabled, Mode=TwoWay}"
+                                        ToolTip="Enable the changes to your PMC pocket size."
+                                    />
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock
+                                            Style="{StaticResource SmallFieldLabel}"
+                                            Text="Pocket 1 Vertical"
+                                            ToolTip="The total vertical size for your first pocket slot."
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.Pocket1Vertical, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                            ToolTip="The total vertical size for your first pocket slot."
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock
+                                            Style="{StaticResource SmallFieldLabel}"
+                                            Text="Pocket 1 Horizontal"
+                                            ToolTip="The total horizontal size for your first pocket slot."
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.Pocket1Horizontal, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                            ToolTip="The total horizontal size for your first pocket slot."
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock
+                                            Style="{StaticResource SmallFieldLabel}"
+                                            Text="Pocket 2 Vertical"
+                                            ToolTip="The total vertical size for your second pocket slot."
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.Pocket2Vertical, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                            ToolTip="The total vertical size for your second pocket slot."
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock
+                                            Style="{StaticResource SmallFieldLabel}"
+                                            Text="Pocket 2 Horizontal"
+                                            ToolTip="The total horizontal size for your second pocket slot."
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.Pocket2Horizontal, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                            ToolTip="The total horizontal size for your second pocket slot."
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock
+                                            Style="{StaticResource SmallFieldLabel}"
+                                            Text="Pocket 3 Vertical"
+                                            ToolTip="The total vertical size for your third pocket slot."
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.Pocket3Vertical, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                            ToolTip="The total vertical size for your third pocket slot."
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock
+                                            Style="{StaticResource SmallFieldLabel}"
+                                            Text="Pocket 3 Horizontal"
+                                            ToolTip="The total horizontal size for your third pocket slot."
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.Pocket3Horizontal, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                            ToolTip="The total horizontal size for your third pocket slot."
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock
+                                            Style="{StaticResource SmallFieldLabel}"
+                                            Text="Pocket 4 Vertical"
+                                            ToolTip="The total vertical size for your fourth pocket slot."
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.Pocket4Vertical, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                            ToolTip="The total vertical size for your fourth pocket slot."
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock
+                                            Style="{StaticResource SmallFieldLabel}"
+                                            Text="Pocket 4 Horizontal"
+                                            ToolTip="The total horizontal size for your fourth pocket slot."
+                                        />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Config.Pocket4Horizontal, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                            ToolTip="The total horizontal size for your fourth pocket slot."
+                                        />
+                                    </DockPanel>
+                                </StackPanel>
+                            </GroupBox>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </TabItem>
+
+            <!-- ════════════════════════════════════════════════════════
+                 TAB 6 : RANDOM RAID EVENTS
+                 ════════════════════════════════════════════════════════ -->
+            <TabItem Header="Random Raid Events">
+                <Grid>
+                    <Image Source="ROConfigGUI.JPG" Stretch="UniformToFill" Opacity="0.18" />
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Background="Transparent">
+                        <StackPanel Margin="12">
+                            <TextBox
+                                IsReadOnly="True"
+                                Background="Transparent"
+                                Foreground="{StaticResource TextDim}"
+                                BorderThickness="0"
+                                FontSize="12"
+                                TextWrapping="Wrap"
+                                Margin="4,0,4,10"
+                                Text="The weighting for each event is calculated as a sum. It IS NOT a percent chance.&#x0a;&#x0a;Similar to how a lottery works, all event weightings are put together and a random number is pulled with the corresponding event set to run.&#x0a;&#x0a;The higher an events weighting, the more likely that event &quot;number&quot; will be pulled."
+                            />
+
+                            <!-- In Raid Event Weightings -->
+                            <GroupBox Header="In Raid Event Weightings">
+                                <StackPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Heart Attack Event" />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Weighting.DamageEvent, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Airdrop Event" />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Weighting.AirdropEvent, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Blackout Event" />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Weighting.BlackoutEvent, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Joke Event" />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Weighting.JokeEvent, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Heal Event" />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Weighting.HealEvent, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Armor Repair Event" />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Weighting.ArmorEvent, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Skill Point Event" />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Weighting.SkillEvent, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Metabolism Event" />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Weighting.MetabolismEvent, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Malfunction Event" />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Weighting.MalfunctionEvent, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Trader Rep Event" />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Weighting.TraderEvent, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Berserk Event" />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Weighting.BerserkEvent, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Player Weight Event" />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Weighting.WeightEvent, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Max Loyalty Level Event" />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Weighting.MaxLLEvent, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Lockdown Event" />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Weighting.LockdownEvent, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Artillery Event" />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Weighting.ArtilleryEvent, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,8">
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Random Event Time Start Max (Minutes)" />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Weighting.RandomEventRangeMinimum, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Random Event Time Start Max (Minutes)" />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Weighting.RandomEventRangeMaximum, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                        />
+                                    </DockPanel>
+                                </StackPanel>
+                            </GroupBox>
+
+                            <!-- Unlock Event Weightings -->
+                            <GroupBox Header="Unlock Event Weightings">
+                                <StackPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Power Switch Toggle Weight" />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Weighting.SwitchToggle, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Door Unlock Weight" />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Weighting.DoorUnlock, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Keycard Unlock Weight" />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Weighting.KeycardUnlock, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,8">
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Door Event Time Start Min (Minutes)" />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Weighting.DoorEventRangeMinimum, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Door Event Time Start Max (Minutes)" />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Weighting.DoorEventRangeMaximum, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                        />
+                                    </DockPanel>
+                                </StackPanel>
+                            </GroupBox>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </DockPanel>
+</Window>

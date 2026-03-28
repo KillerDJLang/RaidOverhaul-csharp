@@ -1,7 +1,8 @@
 {
   "6621b1f22310f5ff09476360": {
-    "ItemToClone": "VEST_A18_SKANDA",
-    "OverrideProperties": {
+    "itemTplToClone": "5d5d87f786f77427997cfaef",
+    "parentId": "5448e5284bdc2dcb718b4567",
+    "overrideProperties": {
       "Prefab": {
         "path": "Rigs/rhino_rig.bundle",
         "rcid": ""
@@ -18,8 +19,12 @@
             "cellsV": 3,
             "filters": [
               {
-                "ExcludedFilter": ["5448bf274bdc2dfc2f8b456a"],
-                "Filter": ["54009119af1c881c07000029"]
+                "ExcludedFilter": [
+                  "5448bf274bdc2dfc2f8b456a"
+                ],
+                "Filter": [
+                  "54009119af1c881c07000029"
+                ]
               }
             ],
             "isSortingTable": false,
@@ -38,8 +43,12 @@
             "cellsV": 1,
             "filters": [
               {
-                "ExcludedFilter": ["5448bf274bdc2dfc2f8b456a"],
-                "Filter": ["54009119af1c881c07000029"]
+                "ExcludedFilter": [
+                  "5448bf274bdc2dfc2f8b456a"
+                ],
+                "Filter": [
+                  "54009119af1c881c07000029"
+                ]
               }
             ],
             "isSortingTable": false,
@@ -58,8 +67,12 @@
             "cellsV": 2,
             "filters": [
               {
-                "ExcludedFilter": ["5448bf274bdc2dfc2f8b456a"],
-                "Filter": ["54009119af1c881c07000029"]
+                "ExcludedFilter": [
+                  "5448bf274bdc2dfc2f8b456a"
+                ],
+                "Filter": [
+                  "54009119af1c881c07000029"
+                ]
               }
             ],
             "isSortingTable": false,
@@ -78,8 +91,12 @@
             "cellsV": 2,
             "filters": [
               {
-                "ExcludedFilter": ["5448bf274bdc2dfc2f8b456a"],
-                "Filter": ["54009119af1c881c07000029"]
+                "ExcludedFilter": [
+                  "5448bf274bdc2dfc2f8b456a"
+                ],
+                "Filter": [
+                  "54009119af1c881c07000029"
+                ]
               }
             ],
             "isSortingTable": false,
@@ -98,8 +115,12 @@
             "cellsV": 4,
             "filters": [
               {
-                "ExcludedFilter": ["5448bf274bdc2dfc2f8b456a"],
-                "Filter": ["54009119af1c881c07000029"]
+                "ExcludedFilter": [
+                  "5448bf274bdc2dfc2f8b456a"
+                ],
+                "Filter": [
+                  "54009119af1c881c07000029"
+                ]
               }
             ],
             "isSortingTable": false,
@@ -118,8 +139,12 @@
             "cellsV": 3,
             "filters": [
               {
-                "ExcludedFilter": ["5448bf274bdc2dfc2f8b456a"],
-                "Filter": ["54009119af1c881c07000029"]
+                "ExcludedFilter": [
+                  "5448bf274bdc2dfc2f8b456a"
+                ],
+                "Filter": [
+                  "54009119af1c881c07000029"
+                ]
               }
             ],
             "isSortingTable": false,
@@ -138,8 +163,12 @@
             "cellsV": 1,
             "filters": [
               {
-                "ExcludedFilter": ["5448bf274bdc2dfc2f8b456a"],
-                "Filter": ["54009119af1c881c07000029"]
+                "ExcludedFilter": [
+                  "5448bf274bdc2dfc2f8b456a"
+                ],
+                "Filter": [
+                  "54009119af1c881c07000029"
+                ]
               }
             ],
             "isSortingTable": false,
@@ -158,8 +187,12 @@
             "cellsV": 2,
             "filters": [
               {
-                "ExcludedFilter": ["5448bf274bdc2dfc2f8b456a"],
-                "Filter": ["54009119af1c881c07000029"]
+                "ExcludedFilter": [
+                  "5448bf274bdc2dfc2f8b456a"
+                ],
+                "Filter": [
+                  "54009119af1c881c07000029"
+                ]
               }
             ],
             "isSortingTable": false,
@@ -172,16 +205,68 @@
       ],
       "RigLayoutName": "rorhinobonk"
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "CQC Rhino plate carrier (MTP)",
         "shortName": "Rhino Rig (R)",
         "description": "Rhino is based on the Osprey body armour system but without neck, shoulder and groin protection. Rhino has proved to be a very popular system as it has a simple but effective design."
       }
     },
-    "HandbookParent": "TacticalRigs",
-    "HandbookPrice": 239999,
-    "CloneToFilters": true
+    "handbookParentId": "5b5f6f8786f77447ed563642",
+    "handbookPriceRoubles": 239999,
+    "fleaPriceRoubles": 239999,
+    "addWeaponPreset": true,
+    "weaponPresets": [
+      {
+        "_changeWeaponName": false,
+        "_encyclopedia": "6621b1f22310f5ff09476360",
+        "_id": "67801a81f1e1708566957a9c",
+        "_items": [
+          {
+            "_id": "6621b36d9abe55b76c03eecf",
+            "_tpl": "6621b1f22310f5ff09476360"
+          },
+          {
+            "_id": "6576e5ce424f2c87d30c75d2",
+            "_tpl": "6570e5100b57c03ec90b970a",
+            "parentId": "6621b36d9abe55b76c03eecf",
+            "slotId": "Soft_armor_front"
+          },
+          {
+            "_id": "6576e5ce424f2c87d30c75d3",
+            "_tpl": "6570e479a6560e4ee50c2b02",
+            "parentId": "6621b36d9abe55b76c03eecf",
+            "slotId": "Soft_armor_back"
+          },
+          {
+            "_id": "6576e5ce424f2c87d30c75d4",
+            "_tpl": "6570e5674cc0d2ab1e05edbb",
+            "parentId": "6621b36d9abe55b76c03eecf",
+            "slotId": "Soft_armor_left"
+          },
+          {
+            "_id": "6576e5ce424f2c87d30c75d5",
+            "_tpl": "6570e59b0b57c03ec90b970e",
+            "parentId": "6621b36d9abe55b76c03eecf",
+            "slotId": "soft_armor_right"
+          },
+          {
+            "_id": "6576e5ce424f2c87d30c75d6",
+            "_tpl": "656f9fa0498d1b7e3e071d98",
+            "parentId": "6621b36d9abe55b76c03eecf",
+            "slotId": "Front_plate"
+          },
+          {
+            "_id": "6576e5ce424f2c87d30c75d7",
+            "_tpl": "656f9fa0498d1b7e3e071d98",
+            "parentId": "6621b36d9abe55b76c03eecf",
+            "slotId": "Back_plate"
+          }
+        ],
+        "_name": "Vest Rhino Standard",
+        "_parent": "6621b36d9abe55b76c03eecf",
+        "_type": "Preset"
+      }
+    ]
   }
 }
-

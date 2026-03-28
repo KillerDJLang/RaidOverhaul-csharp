@@ -20,11 +20,9 @@ public class ROHelpers(
     DatabaseService databaseService,
     LocaleService localeService,
     IReadOnlyList<SptMod> sptModsList,
-    ProfileHelper profileHelper,
     PresetHelper presetHelper,
     HandbookHelper handbookHelper,
     ItemHelper itemHelper,
-    RagfairPriceService ragfairPriceService,
     RandomUtil randomUtil,
     JsonUtil jsonUtil,
     FileUtil fileUtil,
@@ -36,22 +34,12 @@ public class ROHelpers(
         return sptModsList.Any(m => m.ModMetadata.ModGuid == modGuid);
     }
 
-    public bool CheckDependancies(string path, string dependancy)
-    {
-        return path.Contains(dependancy);
-    }
-
     public static bool CheckFilePath(string path, string fileName)
     {
         var filePath = Path.Combine(path, fileName);
         filePath += ".json";
 
         return File.Exists(filePath);
-    }
-
-    public MongoId GenerateId()
-    {
-        return new MongoId();
     }
 
     public int GenRandomCount(int min, int max)
@@ -67,36 +55,10 @@ public class ROHelpers(
         var day = DateTime.Now.Day.ToString();
         var hour = DateTime.Now.Hour.ToString();
         var minute = DateTime.Now.Minute.ToString();
-        var backupPath = Path.Combine(
-            modPath,
-            "Assets",
-            "profileBackup",
-            sessionID,
-            $"{year}/{month}/{day}",
-            $"{sessionID}-{hour}-{minute}.json"
-        );
+        var backupPath = Path.Combine(modPath, "profileBackup", sessionID, $"{year}/{month}/{day}", $"{sessionID}-{hour}-{minute}.json");
         var profilePath = Path.Combine(modPath, "../", "../", "profiles", $"{sessionID}.json");
 
         fileUtil.CopyFile(profilePath, backupPath, true);
-    }
-
-    public int? CheckProfileLevel(string profileId)
-    {
-        var pmcProfile = profileHelper.GetProfileByPmcId(profileId);
-        var profileLevel = pmcProfile?.Info?.Level;
-
-        return profileLevel;
-    }
-
-    public bool CheckProfileExists(string profileId)
-    {
-        var pmcProfile = profileHelper.GetProfileByPmcId(profileId);
-
-        if (pmcProfile is null)
-        {
-            return false;
-        }
-        return true;
     }
 
     public HandbookItem? GetItemInHandbook(string itemId)
@@ -105,32 +67,6 @@ public class ROHelpers(
         var hbItem = tables.Templates.Handbook.Items.SingleOrDefault(x => x.Id == itemId);
 
         return hbItem;
-    }
-
-    public TemplateItem GetItemInTables(string itemId)
-    {
-        var tables = databaseService.GetTables();
-        var item = tables.Templates.Items[itemId];
-
-        return item;
-    }
-
-    public double? GetFleaPrice(string itemId)
-    {
-        var tables = databaseService.GetTables();
-        var fleaPrices = tables.Templates.Prices;
-
-        if (fleaPrices.TryGetValue(itemId, out var fleaPrice))
-        {
-            return fleaPrice;
-        }
-
-        return GetItemInHandbook(itemId)?.Price;
-    }
-
-    public double GetItemPrice(string itemId)
-    {
-        return ragfairPriceService.GetDynamicPriceForItem(itemId) ?? GetItemInHandbook(itemId)?.Price ?? 1;
     }
 
     public double? GetStackedItemPrice(MongoId itemTpl, IEnumerable<Item> items)
@@ -212,23 +148,23 @@ public class ROHelpers(
         throw new ArgumentException($"'{key}' was not found in map.");
     }
 
-    public T LoadConfig<T>(Assembly assembly, string pathFromAssets, string configName)
+    public T LoadConfig<T>(Assembly assembly, string dataPath, string configName)
     {
         var pathToMod = modHelper.GetAbsolutePathToModFolder(assembly);
-        var finalPath = Path.Combine(pathToMod, "Assets", pathFromAssets);
+        var finalPath = Path.Combine(pathToMod, dataPath);
         var config = modHelper.GetJsonDataFromFile<T>(finalPath, configName);
 
         return config;
     }
 
-    public void WriteConfigFile<T>(T data, Assembly assembly, string pathFromAssets, string configName)
+    public void WriteConfigFile<T>(T data, Assembly assembly, string dataPath, string configName)
     {
         if (data == null)
         {
             return;
         }
         var pathToMod = modHelper.GetAbsolutePathToModFolder(assembly);
-        var finalPath = Path.Combine(pathToMod, "Assets", pathFromAssets);
+        var finalPath = Path.Combine(pathToMod, dataPath);
 
         if (!Directory.Exists(finalPath))
         {

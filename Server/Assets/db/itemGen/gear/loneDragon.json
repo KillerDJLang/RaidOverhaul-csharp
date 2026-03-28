@@ -1,7 +1,8 @@
 {
   "6621b274485df00e750df4f2": {
-    "ItemToClone": "VEST_A18_SKANDA",
-    "OverrideProperties": {
+    "itemTplToClone": "5d5d87f786f77427997cfaef",
+    "parentId": "5448e5284bdc2dcb718b4567",
+    "overrideProperties": {
       "Prefab": {
         "path": "Rigs/ld_plate_carrier.bundle",
         "rcid": ""
@@ -16,8 +17,12 @@
             "cellsV": 1,
             "filters": [
               {
-                "ExcludedFilter": ["5448bf274bdc2dfc2f8b456a"],
-                "Filter": ["54009119af1c881c07000029"]
+                "ExcludedFilter": [
+                  "5448bf274bdc2dfc2f8b456a"
+                ],
+                "Filter": [
+                  "54009119af1c881c07000029"
+                ]
               }
             ],
             "isSortingTable": false,
@@ -36,8 +41,12 @@
             "cellsV": 1,
             "filters": [
               {
-                "ExcludedFilter": ["5448bf274bdc2dfc2f8b456a"],
-                "Filter": ["54009119af1c881c07000029"]
+                "ExcludedFilter": [
+                  "5448bf274bdc2dfc2f8b456a"
+                ],
+                "Filter": [
+                  "54009119af1c881c07000029"
+                ]
               }
             ],
             "isSortingTable": false,
@@ -56,8 +65,12 @@
             "cellsV": 2,
             "filters": [
               {
-                "ExcludedFilter": ["5448bf274bdc2dfc2f8b456a"],
-                "Filter": ["54009119af1c881c07000029"]
+                "ExcludedFilter": [
+                  "5448bf274bdc2dfc2f8b456a"
+                ],
+                "Filter": [
+                  "54009119af1c881c07000029"
+                ]
               }
             ],
             "isSortingTable": false,
@@ -76,8 +89,12 @@
             "cellsV": 2,
             "filters": [
               {
-                "ExcludedFilter": ["5448bf274bdc2dfc2f8b456a"],
-                "Filter": ["54009119af1c881c07000029"]
+                "ExcludedFilter": [
+                  "5448bf274bdc2dfc2f8b456a"
+                ],
+                "Filter": [
+                  "54009119af1c881c07000029"
+                ]
               }
             ],
             "isSortingTable": false,
@@ -96,8 +113,12 @@
             "cellsV": 2,
             "filters": [
               {
-                "ExcludedFilter": ["5448bf274bdc2dfc2f8b456a"],
-                "Filter": ["54009119af1c881c07000029"]
+                "ExcludedFilter": [
+                  "5448bf274bdc2dfc2f8b456a"
+                ],
+                "Filter": [
+                  "54009119af1c881c07000029"
+                ]
               }
             ],
             "isSortingTable": false,
@@ -116,8 +137,12 @@
             "cellsV": 2,
             "filters": [
               {
-                "ExcludedFilter": ["5448bf274bdc2dfc2f8b456a"],
-                "Filter": ["54009119af1c881c07000029"]
+                "ExcludedFilter": [
+                  "5448bf274bdc2dfc2f8b456a"
+                ],
+                "Filter": [
+                  "54009119af1c881c07000029"
+                ]
               }
             ],
             "isSortingTable": false,
@@ -136,8 +161,12 @@
             "cellsV": 1,
             "filters": [
               {
-                "ExcludedFilter": ["5448bf274bdc2dfc2f8b456a"],
-                "Filter": ["54009119af1c881c07000029"]
+                "ExcludedFilter": [
+                  "5448bf274bdc2dfc2f8b456a"
+                ],
+                "Filter": [
+                  "54009119af1c881c07000029"
+                ]
               }
             ],
             "isSortingTable": false,
@@ -156,8 +185,12 @@
             "cellsV": 1,
             "filters": [
               {
-                "ExcludedFilter": ["5448bf274bdc2dfc2f8b456a"],
-                "Filter": ["54009119af1c881c07000029"]
+                "ExcludedFilter": [
+                  "5448bf274bdc2dfc2f8b456a"
+                ],
+                "Filter": [
+                  "54009119af1c881c07000029"
+                ]
               }
             ],
             "isSortingTable": false,
@@ -176,8 +209,12 @@
             "cellsV": 4,
             "filters": [
               {
-                "ExcludedFilter": ["5448bf274bdc2dfc2f8b456a"],
-                "Filter": ["54009119af1c881c07000029"]
+                "ExcludedFilter": [
+                  "5448bf274bdc2dfc2f8b456a"
+                ],
+                "Filter": [
+                  "54009119af1c881c07000029"
+                ]
               }
             ],
             "isSortingTable": false,
@@ -196,8 +233,12 @@
             "cellsV": 1,
             "filters": [
               {
-                "ExcludedFilter": ["5448bf274bdc2dfc2f8b456a"],
-                "Filter": ["54009119af1c881c07000029"]
+                "ExcludedFilter": [
+                  "5448bf274bdc2dfc2f8b456a"
+                ],
+                "Filter": [
+                  "54009119af1c881c07000029"
+                ]
               }
             ],
             "isSortingTable": false,
@@ -210,16 +251,68 @@
       ],
       "RigLayoutName": "robigrig"
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Lone Dragon Plate Carrier",
         "shortName": "Lone Dragon (R)",
         "description": "The Lone Dragon plate carrier has been used by the most elite of operators in the US army. It has a modular design allowing you to bring everything you would conceivably need into the field with you. If you're going behind enemy lines, look no further."
       }
     },
-    "HandbookParent": "TacticalRigs",
-    "HandbookPrice": 189999,
-    "CloneToFilters": true
+    "handbookParentId": "5b5f6f8786f77447ed563642",
+    "handbookPriceRoubles": 189999,
+    "fleaPriceRoubles": 189999,
+    "addWeaponPreset": true,
+    "weaponPresets": [
+      {
+        "_changeWeaponName": false,
+        "_encyclopedia": "6621b274485df00e750df4f2",
+        "_id": "67801a787a2d205b6b06ff72",
+        "_items": [
+          {
+            "_id": "6621b3e205636445378bfd6e",
+            "_tpl": "6621b274485df00e750df4f2"
+          },
+          {
+            "_id": "6621b3f15aa95a621a695bd4",
+            "_tpl": "6570e5100b57c03ec90b970a",
+            "parentId": "6621b3e205636445378bfd6e",
+            "slotId": "Soft_armor_front"
+          },
+          {
+            "_id": "6621b3f62abd25f54483bf5d",
+            "_tpl": "6570e479a6560e4ee50c2b02",
+            "parentId": "6621b3e205636445378bfd6e",
+            "slotId": "Soft_armor_back"
+          },
+          {
+            "_id": "6621b3fb603ae9c8215084bf",
+            "_tpl": "6570e5674cc0d2ab1e05edbb",
+            "parentId": "6621b3e205636445378bfd6e",
+            "slotId": "Soft_armor_left"
+          },
+          {
+            "_id": "6621b401d7c51008269dcd24",
+            "_tpl": "6570e59b0b57c03ec90b970e",
+            "parentId": "6621b3e205636445378bfd6e",
+            "slotId": "soft_armor_right"
+          },
+          {
+            "_id": "6621b40624047caf313f2a3e",
+            "_tpl": "656f9fa0498d1b7e3e071d98",
+            "parentId": "6621b3e205636445378bfd6e",
+            "slotId": "Front_plate"
+          },
+          {
+            "_id": "6621b40ac1720868593eb226",
+            "_tpl": "656f9fa0498d1b7e3e071d98",
+            "parentId": "6621b3e205636445378bfd6e",
+            "slotId": "Back_plate"
+          }
+        ],
+        "_name": "Lone Dragon Standard",
+        "_parent": "6621b3e205636445378bfd6e",
+        "_type": "Preset"
+      }
+    ]
   }
 }
-

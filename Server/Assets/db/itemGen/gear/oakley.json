@@ -1,7 +1,8 @@
 {
   "6621b28d9411498998d408c3": {
-    "ItemToClone": "BACKPACK_COMM_3",
-    "OverrideProperties": {
+    "itemTplToClone": "628bc7fb408e2b2e9c0801b1",
+    "parentId": "5448e53e4bdc2d60728b4567",
+    "overrideProperties": {
       "Prefab": {
         "path": "Backpacks/oakley_backpack.bundle",
         "rcid": ""
@@ -16,8 +17,12 @@
             "cellsV": 10,
             "filters": [
               {
-                "ExcludedFilter": ["5448bf274bdc2dfc2f8b456a"],
-                "Filter": ["54009119af1c881c07000029"]
+                "ExcludedFilter": [
+                  "5448bf274bdc2dfc2f8b456a"
+                ],
+                "Filter": [
+                  "54009119af1c881c07000029"
+                ]
               }
             ],
             "isSortingTable": false,
@@ -36,8 +41,12 @@
             "cellsV": 10,
             "filters": [
               {
-                "ExcludedFilter": ["5448bf274bdc2dfc2f8b456a"],
-                "Filter": ["54009119af1c881c07000029"]
+                "ExcludedFilter": [
+                  "5448bf274bdc2dfc2f8b456a"
+                ],
+                "Filter": [
+                  "54009119af1c881c07000029"
+                ]
               }
             ],
             "isSortingTable": false,
@@ -49,16 +58,15 @@
         }
       ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Oakley Kitchen Sink support backpack",
         "shortName": "OKSB (R)",
         "description": "This backpack truly lives up to it's name. Meant for support forces carrying a large amount of supplies to stranded troops, it was been repurposed for more nefarious deeds in Tarkov."
       }
     },
-    "HandbookParent": "Backpacks",
-    "HandbookPrice": 43999,
-    "CloneToFilters": true
+    "handbookParentId": "5b5f6f6c86f774093f2ecf0b",
+    "handbookPriceRoubles": 43999,
+    "fleaPriceRoubles": 43999
   }
 }
-

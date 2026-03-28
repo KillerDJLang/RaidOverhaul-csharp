@@ -1,7 +1,8 @@
 {
   "6628f2e31084cf4d62b2b40b": {
-    "ItemToClone": "ASSAULTRIFLE_AUG_A3_556X45",
-    "OverrideProperties": {
+    "itemTplToClone": "63171672192e68c5460cebc5",
+    "parentId": "5447b5f14bdc2d61278b4567",
+    "overrideProperties": {
       "Chambers": [
         {
           "_name": "patron_in_weapon",
@@ -52,32 +53,145 @@
       "defAmmo": "64b7af5a8532cf95ee0a0dbd",
       "defMagType": "6628f31d2e4dbf64427b378d"
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Modified AUG A3 7.62x39 assault rifle",
         "shortName": "AUG 762",
         "description": "Steyr AUG A3 is a 5.56x45 bullpup assault rifle, developed by the Austrian company Steyr-Daimler-Puch. AUG is known for good ergonomics, decent accuracy, low recoil and sufficient reliability. The rifle also stands out for its futuristic design. The A3 version features a bolt-catch button. This rifle has been modified to be compatible with 7.62x39mm caliber ammunition while retaining it's standout characteristics."
       }
     },
-    "HandbookParent": "MarksmanRifles",
-    "HandbookPrice": 61999,
-    "PushMastery": true,
-    "CloneToFilters": true,
-    "LootPush": {
-      "AddToStaticLoot": true,
-      "LootContainersToAdd": [
-        "5909d89086f77472591234a0",
-        "5909d7cf86f77470ee57d75a",
-        "5909d76c86f77471e53d2adf",
-        "5909d5ef86f77467974efbd8",
-        "578f87ad245977356274f2cc"
-      ],
-      "StaticLootProbability": 5
-    }
+    "handbookParentId": "5b5f791486f774093f2ed3be",
+    "handbookPriceRoubles": 61999,
+    "fleaPriceRoubles": 61999,
+    "addCaliberToAllCloneLocations": true,
+    "masteries": true,
+    "masterySections": [
+      {
+        "Level3": 900,
+        "Level2": 450,
+        "Templates": [
+          "6628f2e31084cf4d62b2b40b"
+        ],
+        "Name": "Modified AUG A3 7.62x39 assault rifle"
+      }
+    ],
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ],
+    "addWeaponPreset": true,
+    "weaponPresets": [
+      {
+        "_changeWeaponName": false,
+        "_encyclopedia": "6628f2e31084cf4d62b2b40b",
+        "_id": "67801a631a22f8da19d6cffc",
+        "_items": [
+          {
+            "_id": "c54359f7d804a614642382c0",
+            "_tpl": "6628f2e31084cf4d62b2b40b"
+          },
+          {
+            "_id": "04a053de7b30ac5c2634e638",
+            "_tpl": "6628f33d585102d8bc5d75db",
+            "parentId": "c54359f7d804a614642382c0",
+            "slotId": "mod_magazine"
+          },
+          {
+            "_id": "d3645623a1b68e602608cc24",
+            "_tpl": "62ebbc53e3c1e1ec7c02c44f",
+            "parentId": "c54359f7d804a614642382c0",
+            "slotId": "mod_charge"
+          },
+          {
+            "_id": "7a89fe1c63cfd07dcce2b69c",
+            "_tpl": "62e7c72df68e7a0676050c77",
+            "parentId": "c54359f7d804a614642382c0",
+            "slotId": "mod_reciever"
+          },
+          {
+            "_id": "34a60b6dc30c34a20c8d2864",
+            "_tpl": "62e7c7f3c34ea971710c32fc",
+            "parentId": "7a89fe1c63cfd07dcce2b69c",
+            "slotId": "mod_barrel"
+          },
+          {
+            "_id": "065e966be13638b545da239b",
+            "_tpl": "62e7c8f91cd3fde4d503d690",
+            "parentId": "7a89fe1c63cfd07dcce2b69c",
+            "slotId": "mod_mount"
+          },
+          {
+            "_id": "42f300565e0d82bf8bde86ca",
+            "_tpl": "644a3df63b0b6f03e101e065",
+            "parentId": "7a89fe1c63cfd07dcce2b69c",
+            "slotId": "mod_tactical"
+          },
+          {
+            "_id": "ebc104d4e4e293097416e7b0",
+            "_tpl": "630f28f0cadb1fe05e06f004",
+            "parentId": "34a60b6dc30c34a20c8d2864",
+            "slotId": "mod_muzzle_000"
+          },
+          {
+            "_id": "0f094eb67cb4e7b4a945636c",
+            "_tpl": "630f2982cdb9e392db0cbcc7",
+            "parentId": "34a60b6dc30c34a20c8d2864",
+            "slotId": "mod_muzzle_001"
+          },
+          {
+            "_id": "72c912b21b773044670f666c",
+            "_tpl": "634e61b0767cb15c4601a877",
+            "parentId": "34a60b6dc30c34a20c8d2864",
+            "slotId": "mod_foregrip"
+          },
+          {
+            "_id": "8314b95662e847cd1cda4ebb",
+            "_tpl": "584924ec24597768f12ae244",
+            "parentId": "065e966be13638b545da239b",
+            "slotId": "mod_scope"
+          },
+          {
+            "_id": "f32b5938cc8ea69adbb06a12",
+            "_tpl": "5c17804b2e2216152006c02f",
+            "parentId": "065e966be13638b545da239b",
+            "slotId": "mod_sight_front"
+          },
+          {
+            "_id": "04ac5646bf20dba3d4928617",
+            "_tpl": "5dfa3d7ac41b2312ea33362a",
+            "parentId": "065e966be13638b545da239b",
+            "slotId": "mod_sight_rear"
+          }
+        ],
+        "_name": "AUG 762",
+        "_parent": "c54359f7d804a614642382c0",
+        "_type": "Preset"
+      }
+    ]
   },
   "6628f31d2e4dbf64427b378d": {
-    "ItemToClone": "MAGAZINE_556X45_AUG_30RND",
-    "OverrideProperties": {
+    "itemTplToClone": "62e7c98b550c8218d602cbb4",
+    "parentId": "5448bc234bdc2d3c308b4569",
+    "overrideProperties": {
       "Cartridges": [
         {
           "_name": "cartridges",
@@ -105,29 +219,44 @@
         }
       ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Steyr AUG 7.62x39 30-round magazine",
         "shortName": "AUG",
         "description": "A 30-round polymer Steyr AUG magazine, for 7.62x39 ammunition."
       }
     },
-    "HandbookParent": "Magazines",
-    "HandbookPrice": 11999,
-    "LootPush": {
-      "LootContainersToAdd": [
-        "5909d89086f77472591234a0",
-        "5909d7cf86f77470ee57d75a",
-        "5909d76c86f77471e53d2adf",
-        "5909d5ef86f77467974efbd8",
-        "578f87ad245977356274f2cc"
-      ],
-      "StaticLootProbability": 5
-    }
+    "handbookParentId": "5b5f754a86f774094242f19b",
+    "handbookPriceRoubles": 11999,
+    "fleaPriceRoubles": 11999,
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ]
   },
   "6628f33d585102d8bc5d75db": {
-    "ItemToClone": "MAGAZINE_556X45_AUG_42RND",
-    "OverrideProperties": {
+    "itemTplToClone": "630e295c984633f1fb0e7c30",
+    "parentId": "5448bc234bdc2d3c308b4569",
+    "overrideProperties": {
       "Cartridges": [
         {
           "_name": "cartridges",
@@ -156,25 +285,38 @@
       ],
       "Height": 2
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Steyr AUG 7.62x39 42-round magazine",
         "shortName": "AUG",
         "description": "A 42-round polymer Steyr AUG magazine, for 7.62x39 ammunition."
       }
     },
-    "HandbookParent": "Magazines",
-    "HandbookPrice": 19999,
-    "LootPush": {
-      "LootContainersToAdd": [
-        "5909d89086f77472591234a0",
-        "5909d7cf86f77470ee57d75a",
-        "5909d76c86f77471e53d2adf",
-        "5909d5ef86f77467974efbd8",
-        "578f87ad245977356274f2cc"
-      ],
-      "StaticLootProbability": 5
-    }
+    "handbookParentId": "5b5f754a86f774094242f19b",
+    "handbookPriceRoubles": 19999,
+    "fleaPriceRoubles": 19999,
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ]
   }
 }
-

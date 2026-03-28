@@ -73,24 +73,37 @@ namespace RaidOverhaul.Controllers
                 _hasInitialized = true;
             }
 
-            if (!DJConfig.SpecialReqFeatures.Value)
-            {
-                return;
-            }
-
-            if (!Utils.IsInRaid())
-            {
-                if (_menuVisible)
-                {
-                    _menuVisible = false;
-                }
-                return;
-            }
-
+            // Process close input BEFORE feature-flag and raid checks
+            // so the menu can always be dismissed.
             if (_menuVisible)
             {
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
+
+                // Force-close when the feature is turned off or we leave the raid
+                if (!DJConfig.SpecialReqFeatures.Value || !Utils.IsInRaid())
+                {
+                    CloseMenu();
+                    return;
+                }
+
+                if (Input.GetKeyDown(KeyCode.Escape))
+                {
+                    if (_showGearTransferUI)
+                    {
+                        _showGearTransferUI = false;
+                    }
+                    else
+                    {
+                        CloseMenu();
+                    }
+                    return;
+                }
+            }
+
+            if (!DJConfig.SpecialReqFeatures.Value || !Utils.IsInRaid())
+            {
+                return;
             }
 
             var keybind = DJConfig.SpecialReqFeaturesBinding.Value;
@@ -114,18 +127,6 @@ namespace RaidOverhaul.Controllers
             if (keyPressed)
             {
                 ToggleMenu();
-            }
-
-            if (_menuVisible && Input.GetKeyDown(KeyCode.Escape))
-            {
-                if (_showGearTransferUI)
-                {
-                    _showGearTransferUI = false;
-                }
-                else
-                {
-                    CloseMenu();
-                }
             }
         }
 
@@ -257,7 +258,14 @@ namespace RaidOverhaul.Controllers
 
         private void ToggleMenu()
         {
-            _menuVisible = !_menuVisible;
+            if (_menuVisible)
+            {
+                CloseMenu();
+            }
+            else
+            {
+                _menuVisible = true;
+            }
         }
 
         private void CloseMenu()
@@ -338,6 +346,50 @@ namespace RaidOverhaul.Controllers
             if (!_menuVisible)
             {
                 return;
+            }
+
+            // Fallback input handling through IMGUI event system —
+            // catches key events that the game's input layer may have
+            // consumed before ManualUpdate() could process them.
+            if (Event.current.type == EventType.KeyDown)
+            {
+                if (Event.current.keyCode == KeyCode.Escape)
+                {
+                    if (_showGearTransferUI)
+                    {
+                        _showGearTransferUI = false;
+                    }
+                    else
+                    {
+                        CloseMenu();
+                    }
+                    Event.current.Use();
+                    return;
+                }
+
+                var keybind = DJConfig.SpecialReqFeaturesBinding.Value;
+                if (Event.current.keyCode == keybind.MainKey)
+                {
+                    bool modifiersHeld = true;
+                    if (keybind.Modifiers != null && keybind.Modifiers.Any())
+                    {
+                        foreach (var modifier in keybind.Modifiers)
+                        {
+                            if (!Input.GetKey(modifier))
+                            {
+                                modifiersHeld = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (modifiersHeld)
+                    {
+                        CloseMenu();
+                        Event.current.Use();
+                        return;
+                    }
+                }
             }
 
             InitializeStyles();

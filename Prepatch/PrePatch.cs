@@ -9,10 +9,11 @@ using LegionPrepatch.Helpers;
 
 namespace LegionPrepatch
 {
+    [BepInDependency("com.morebotsapiprepatch.tacticaltoaster", BepInDependency.DependencyFlags.HardDependency)]
     [BepInPlugin(ClientInfo.ROPrepatchGUID, ClientInfo.ROPrepatchName, ClientInfo.PluginVersion)]
     public class LegionPrepatch : BaseUnityPlugin
     {
-        public static LegionPrepatch Instance { get; private set; }
+        public static LegionPrepatch Instance;
 
         public void Awake()
         {

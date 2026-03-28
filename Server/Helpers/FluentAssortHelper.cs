@@ -30,21 +30,6 @@ public class ROFluentTraderAssortHelper(DatabaseService databaseService, ISptLog
         return this;
     }
 
-    public ROFluentTraderAssortHelper CreateComplexAssortItem(List<Item> items)
-    {
-        items[0].ParentId = "hideout";
-        items[0].SlotId = "hideout";
-
-        items[0].Upd ??= new Upd();
-
-        items[0].Upd.UnlimitedCount = false;
-        items[0].Upd.StackObjectsCount = 100;
-
-        _itemsToSell.AddRange(items);
-
-        return this;
-    }
-
     public ROFluentTraderAssortHelper AddStackCount(int stackCount)
     {
         _itemsToSell[0].Upd.StackObjectsCount = stackCount;
@@ -52,51 +37,9 @@ public class ROFluentTraderAssortHelper(DatabaseService databaseService, ISptLog
         return this;
     }
 
-    public ROFluentTraderAssortHelper AddUnlimitedStackCount()
-    {
-        _itemsToSell[0].Upd.StackObjectsCount = 999999;
-        _itemsToSell[0].Upd.UnlimitedCount = true;
-
-        return this;
-    }
-
-    public ROFluentTraderAssortHelper MakeStackCountUnlimited()
-    {
-        _itemsToSell[0].Upd.StackObjectsCount = 999999;
-
-        return this;
-    }
-
-    public ROFluentTraderAssortHelper AddBuyRestriction(int maxBuyLimit)
-    {
-        _itemsToSell[0].Upd.BuyRestrictionMax = maxBuyLimit;
-        _itemsToSell[0].Upd.BuyRestrictionCurrent = 0;
-
-        return this;
-    }
-
     public ROFluentTraderAssortHelper AddLoyaltyLevel(int level)
     {
         _loyaltyLevel[_itemsToSell[0].Id] = level;
-
-        return this;
-    }
-
-    public ROFluentTraderAssortHelper AddMoneyCost(string currencyType, int amount)
-    {
-        var dataToAdd = new BarterScheme { Count = amount, Template = currencyType };
-
-        if (
-            !_barterScheme.TryAdd(
-                _itemsToSell[0].Id,
-                [
-                    [dataToAdd],
-                ]
-            )
-        )
-        {
-            logger.Warning($"Unable to add barter scheme currency: {currencyType}");
-        }
 
         return this;
     }

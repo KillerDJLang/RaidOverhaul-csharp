@@ -3,4 +3,5 @@
     <Project Path="Plugin/RO-Plugin.csproj" />
     <Project Path="Prepatch/RO-Prepatch.csproj" />
     <Project Path="Server/RO-Server.csproj" />
+    <Project Path="Config/RO-Config.csproj" />
 </Solution>

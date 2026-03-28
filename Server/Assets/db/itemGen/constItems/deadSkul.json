@@ -1,7 +1,8 @@
 {
   "6621b0dcbcfe66cdbbab48c7": {
-    "ItemToClone": "VEST_SCAV_VEST",
-    "OverrideProperties": {
+    "itemTplToClone": "572b7adb24597762ae139821",
+    "parentId": "5448e5284bdc2dcb718b4567",
+    "overrideProperties": {
       "Prefab": {
         "path": "assets/content/items/equipment/armband/item_equipment_armband_dead.bundle",
         "rcid": ""
@@ -19,8 +20,12 @@
             "cellsV": 1,
             "filters": [
               {
-                "ExcludedFilter": ["5448bf274bdc2dfc2f8b456a"],
-                "Filter": ["54009119af1c881c07000029"]
+                "ExcludedFilter": [
+                  "5448bf274bdc2dfc2f8b456a"
+                ],
+                "Filter": [
+                  "54009119af1c881c07000029"
+                ]
               }
             ],
             "isSortingTable": false,
@@ -39,8 +44,12 @@
             "cellsV": 2,
             "filters": [
               {
-                "ExcludedFilter": ["5448bf274bdc2dfc2f8b456a"],
-                "Filter": ["54009119af1c881c07000029"]
+                "ExcludedFilter": [
+                  "5448bf274bdc2dfc2f8b456a"
+                ],
+                "Filter": [
+                  "54009119af1c881c07000029"
+                ]
               }
             ],
             "isSortingTable": false,
@@ -59,8 +68,12 @@
             "cellsV": 1,
             "filters": [
               {
-                "ExcludedFilter": ["5448bf274bdc2dfc2f8b456a"],
-                "Filter": ["54009119af1c881c07000029"]
+                "ExcludedFilter": [
+                  "5448bf274bdc2dfc2f8b456a"
+                ],
+                "Filter": [
+                  "54009119af1c881c07000029"
+                ]
               }
             ],
             "isSortingTable": false,
@@ -79,8 +92,12 @@
             "cellsV": 3,
             "filters": [
               {
-                "ExcludedFilter": ["5448bf274bdc2dfc2f8b456a"],
-                "Filter": ["54009119af1c881c07000029"]
+                "ExcludedFilter": [
+                  "5448bf274bdc2dfc2f8b456a"
+                ],
+                "Filter": [
+                  "54009119af1c881c07000029"
+                ]
               }
             ],
             "isSortingTable": false,
@@ -99,8 +116,12 @@
             "cellsV": 1,
             "filters": [
               {
-                "ExcludedFilter": ["5448bf274bdc2dfc2f8b456a"],
-                "Filter": ["54009119af1c881c07000029"]
+                "ExcludedFilter": [
+                  "5448bf274bdc2dfc2f8b456a"
+                ],
+                "Filter": [
+                  "54009119af1c881c07000029"
+                ]
               }
             ],
             "isSortingTable": false,
@@ -113,22 +134,18 @@
       ],
       "RigLayoutName": "rodeadarmband"
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Custom Deadskul Carrying Pouch",
         "shortName": "Dead",
         "description": "A modified Deadskul Armband with pouches sown into it. Now you can be sure to never go into the field without extra provisions. The Requisition Officers really knew what they were doing with this one. Only for real collectors."
       }
     },
-    "Handbook": {
-      "HandbookParent": "GearComponents",
-      "HandbookPrice": 99999999
-    },
-    "CloneToFilters": true,
-    "PushToFleaBlacklist": true,
-    "SlotPush": {
-      "Slot": "Armband"
-    }
+    "handbookParentId": "5b5f704686f77447ec5d76d7",
+    "handbookPriceRoubles": 99999999,
+    "fleaPriceRoubles": 99999999,
+    "addtoInventorySlots": [
+      "ArmBand"
+    ]
   }
 }
-

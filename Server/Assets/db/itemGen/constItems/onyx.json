@@ -1,7 +1,8 @@
 {
   "666361eff60f4ea5a464eb70": {
-    "ItemToClone": "SECURE_KAPPA",
-    "OverrideProperties": {
+    "itemTplToClone": "5c093ca986f7740a1867ab12",
+    "parentId": "5448bf274bdc2dfc2f8b456a",
+    "overrideProperties": {
       "Prefab": {
         "path": "Containers/onyx_container.bundle",
         "rcid": ""
@@ -14,8 +15,12 @@
           "_props": {
             "filters": [
               {
-                "Filter": ["54009119af1c881c07000029"],
-                "ExcludedFilter": ["5447e1d04bdc2dff2f8b4567"]
+                "Filter": [
+                  "54009119af1c881c07000029"
+                ],
+                "ExcludedFilter": [
+                  "5447e1d04bdc2dff2f8b4567"
+                ]
               }
             ],
             "cellsH": 2,
@@ -34,8 +39,12 @@
           "_props": {
             "filters": [
               {
-                "Filter": ["54009119af1c881c07000029"],
-                "ExcludedFilter": ["5447e1d04bdc2dff2f8b4567"]
+                "Filter": [
+                  "54009119af1c881c07000029"
+                ],
+                "ExcludedFilter": [
+                  "5447e1d04bdc2dff2f8b4567"
+                ]
               }
             ],
             "cellsH": 3,
@@ -54,8 +63,12 @@
           "_props": {
             "filters": [
               {
-                "Filter": ["54009119af1c881c07000029"],
-                "ExcludedFilter": ["5447e1d04bdc2dff2f8b4567"]
+                "Filter": [
+                  "54009119af1c881c07000029"
+                ],
+                "ExcludedFilter": [
+                  "5447e1d04bdc2dff2f8b4567"
+                ]
               }
             ],
             "cellsH": 1,
@@ -69,19 +82,15 @@
         }
       ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Secure Container Onyx",
         "shortName": "Onyx",
         "description": "The best of the best. The rarest case found in the land of Tarkov, used by only the most skilled and seasoned PMC's."
       }
     },
-    "Handbook": {
-      "HandbookParent": "SecureContainers",
-      "HandbookPrice": 11999999
-    },
-    "PushToFleaBlacklist": true,
-    "CloneToFilters": true
+    "handbookParentId": "5b5f6fd286f774093f2ecf0d",
+    "handbookPriceRoubles": 11999999,
+    "fleaPriceRoubles": 11999999
   }
 }
-

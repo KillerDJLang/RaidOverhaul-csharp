@@ -1,6 +1,7 @@
 /.vs
 /.idea
 /Build
+/References
 /FikaCompat/bin
 /FikaCompat/obj
 /Plugin/bin
@@ -9,13 +10,10 @@
 /Prepatch/obj
 /Server/bin
 /Server/obj
-/ConfigGUI/.vs
-/ConfigGUI/.idea
-/ConfigGUI/bin
-/ConfigGUI/obj
-/ConfigGUI/publish_output
-/ConfigGUI/publish--CLI.txt
-/Fika.Core.dll
+/Server/docs
+/Config/bin
+/Config/obj
+/Config/publish
+/Config/publish_commands.md
 /RaidOverhaul.sln
 /RaidOverhaul.sln.DotSettings.user
-/UnityToolkit

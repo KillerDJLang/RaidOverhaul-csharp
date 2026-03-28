@@ -9,7 +9,6 @@ using Comfort.Common;
 using EFT;
 using EFT.InventoryLogic;
 using EFT.UI;
-using HarmonyLib;
 using LegionPrepatch.Helpers;
 using RaidOverhaul.Checkers;
 using RaidOverhaul.Configs;
@@ -28,14 +27,14 @@ using UnityEngine;
 
 namespace RaidOverhaul
 {
+    [BepInDependency("com.arys.unitytoolkit", BepInDependency.DependencyFlags.HardDependency)]
+    [BepInDependency("com.wtt.commonlib", BepInDependency.DependencyFlags.HardDependency)]
     [BepInPlugin(ClientInfo.ROGUID, ClientInfo.ROPluginName, ClientInfo.PluginVersion)]
-    [BepInDependency("com.arys.unitytoolkit", "2.0.1")]
     public class Plugin : BaseUnityPlugin
     {
         public static string ModPath = Path.Combine(Environment.CurrentDirectory, "SPT", "user", "mods", "RaidOverhaul");
         public static readonly string PluginPath = Path.Combine(Environment.CurrentDirectory, "BepInEx", "plugins", "RaidOverhaul");
         public static readonly string ResourcePath = Path.Combine(PluginPath, "Resources");
-        public static readonly string LegionJsonPath = Path.Combine(ResourcePath, "normalLegionSettings.json");
         internal static readonly List<string> _softDependancies = ["com.fika.core"];
         internal static TextAsset _legionText;
 
@@ -116,32 +115,6 @@ namespace RaidOverhaul
 
             Utils.GetWeatherFields();
 
-            //Load Legion
-            var excludedDifficultiesField =
-                typeof(LocalBotSettingsProviderClass).GetField("Dictionary_1", BindingFlags.Static | BindingFlags.Public)
-                ?? throw new InvalidOperationException("ExcludedDifficulties field not found.");
-            var excludedDifficulties = (Dictionary<WildSpawnType, List<BotDifficulty>>)excludedDifficultiesField.GetValue(null);
-
-            var excludedDifficultiesForLegion = new List<BotDifficulty>
-            {
-                BotDifficulty.easy,
-                BotDifficulty.hard,
-                BotDifficulty.impossible,
-            };
-
-            excludedDifficulties.TryAdd((WildSpawnType)199, excludedDifficultiesForLegion);
-            Console.WriteLine("Successfully added Legion to the excluded difficulties list");
-
-            Traverse
-                .Create(typeof(BotSettingsRepoClass))
-                .Field<Dictionary<WildSpawnType, GClass790>>("Dictionary_0") // GClass790 --> WildSpawnTypeSettings
-                .Value.Add((WildSpawnType)199, new GClass790(true, false, false, "ScavRole/Boss", (ETagStatus)0));
-
-            Console.WriteLine("Successfully added Legion to the BotSettingsRepo");
-
-            Utils.LoadLegionSettings();
-            Console.WriteLine("Successfully loaded Legion settings");
-
             if (DJConfig.TimeChanges.Value)
             {
                 new GameWorldPatch().Enable();
@@ -183,9 +156,6 @@ namespace RaidOverhaul
             {
                 ConsoleCommands.RegisterCC();
             }
-
-            var bundleLoader = new BundleLoader();
-            bundleLoader.LoadLayouts(Logger);
 
             TryInitFikaAssembly();
         }
@@ -259,8 +229,6 @@ namespace RaidOverhaul
             }
 
             _session = ClientAppUtils.GetMainApp().GetClientBackEndSession();
-
-            Logger.LogDebug("Session set");
         }
 
         private void RecreateGameObject()

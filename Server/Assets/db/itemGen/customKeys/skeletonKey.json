@@ -1,26 +1,20 @@
 {
   "66a2fc926af26cc365283f23": {
-    "ItemToClone": "KEY_DORM_MRK",
-    "OverrideProperties": {
+    "itemTplToClone": "5780cf7f2459777de4559322",
+    "parentId": "5c99f98d86f7745c314214b3",
+    "overrideProperties": {
       "MaximumNumberOfUsage": 0,
       "BackgroundColor": "violet"
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Skeleton Key",
         "shortName": "Skeleton",
         "description": "A simple looking key with a lot of potential. I don't know who made this, but don't let it out of your grasp."
       }
     },
-    "Handbook": {
-      "HandbookParent": "MechanicalKeys",
-      "HandbookPrice": 49999999
-    },
-    "CloneToFilters": true,
-    "PushToFleaBlacklist": true,
-    "CasePush": {
-      "CaseFiltersToAdd": ["CONTAINER_DOCS", "CONTAINER_SICC", "CONTAINER_WALLET", "CONTAINER_WZ", "CONTAINER_KEY_TOOL"]
-    }
+    "handbookParentId": "5c518ec986f7743b68682ce2",
+    "handbookPriceRoubles": 49999999,
+    "fleaPriceRoubles": 49999999
   }
 }
-

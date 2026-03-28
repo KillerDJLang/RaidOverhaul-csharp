@@ -33,6 +33,9 @@
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>..\..\..\EscapeFromTarkov_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
+    <Reference Include="MoreBotsPrepatch">
+      <HintPath>..\References\MoreBots\MoreBotsPrepatch.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

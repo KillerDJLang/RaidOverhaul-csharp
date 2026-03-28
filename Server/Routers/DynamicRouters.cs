@@ -14,22 +14,6 @@ using SPTarkov.Server.Core.Utils;
 namespace RaidOverhaulMain.Routers;
 
 [Injectable]
-public class ROBotDynamicRouter(JsonUtil jsonUtil, HttpResponseUtil httpResponseUtil, ROBossHelper bossHelper)
-    : DynamicRouter(
-        jsonUtil,
-        [
-            new RouteAction(
-                "/singleplayer/settings/bot/difficulties",
-                async (url, info, sessionID, output) =>
-                {
-                    var result = bossHelper.GetBotDifficulties(url, (EmptyRequestData)info, sessionID, output);
-                    return await new ValueTask<string>(httpResponseUtil.NoBody(result));
-                }
-            ),
-        ]
-    ) { }
-
-[Injectable]
 public class ROTraderDynamicRouter(
     JsonUtil jsonUtil,
     RandomUtil randomUtil,

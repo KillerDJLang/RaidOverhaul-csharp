@@ -1,7 +1,8 @@
 {
   "6628f76df1a913e3afc16360": {
-    "ItemToClone": "PISTOL_GLOCK_17",
-    "OverrideProperties": {
+    "itemTplToClone": "5a7ae0c351dfba0017554310",
+    "parentId": "5447b5cf4bdc2d65278b4567",
+    "overrideProperties": {
       "Chambers": [
         {
           "_name": "patron_in_weapon",
@@ -10,7 +11,11 @@
           "_props": {
             "filters": [
               {
-                "Filter": ["66280a30d3b6f288cb6b9653", "662809f445b5ff428e21ac0a", "662808ec26a8e83120bb25fe"]
+                "Filter": [
+                  "66280a30d3b6f288cb6b9653",
+                  "662809f445b5ff428e21ac0a",
+                  "662808ec26a8e83120bb25fe"
+                ]
               }
             ]
           },
@@ -22,34 +27,144 @@
       "ammoCaliber": "Caliber1143x23ACP",
       "defAmmo": "5efb0cabfb3e451d70735af5",
       "defMagType": "6628f77390fd0c39ebfa1125",
-      "weapFireType": ["single", "fullauto"]
+      "weapFireType": [
+        "single",
+        "fullauto"
+      ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "The Judge",
         "shortName": "Judge",
         "description": "The Judge is a handgun capable of loading 12 gauge shotgun shells. Many scavs quiver in fear when they hear the name."
       }
     },
-    "HandbookParent": "Pistols",
-    "HandbookPrice": 55999,
-    "PushMastery": true,
-    "CloneToFilters": true,
-    "LootPush": {
-      "LootContainersToAdd": [
-        "5909d89086f77472591234a0",
-        "5909d7cf86f77470ee57d75a",
-        "5909d76c86f77471e53d2adf",
-        "5909d5ef86f77467974efbd8",
-        "578f87ad245977356274f2cc"
-      ],
-      "StaticLootProbability": 5
-    },
-    "PushToFleaBlacklist": true
+    "handbookParentId": "5b5f792486f77447ed5636b3",
+    "handbookPriceRoubles": 55999,
+    "fleaPriceRoubles": 55999,
+    "addCaliberToAllCloneLocations": true,
+    "masteries": true,
+    "masterySections": [
+      {
+        "Level3": 900,
+        "Level2": 450,
+        "Templates": [
+          "6628f76df1a913e3afc16360"
+        ],
+        "Name": "The Judge"
+      }
+    ],
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ],
+    "addWeaponPreset": true,
+    "weaponPresets": [
+      {
+        "_changeWeaponName": false,
+        "_encyclopedia": "6628f76df1a913e3afc16360",
+        "_id": "67801a682af46237eff2e4c2",
+        "_items": [
+          {
+            "_id": "66282e13a3168a5a05daee2c",
+            "_tpl": "6628f76df1a913e3afc16360"
+          },
+          {
+            "_id": "66282e17c9b56ef1fe2827a9",
+            "_tpl": "5a6b5e468dc32e001207faf5",
+            "parentId": "66282e13a3168a5a05daee2c",
+            "slotId": "mod_barrel"
+          },
+          {
+            "_id": "66282e1cc6e177cc8ebb4090",
+            "_tpl": "5a7b4960e899ef197b331a2d",
+            "parentId": "66282e13a3168a5a05daee2c",
+            "slotId": "mod_pistol_grip"
+          },
+          {
+            "_id": "66282e20a387fac998ac257d",
+            "_tpl": "6628f7705124be8295a0bdd9",
+            "parentId": "66282e13a3168a5a05daee2c",
+            "slotId": "mod_reciever"
+          },
+          {
+            "_id": "66282e25589749c6252175c6",
+            "_tpl": "6628f7786fbce2d268af4913",
+            "parentId": "66282e13a3168a5a05daee2c",
+            "slotId": "mod_magazine"
+          },
+          {
+            "_id": "66282e29277efc692e12b88e",
+            "_tpl": "5a7ad4af51dfba0013379717",
+            "parentId": "66282e13a3168a5a05daee2c",
+            "slotId": "mod_tactical"
+          },
+          {
+            "_id": "66282e2d66c78a9caf8ab399",
+            "_tpl": "5d1c702ad7ad1a632267f429",
+            "parentId": "66282e13a3168a5a05daee2c",
+            "slotId": "mod_stock"
+          },
+          {
+            "_id": "66282e318cc440c0f5822126",
+            "_tpl": "5a32a064c4a28200741e22de",
+            "parentId": "66282e17c9b56ef1fe2827a9",
+            "slotId": "mod_muzzle"
+          },
+          {
+            "_id": "66282e362c07e620347c4de5",
+            "_tpl": "5a7d9122159bd4001438dbf4",
+            "parentId": "66282e20a387fac998ac257d",
+            "slotId": "mod_sight_rear"
+          },
+          {
+            "_id": "66282e39267a68d22ddd5988",
+            "_tpl": "5a7d90eb159bd400165484f1",
+            "parentId": "66282e20a387fac998ac257d",
+            "slotId": "mod_sight_front"
+          },
+          {
+            "_id": "66282e3ce2764dc2bcd81c6b",
+            "_tpl": "616554fe50224f204c1da2aa",
+            "parentId": "66282e29277efc692e12b88e",
+            "slotId": "mod_scope"
+          },
+          {
+            "_id": "66282e40e4cbe3c88c3b91f8",
+            "_tpl": "61657230d92c473c770213d7",
+            "parentId": "66282e3ce2764dc2bcd81c6b",
+            "slotId": "mod_scope"
+          }
+        ],
+        "_name": "Nightmare",
+        "_parent": "66282e13a3168a5a05daee2c",
+        "_type": "Preset"
+      }
+    ]
   },
   "6628f7705124be8295a0bdd9": {
-    "ItemToClone": "RECEIVER_G_AW_C",
-    "OverrideProperties": {
+    "itemTplToClone": "5a7033908dc32e000a311392",
+    "parentId": "55818a304bdc2db5418b457d",
+    "overrideProperties": {
       "ConflictingItems": [
         "5efb0da7a29a85116f6ea05f",
         "5c3df7d588a4501f290594e5",
@@ -62,19 +177,44 @@
         "64b7bbb74b75259c590fa897"
       ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Judge custom Lone Wolf Slide",
         "shortName": "Judge Lone Wolf",
         "description": "A custom Lone Wolf receiver modified to fit on the Judge handgun. The sound of the slide brings nightmares to many."
       }
     },
-    "HandbookParent": "ReceiversAndSlides",
-    "HandbookPrice": 41999
+    "handbookParentId": "5b5f764186f77447ec5d7714",
+    "handbookPriceRoubles": 41999,
+    "fleaPriceRoubles": 41999,
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ]
   },
   "6628f77390fd0c39ebfa1125": {
-    "ItemToClone": "MAGAZINE_9X19_GLOCK_9X19_17RND",
-    "OverrideProperties": {
+    "itemTplToClone": "5a718b548dc32e000d46d262",
+    "parentId": "5448bc234bdc2d3c308b4569",
+    "overrideProperties": {
       "Cartridges": [
         {
           "_name": "cartridges",
@@ -84,7 +224,11 @@
           "_props": {
             "filters": [
               {
-                "Filter": ["66280a30d3b6f288cb6b9653", "662809f445b5ff428e21ac0a", "662808ec26a8e83120bb25fe"]
+                "Filter": [
+                  "66280a30d3b6f288cb6b9653",
+                  "662809f445b5ff428e21ac0a",
+                  "662808ec26a8e83120bb25fe"
+                ]
               }
             ]
           },
@@ -92,19 +236,44 @@
         }
       ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Judge 17 Round Magazine",
         "shortName": "Judge 17 Mag",
         "description": "A 17-round magazine made for the Judge handgun, the sound of which causes scavs to quiver in fear."
       }
     },
-    "HandbookParent": "Magazines",
-    "HandbookPrice": 11999
+    "handbookParentId": "5b5f754a86f774094242f19b",
+    "handbookPriceRoubles": 11999,
+    "fleaPriceRoubles": 11999,
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ]
   },
   "6628f7750e470be83e65dc76": {
-    "ItemToClone": "MAGAZINE_9X19_BIG_STICK_33RND",
-    "OverrideProperties": {
+    "itemTplToClone": "5a7ad2e851dfba0016153692",
+    "parentId": "5448bc234bdc2d3c308b4569",
+    "overrideProperties": {
       "Cartridges": [
         {
           "_name": "cartridges",
@@ -114,7 +283,11 @@
           "_props": {
             "filters": [
               {
-                "Filter": ["66280a30d3b6f288cb6b9653", "662809f445b5ff428e21ac0a", "662808ec26a8e83120bb25fe"]
+                "Filter": [
+                  "66280a30d3b6f288cb6b9653",
+                  "662809f445b5ff428e21ac0a",
+                  "662808ec26a8e83120bb25fe"
+                ]
               }
             ]
           },
@@ -122,19 +295,21 @@
         }
       ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Judge 33 Round Magazine",
         "shortName": "Judge 33 Mag",
         "description": "A 33-round magazine made for the Judge handgun, the sound of which causes scavs to quiver in fear."
       }
     },
-    "HandbookParent": "Magazines",
-    "HandbookPrice": 15499
+    "handbookParentId": "5b5f754a86f774094242f19b",
+    "handbookPriceRoubles": 15499,
+    "fleaPriceRoubles": 15499
   },
   "6628f7786fbce2d268af4913": {
-    "ItemToClone": "MAGAZINE_9X19_G_SGMT_50RND",
-    "OverrideProperties": {
+    "itemTplToClone": "5a718f958dc32e00094b97e7",
+    "parentId": "5448bc234bdc2d3c308b4569",
+    "overrideProperties": {
       "Cartridges": [
         {
           "_name": "cartridges",
@@ -144,7 +319,11 @@
           "_props": {
             "filters": [
               {
-                "Filter": ["66280a30d3b6f288cb6b9653", "662809f445b5ff428e21ac0a", "662808ec26a8e83120bb25fe"]
+                "Filter": [
+                  "66280a30d3b6f288cb6b9653",
+                  "662809f445b5ff428e21ac0a",
+                  "662808ec26a8e83120bb25fe"
+                ]
               }
             ]
           },
@@ -152,15 +331,38 @@
         }
       ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Judge Drum Magazine",
         "shortName": "Judge Drum",
         "description": "A 50-round Drum magazine made for the Judge handgun, the sound of which causes scavs to quiver in fear."
       }
     },
-    "HandbookParent": "Magazines",
-    "HandbookPrice": 25999
+    "handbookParentId": "5b5f754a86f774094242f19b",
+    "handbookPriceRoubles": 25999,
+    "fleaPriceRoubles": 25999,
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ]
   }
 }
-

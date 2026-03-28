@@ -1,150 +1,338 @@
 {
   "662808ec26a8e83120bb25fe": {
-    "ItemToClone": "AMMO_12G_FLECHETTE",
-    "OverrideProperties": {
+    "itemTplToClone": "5d6e6911a4b9361bd5780d52",
+    "parentId": "5485a8684bdc2da71d8b4567",
+    "overrideProperties": {
       "Prefab": {
         "path": "assets/content/items/ammo/patrons/patron_1143x23_rip.bundle",
         "rcid": ""
       },
       "Caliber": "Caliber1143x23ACP"
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Judge Flechette Round",
         "shortName": "JFR",
         "description": "A tightly packed Flechette round for the Judge Handgun. How they managed to fit all of that into a small 9x19 casing is beyond me."
       }
     },
-    "Handbook": {
-      "HandbookParent": "Ammo",
-      "HandbookPrice": 999
-    }
+    "handbookParentId": "5b47574386f77428ca22b33b",
+    "handbookPriceRoubles": 999,
+    "fleaPriceRoubles": 999,
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d45286f77465a8136dc6",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ]
   },
   "662809f445b5ff428e21ac0a": {
-    "ItemToClone": "AMMO_12G_AP20",
-    "OverrideProperties": {
+    "itemTplToClone": "5d6e68a8a4b9360b6c0d54e2",
+    "parentId": "5485a8684bdc2da71d8b4567",
+    "overrideProperties": {
       "Prefab": {
         "path": "assets/content/items/ammo/patrons/patron_1143x23_acp_ap.bundle",
         "rcid": ""
       },
       "Caliber": "Caliber1143x23ACP"
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Judge AP Slug Round",
         "shortName": "JSR",
         "description": "A tightly packed Armor Piercing Slug round for the Judge Handgun. How they managed to fit all of that into a small .45 casing is beyond me."
       }
     },
-    "Handbook": {
-      "HandbookParent": "Ammo",
-      "HandbookPrice": 879
-    }
+    "handbookParentId": "5b47574386f77428ca22b33b",
+    "handbookPriceRoubles": 879,
+    "fleaPriceRoubles": 879,
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d45286f77465a8136dc6",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ]
   },
   "66280a30d3b6f288cb6b9653": {
-    "ItemToClone": "AMMO_12G_MAGNUM",
-    "OverrideProperties": {
+    "itemTplToClone": "5d6e6806a4b936088465b17e",
+    "parentId": "5485a8684bdc2da71d8b4567",
+    "overrideProperties": {
       "Prefab": {
         "path": "assets/content/items/ammo/patrons/patron_1143x23_acp_hydra_shok.bundle",
         "rcid": ""
       },
       "Caliber": "Caliber1143x23ACP"
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Judge Buckshot Round",
         "shortName": "JBR",
         "description": "A tightly packed Buckshot round for the Judge Handgun. How they managed to fit all of that into a small .45 casing is beyond me."
       }
     },
-    "Handbook": {
-      "HandbookParent": "Ammo",
-      "HandbookPrice": 599
-    }
+    "handbookParentId": "5b47574386f77428ca22b33b",
+    "handbookPriceRoubles": 599,
+    "fleaPriceRoubles": 599,
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d45286f77465a8136dc6",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ]
   },
   "6628185208dd86f969db7e03": {
-    "ItemToClone": "AMMO_86X70_TACX",
-    "OverrideProperties": {
+    "itemTplToClone": "5fc382b6d6fa9c00c571bbc3",
+    "parentId": "5485a8684bdc2da71d8b4567",
+    "overrideProperties": {
       "Prefab": {
         "path": "assets/content/items/ammo/patrons/patron_68x51_fmj.bundle",
         "rcid": ""
       },
       "Caliber": "Caliber68x51"
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Jury TacX Round",
         "shortName": "JuryX",
         "description": "A modified TacX round for the Jury Marksman Rifle. This is the last thing many scavs and PMCs around Tarkov ever saw."
       }
     },
-    "Handbook": {
-      "HandbookParent": "Ammo",
-      "HandbookPrice": 1349
-    }
+    "handbookParentId": "5b47574386f77428ca22b33b",
+    "handbookPriceRoubles": 1349,
+    "fleaPriceRoubles": 1349,
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d45286f77465a8136dc6",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ]
   },
   "662818a23a552da6aef8fada": {
-    "ItemToClone": "AMMO_86X70_AP",
-    "OverrideProperties": {
+    "itemTplToClone": "5fc382a9d724d907e2077dab",
+    "parentId": "5485a8684bdc2da71d8b4567",
+    "overrideProperties": {
       "Prefab": {
         "path": "assets/content/items/ammo/patrons/patron_68x51.bundle",
         "rcid": ""
       },
       "Caliber": "Caliber68x51"
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Jury AP Round",
         "shortName": "JuryAP",
         "description": "An Armor Piercing round for the Jury Marksman Rifle. This is the last thing many scavs and PMCs around Tarkov ever saw."
       }
     },
-    "Handbook": {
-      "HandbookParent": "Ammo",
-      "HandbookPrice": 1949
-    }
+    "handbookParentId": "5b47574386f77428ca22b33b",
+    "handbookPriceRoubles": 1949,
+    "fleaPriceRoubles": 1949,
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d45286f77465a8136dc6",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ]
   },
   "66281ab7fca966e5021f81b5": {
-    "ItemToClone": "AMMO_127X108_B32",
-    "OverrideProperties": {
+    "itemTplToClone": "5cde8864d7f00c0010373be1",
+    "parentId": "5485a8684bdc2da71d8b4567",
+    "overrideProperties": {
       "Prefab": {
         "path": "assets/content/items/ammo/patrons/patron_762x51_m61.bundle",
         "rcid": ""
       },
       "Caliber": "Caliber762x51"
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Executioner AT Round",
         "shortName": "ExecAT",
         "description": "An Anti-tank round for the Executioner Sniper Rifle. If you hear the sound this round makes, it's already too late."
       }
     },
-    "Handbook": {
-      "HandbookParent": "Ammo",
-      "HandbookPrice": 1879
-    }
+    "handbookParentId": "5b47574386f77428ca22b33b",
+    "handbookPriceRoubles": 1879,
+    "fleaPriceRoubles": 1879,
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d45286f77465a8136dc6",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ]
   },
   "66281ac038f9aebf6f914138": {
-    "ItemToClone": "AMMO_127X108_BZT44M",
-    "OverrideProperties": {
+    "itemTplToClone": "5d2f2ab648f03550091993ca",
+    "parentId": "5485a8684bdc2da71d8b4567",
+    "overrideProperties": {
       "Prefab": {
         "path": "assets/content/items/ammo/patrons/patron_762x51_m993.bundle",
         "rcid": ""
       },
       "Caliber": "Caliber762x51"
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Executioner AP Round",
         "shortName": "ExecAP",
         "description": "An Armor Piercing round for the Executioner Sniper Rifle. If you hear the sound this round makes, it's already too late."
       }
     },
-    "Handbook": {
-      "HandbookParent": "Ammo",
-      "HandbookPrice": 2399
-    }
+    "handbookParentId": "5b47574386f77428ca22b33b",
+    "handbookPriceRoubles": 2399,
+    "fleaPriceRoubles": 2399,
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d45286f77465a8136dc6",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ]
   }
 }
-

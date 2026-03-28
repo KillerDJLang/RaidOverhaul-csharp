@@ -1,7 +1,8 @@
 {
   "6628f8813e3fe94f5f035010": {
-    "ItemToClone": "ASSAULTRIFLE_SPEAR_68",
-    "OverrideProperties": {
+    "itemTplToClone": "65290f395ae2ae97b80fdf2d",
+    "parentId": "5447b5f14bdc2d61278b4567",
+    "overrideProperties": {
       "Chambers": [
         {
           "_name": "patron_in_weapon",
@@ -10,7 +11,10 @@
           "_props": {
             "filters": [
               {
-                "Filter": ["6628185208dd86f969db7e03", "662818a23a552da6aef8fada"]
+                "Filter": [
+                  "6628185208dd86f969db7e03",
+                  "662818a23a552da6aef8fada"
+                ]
               }
             ]
           },
@@ -23,32 +27,163 @@
       "defAmmo": "6628185208dd86f969db7e03",
       "defMagType": "6628f887f6ec08df7b7dc336"
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "The Jury",
         "shortName": "Jury",
         "description": "The Overseer of judgement. Or at least that's what it appears to be, considering the amount of scavs and PMC's brought down by it."
       }
     },
-    "HandbookParent": "MarksmanRifles",
-    "HandbookPrice": 60999,
-    "PushMastery": true,
-    "CloneToFilters": true,
-    "LootPush": {
-      "LootContainersToAdd": [
-        "5909d89086f77472591234a0",
-        "5909d7cf86f77470ee57d75a",
-        "5909d76c86f77471e53d2adf",
-        "5909d5ef86f77467974efbd8",
-        "578f87ad245977356274f2cc"
-      ],
-      "StaticLootProbability": 5
-    },
-    "PushToFleaBlacklist": true
+    "handbookParentId": "5b5f791486f774093f2ed3be",
+    "handbookPriceRoubles": 60999,
+    "fleaPriceRoubles": 60999,
+    "addCaliberToAllCloneLocations": true,
+    "masteries": true,
+    "masterySections": [
+      {
+        "Level3": 900,
+        "Level2": 450,
+        "Templates": [
+          "6628f8813e3fe94f5f035010"
+        ],
+        "Name": "The Jury"
+      }
+    ],
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ],
+    "addWeaponPreset": true,
+    "weaponPresets": [
+      {
+        "_changeWeaponName": false,
+        "_encyclopedia": "6628f8813e3fe94f5f035010",
+        "_id": "67801a74b882fe02c463262f",
+        "_items": [
+          {
+            "_id": "66282d1b014e668fc57bedd8",
+            "_tpl": "6628f8813e3fe94f5f035010"
+          },
+          {
+            "_id": "66282d25b6f41a18c86ee83c",
+            "_tpl": "59db3a1d86f77429e05b4e92",
+            "parentId": "66282d1b014e668fc57bedd8",
+            "slotId": "mod_pistol_grip"
+          },
+          {
+            "_id": "66282d2f6030ff262a2f0f6d",
+            "_tpl": "6628f88aaa160dcd09a782e7",
+            "parentId": "66282d1b014e668fc57bedd8",
+            "slotId": "mod_magazine"
+          },
+          {
+            "_id": "66282d36302b16cb1df5d6cf",
+            "_tpl": "6628f885b95f6ae9d977162f",
+            "parentId": "66282d1b014e668fc57bedd8",
+            "slotId": "mod_reciever"
+          },
+          {
+            "_id": "66282d3be4dc9f789c9be8f7",
+            "_tpl": "5c5db6f82e2216003a0fe914",
+            "parentId": "66282d1b014e668fc57bedd8",
+            "slotId": "mod_stock_000"
+          },
+          {
+            "_id": "66282d42c4beba3d571e95d3",
+            "_tpl": "6529109524cbe3c74a05e5b7",
+            "parentId": "66282d1b014e668fc57bedd8",
+            "slotId": "mod_charge"
+          },
+          {
+            "_id": "66282d48b1aa1769e9276880",
+            "_tpl": "558022b54bdc2dac148b458d",
+            "parentId": "66282d36302b16cb1df5d6cf",
+            "slotId": "mod_scope"
+          },
+          {
+            "_id": "66282d4c1357c98e30161fe0",
+            "_tpl": "652910565ae2ae97b80fdf35",
+            "parentId": "66282d36302b16cb1df5d6cf",
+            "slotId": "mod_barrel"
+          },
+          {
+            "_id": "66282d53c8dd7430e211b5f5",
+            "_tpl": "652910ef50dc782999054b97",
+            "parentId": "66282d36302b16cb1df5d6cf",
+            "slotId": "mod_handguard"
+          },
+          {
+            "_id": "66282d5df98894aecc5d687c",
+            "_tpl": "5c1780312e221602b66cc189",
+            "parentId": "66282d36302b16cb1df5d6cf",
+            "slotId": "mod_sight_rear"
+          },
+          {
+            "_id": "66282d60ec48a9f71de99998",
+            "_tpl": "6529113b5ae2ae97b80fdf39",
+            "parentId": "66282d4c1357c98e30161fe0",
+            "slotId": "mod_muzzle"
+          },
+          {
+            "_id": "66282d66ec4d55e7c5660f54",
+            "_tpl": "652910bc24cbe3c74a05e5b9",
+            "parentId": "66282d4c1357c98e30161fe0",
+            "slotId": "mod_gas_block"
+          },
+          {
+            "_id": "66282d683dc78e7f777fbea8",
+            "_tpl": "5c17804b2e2216152006c02f",
+            "parentId": "66282d53c8dd7430e211b5f5",
+            "slotId": "mod_sight_front"
+          },
+          {
+            "_id": "66282d6ba4f053a46af91386",
+            "_tpl": "5b7be4895acfc400170e2dd5",
+            "parentId": "66282d53c8dd7430e211b5f5",
+            "slotId": "mod_foregrip"
+          },
+          {
+            "_id": "66282d717d155ce6f546d366",
+            "_tpl": "652911e650dc782999054b9d",
+            "parentId": "66282d60ec48a9f71de99998",
+            "slotId": "mod_muzzle"
+          },
+          {
+            "_id": "66282d7637bdfd7e1954be49",
+            "_tpl": "655df24fdf80b12750626d0a",
+            "parentId": "66282d6ba4f053a46af91386",
+            "slotId": "mod_foregrip"
+          }
+        ],
+        "_name": "Fear",
+        "_parent": "66282d1b014e668fc57bedd8",
+        "_type": "Preset"
+      }
+    ]
   },
   "6628f887f6ec08df7b7dc336": {
-    "ItemToClone": "MAGAZINE_762X51_L7AWM_20RND",
-    "OverrideProperties": {
+    "itemTplToClone": "65293c38fc460e50a509cb25",
+    "parentId": "5448bc234bdc2d3c308b4569",
+    "overrideProperties": {
       "Cartridges": [
         {
           "_name": "cartridges",
@@ -58,7 +193,10 @@
           "_props": {
             "filters": [
               {
-                "Filter": ["6628185208dd86f969db7e03", "662818a23a552da6aef8fada"]
+                "Filter": [
+                  "6628185208dd86f969db7e03",
+                  "662818a23a552da6aef8fada"
+                ]
               }
             ]
           },
@@ -66,19 +204,44 @@
         }
       ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Jury Magazine",
         "shortName": "Jury Mag",
         "description": "A 20 round extended magazine for the Jury marksman rifle. Nobody knows who produced these or where they come from."
       }
     },
-    "HandbookParent": "Magazines",
-    "HandbookPrice": 6999
+    "handbookParentId": "5b5f754a86f774094242f19b",
+    "handbookPriceRoubles": 6999,
+    "fleaPriceRoubles": 6999,
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ]
   },
   "6628f88aaa160dcd09a782e7": {
-    "ItemToClone": "MAGAZINE_762X51_L7AWM_25RND",
-    "OverrideProperties": {
+    "itemTplToClone": "65293c7a17e14363030ad308",
+    "parentId": "5448bc234bdc2d3c308b4569",
+    "overrideProperties": {
       "Cartridges": [
         {
           "_name": "cartridges",
@@ -88,7 +251,10 @@
           "_props": {
             "filters": [
               {
-                "Filter": ["6628185208dd86f969db7e03", "662818a23a552da6aef8fada"]
+                "Filter": [
+                  "6628185208dd86f969db7e03",
+                  "662818a23a552da6aef8fada"
+                ]
               }
             ]
           },
@@ -96,19 +262,21 @@
         }
       ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Jury Extended Magazine",
         "shortName": "Jury ExtMag",
         "description": "A 25 round extended magazine for the Jury marksman rifle. Nobody knows who produced these or where they come from."
       }
     },
-    "HandbookParent": "Magazines",
-    "HandbookPrice": 14999
+    "handbookParentId": "5b5f754a86f774094242f19b",
+    "handbookPriceRoubles": 14999,
+    "fleaPriceRoubles": 14999
   },
   "6628f88df6034dfe1933f636": {
-    "ItemToClone": "MAGAZINE_762X51_X14_762_50RND",
-    "OverrideProperties": {
+    "itemTplToClone": "5addccf45acfc400185c2989",
+    "parentId": "5448bc234bdc2d3c308b4569",
+    "overrideProperties": {
       "Cartridges": [
         {
           "_name": "cartridges",
@@ -118,7 +286,10 @@
           "_props": {
             "filters": [
               {
-                "Filter": ["6628185208dd86f969db7e03", "662818a23a552da6aef8fada"]
+                "Filter": [
+                  "6628185208dd86f969db7e03",
+                  "662818a23a552da6aef8fada"
+                ]
               }
             ]
           },
@@ -126,30 +297,81 @@
         }
       ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Jury Drum Magazine",
         "shortName": "Jury Drum",
         "description": "A 50 round drum magazine for the Jury marksman rifle. Nobody knows who produced these or where they come from."
       }
     },
-    "HandbookParent": "Magazines",
-    "HandbookPrice": 29999
+    "handbookParentId": "5b5f754a86f774094242f19b",
+    "handbookPriceRoubles": 29999,
+    "fleaPriceRoubles": 29999,
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ]
   },
   "6628f885b95f6ae9d977162f": {
-    "ItemToClone": "RECEIVER_SPEAR_68",
-    "OverrideProperties": {
-      "ConflictingItems": ["6529243824cbe3c74a05e5c1", "6529302b8c26af6326029fb7"]
+    "itemTplToClone": "6529119424cbe3c74a05e5bb",
+    "parentId": "55818a304bdc2db5418b457d",
+    "overrideProperties": {
+      "ConflictingItems": [
+        "6529243824cbe3c74a05e5c1",
+        "6529302b8c26af6326029fb7"
+      ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Jury Custom upper receiver",
         "shortName": "Jury Rec",
         "description": "An upper receiver for the Jury marksman rifle. Although its origin is a mystery, it is very effective at what it does, killing enemies."
       }
     },
-    "HandbookParent": "ReceiversAndSlides",
-    "HandbookPrice": 39999
+    "handbookParentId": "5b5f764186f77447ec5d7714",
+    "handbookPriceRoubles": 39999,
+    "fleaPriceRoubles": 39999,
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ]
   }
 }
-

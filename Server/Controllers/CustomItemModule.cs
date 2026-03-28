@@ -1,12 +1,14 @@
 ﻿using System.Reflection;
-using RaidOverhaulMain.Generators;
 using RaidOverhaulMain.Helpers;
 using RaidOverhaulMain.Models;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.DI;
 using SPTarkov.Server.Core.Models.Logging;
+using SPTarkov.Server.Core.Models.Spt.Config;
 using SPTarkov.Server.Core.Models.Utils;
+using SPTarkov.Server.Core.Servers;
 using SPTarkov.Server.Core.Services;
+using WTTServerCommonLib.Services;
 
 namespace RaidOverhaulMain.Controllers;
 
@@ -14,53 +16,156 @@ namespace RaidOverhaulMain.Controllers;
 public class ROCustomItems(
     ISptLogger<ROCustomItems> logger,
     DatabaseService databaseService,
-    ROItemGenerator roItemGenerator,
+    ConfigServer configServer,
+    WTTCustomItemServiceExtended wttItemService,
+    WTTCustomRigLayoutService wttRigLayoutService,
     ROHelpers roHelpers
 )
 {
+    private readonly RagfairConfig _ragfairConfig = configServer.GetConfig<RagfairConfig>();
     private static ConfigFile? _config;
-    private static DebugFile? _debugConfig;
 
-    public void PassCustomItemConfigs(ConfigFile config, DebugFile debugConfig)
+    public void PassCustomItemConfigs(ConfigFile config)
     {
         _config = config;
-        _debugConfig = debugConfig;
     }
 
-    public void BuildCustomItems()
+    public async Task BuildCustomItems()
     {
         var assembly = Assembly.GetExecutingAssembly();
-        LoadCustomItems(assembly, roHelpers, roItemGenerator);
-        roItemGenerator.CreateRigLayouts(assembly);
+        await LoadCustomItems(assembly, roHelpers);
+        wttRigLayoutService.CreateRigLayouts(assembly, "db/itemGen/customLayouts");
+        ApplyFleaBlacklist();
+        ApplyCasePushes();
         ROLogger.Log(logger, "Custom Items finished loading", LogTextColor.Magenta);
     }
 
-    private void LoadCustomItems(Assembly assembly, ROHelpers helpers, ROItemGenerator itemGenerator)
+    private async Task LoadCustomItems(Assembly assembly, ROHelpers helpers)
     {
         var locations = databaseService.GetLocations();
         const string realismKey = "SPT-Realism";
-        itemGenerator.CreateCustomItems(assembly, "Assets/db/itemGen/currency", _debugConfig);
-        itemGenerator.CreateCustomItems(assembly, "Assets/db/itemGen/constItems", _debugConfig);
-        itemGenerator.CreateCustomItems(assembly, "Assets/db/itemGen/customKeys", _debugConfig);
-        itemGenerator.CreateCustomItems(assembly, "Assets/db/itemGen/cases", _debugConfig);
+        await wttItemService.CreateCustomItems(assembly, "db/itemGen/currency");
+        await wttItemService.CreateCustomItems(assembly, "db/itemGen/constItems");
+        await wttItemService.CreateCustomItems(assembly, "db/itemGen/customKeys");
+        await wttItemService.CreateCustomItems(assembly, "db/itemGen/cases");
         if (_config.EnableCustomItems)
         {
             if (helpers.CheckForMod(realismKey))
             {
-                itemGenerator.CreateCustomItems(assembly, "Assets/db/itemGen/ammoRealism", _debugConfig);
+                await wttItemService.CreateCustomItems(assembly, "db/itemGen/ammoRealism");
                 ROLogger.Log(logger, "Realism detected, modifying custom ammunition.", LogTextColor.Magenta);
             }
             else if (!helpers.CheckForMod(realismKey))
             {
-                itemGenerator.CreateCustomItems(assembly, "Assets/db/itemGen/ammo", _debugConfig);
+                await wttItemService.CreateCustomItems(assembly, "db/itemGen/ammo");
             }
-            itemGenerator.CreateCustomItems(assembly, "Assets/db/itemGen/weapons", _debugConfig);
-            itemGenerator.CreateCustomItems(assembly, "Assets/db/itemGen/gear", _debugConfig);
+            await wttItemService.CreateCustomItems(assembly, "db/itemGen/weapons");
+            await wttItemService.CreateCustomItems(assembly, "db/itemGen/gear");
+            ApplyFleaBlacklistCustomWeapons();
             BuildSlots(helpers);
         }
         var labsKeys = locations.Laboratory.Base.AccessKeys?.ToList();
         labsKeys?.Add("66a2fc9886fbd5d38c5ca2a6");
         locations.Laboratory.Base.AccessKeys = labsKeys;
+    }
+
+    private void ApplyFleaBlacklist()
+    {
+        string[] fleaBlacklistIds =
+        [
+            "67c957ce411e6263333a1c38", // Special Storage Crate (Requisitions)
+            "6621b0dcbcfe66cdbbab48c7", // Custom Deadskul Carrying Pouch
+            "666361eff60f4ea5a464eb70", // Secure Container Onyx
+            "6621b12c9f46c3eb4a0c8f40", // Custom Waist Pouch
+            "6621b143edb81061ceb5d7cc", // Custom Secure Container Alpha
+            "6621b177ce1b117550362db5", // Custom Secure Container Beta
+            "6621b1895c9cd0794d536d14", // Custom Secure Container Gamma
+            "6621b1986f4ebd47e39eacb5", // Custom Secure Container Epsilon
+            "6621b1b3166c301c04facfc8", // Custom Secure Container Kappa
+            "67c95a09708ee99e7a575da5", // Special Request Form
+            "66a2fc926af26cc365283f23", // Skeleton Key
+            "66a2fc9886fbd5d38c5ca2a6", // VIP Keycard
+        ];
+        foreach (var id in fleaBlacklistIds)
+        {
+            _ragfairConfig.Dynamic.Blacklist.Custom.Add(id);
+        }
+    }
+
+    private void ApplyFleaBlacklistCustomWeapons()
+    {
+        string[] fleaBlacklistIds =
+        [
+            "6628f96fd59ab54dedb55801", // The Executioner
+            "6628f76df1a913e3afc16360", // The Judge
+            "6628f8813e3fe94f5f035010", // The Jury
+        ];
+        foreach (var id in fleaBlacklistIds)
+        {
+            _ragfairConfig.Dynamic.Blacklist.Custom.Add(id);
+        }
+    }
+
+    private void ApplyCasePushes()
+    {
+        var items = databaseService.GetItems();
+
+        var casePushMap = new Dictionary<string, string[]>
+        {
+            // Requisition Coin → docs, sicc, wallet, wz, money
+            ["66292e79a4d9da25e683ab55"] =
+            [
+                "5c093db286f7740a1b2617e3",
+                "5d235bb686f77443f4331278",
+                "5783c43d2459774bbe137486",
+                "60b0f6c058e0b0481a09ad11",
+                "59fb016586f7746d0d4b423a",
+            ],
+            // Requisition Slips → docs, sicc, wallet, wz, money
+            ["668b3c71042c73c6f9b00704"] =
+            [
+                "5c093db286f7740a1b2617e3",
+                "5d235bb686f77443f4331278",
+                "5783c43d2459774bbe137486",
+                "60b0f6c058e0b0481a09ad11",
+                "59fb016586f7746d0d4b423a",
+            ],
+            // Special Request Form → docs, sicc, wallet, wz, money
+            ["67c95a09708ee99e7a575da5"] =
+            [
+                "5c093db286f7740a1b2617e3",
+                "5d235bb686f77443f4331278",
+                "5783c43d2459774bbe137486",
+                "60b0f6c058e0b0481a09ad11",
+                "59fb016586f7746d0d4b423a",
+            ],
+            // Skeleton Key → docs, sicc, wallet, wz, keytool
+            ["66a2fc926af26cc365283f23"] =
+            [
+                "5c093db286f7740a1b2617e3",
+                "5d235bb686f77443f4331278",
+                "5783c43d2459774bbe137486",
+                "60b0f6c058e0b0481a09ad11",
+                "59fafd4b86f7745ca07e1232",
+            ],
+            // VIP Keycard → docs, sicc, wallet, wz, keycards
+            ["66a2fc9886fbd5d38c5ca2a6"] =
+            [
+                "5c093db286f7740a1b2617e3",
+                "5d235bb686f77443f4331278",
+                "5783c43d2459774bbe137486",
+                "60b0f6c058e0b0481a09ad11",
+                "619cbf9e0a7c3a1a2731940a",
+            ],
+        };
+
+        foreach (var (itemId, caseIds) in casePushMap)
+        {
+            foreach (var caseId in caseIds)
+            {
+                items[caseId].Properties?.Grids?.FirstOrDefault()?.Properties?.Filters?.FirstOrDefault()?.Filter?.Add(itemId);
+            }
+        }
     }
 
     private void BuildSlots(ROHelpers helpers)

@@ -1,7 +1,8 @@
 {
   "6628f3786c4f8a10a65adee4": {
-    "ItemToClone": "SMG_STM9",
-    "OverrideProperties": {
+    "itemTplToClone": "60339954d62c9b14ed777c06",
+    "parentId": "5447b5e04bdc2d62278b4567",
+    "overrideProperties": {
       "Chambers": [
         {
           "_id": "668b401927ef539b2cc78603",
@@ -39,33 +40,61 @@
       "ammoCaliber": "Caliber46x30",
       "defAmmo": "5ba2678ad4351e44f824b344",
       "defMagType": "6628f38262cab98c01ffada1",
-      "weapFireType": ["single", "fullauto"]
+      "weapFireType": [
+        "single",
+        "fullauto"
+      ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Soyuz-TM STM-46 Gen.2 4.6x30 carbine",
         "shortName": "STM 4.6x30",
         "description": "A PCC carbine with excellent performance already 'out of the box', manufactured by Soyuz-TM Arms. Designed with the participation of world bronze medalist in Semi-Auto Rifle Vadim Mikhailov. Accuracy, speed, comfort of recoil. Compatible with custom 4.6x30mm magazines."
       }
     },
-    "HandbookParent": "SMGs",
-    "HandbookPrice": 47999,
-    "PushMastery": true,
-    "CloneToFilters": true,
-    "LootPush": {
-      "LootContainersToAdd": [
-        "5909d89086f77472591234a0",
-        "5909d7cf86f77470ee57d75a",
-        "5909d76c86f77471e53d2adf",
-        "5909d5ef86f77467974efbd8",
-        "578f87ad245977356274f2cc"
-      ],
-      "StaticLootProbability": 5
-    }
+    "handbookParentId": "5b5f796a86f774093f2ed3c0",
+    "handbookPriceRoubles": 47999,
+    "fleaPriceRoubles": 47999,
+    "addCaliberToAllCloneLocations": true,
+    "masteries": true,
+    "masterySections": [
+      {
+        "Level3": 900,
+        "Level2": 450,
+        "Templates": [
+          "6628f3786c4f8a10a65adee4"
+        ],
+        "Name": "Soyuz-TM STM-46 Gen.2 4.6x30 carbine"
+      }
+    ],
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ]
   },
   "6628f38262cab98c01ffada1": {
-    "ItemToClone": "MAGAZINE_9X19_BIG_STICK_33RND",
-    "OverrideProperties": {
+    "itemTplToClone": "5a7ad2e851dfba0016153692",
+    "parentId": "5448bc234bdc2d3c308b4569",
+    "overrideProperties": {
       "Cartridges": [
         {
           "_name": "cartridges",
@@ -89,29 +118,44 @@
         }
       ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Glock 4.6x30 'Big Stick' 33-round magazine",
         "shortName": "STM-46M",
         "description": "A factory-produced 33-round 4.6x30 magazine for the custom Soyuz-TM STM-46 Gen.2 4.6x30mm carbine."
       }
     },
-    "HandbookParent": "Magazines",
-    "HandbookPrice": 8999,
-    "LootPush": {
-      "LootContainersToAdd": [
-        "5909d89086f77472591234a0",
-        "5909d7cf86f77470ee57d75a",
-        "5909d76c86f77471e53d2adf",
-        "5909d5ef86f77467974efbd8",
-        "578f87ad245977356274f2cc"
-      ],
-      "StaticLootProbability": 5
-    }
+    "handbookParentId": "5b5f754a86f774094242f19b",
+    "handbookPriceRoubles": 8999,
+    "fleaPriceRoubles": 8999,
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ]
   },
   "6628f38835c496a91efdef37": {
-    "ItemToClone": "MAGAZINE_9X19_G_SGMT_50RND",
-    "OverrideProperties": {
+    "itemTplToClone": "5a718f958dc32e00094b97e7",
+    "parentId": "5448bc234bdc2d3c308b4569",
+    "overrideProperties": {
       "Cartridges": [
         {
           "_name": "cartridges",
@@ -135,29 +179,44 @@
         }
       ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Custom Glock 4.6x30 SGM Tactical 50-round drum magazine",
         "shortName": "STM-46D",
         "description": "A high-capacity 50-round magazine for the custom Soyuz-TM STM-46 Gen.2 4.6x30mm carbine. Made in Korea and imported by SGM Tactical. Can hold even more than 50 rounds, but the manufacturer does not recommend loading more."
       }
     },
-    "HandbookParent": "Magazines",
-    "HandbookPrice": 18499,
-    "LootPush": {
-      "LootContainersToAdd": [
-        "5909d89086f77472591234a0",
-        "5909d7cf86f77470ee57d75a",
-        "5909d76c86f77471e53d2adf",
-        "5909d5ef86f77467974efbd8",
-        "578f87ad245977356274f2cc"
-      ],
-      "StaticLootProbability": 5
-    }
+    "handbookParentId": "5b5f754a86f774094242f19b",
+    "handbookPriceRoubles": 18499,
+    "fleaPriceRoubles": 18499,
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ]
   },
   "6628f37eb50e789115223da9": {
-    "ItemToClone": "RECEIVER_STM9",
-    "OverrideProperties": {
+    "itemTplToClone": "602e63fb6335467b0c5ac94d",
+    "parentId": "55818a304bdc2db5418b457d",
+    "overrideProperties": {
       "ConflictingItems": [
         "5efb0da7a29a85116f6ea05f",
         "5c3df7d588a4501f290594e5",
@@ -170,25 +229,38 @@
         "64b7bbb74b75259c590fa897"
       ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "STM-46 4.6x30 upper receiver",
-        "shortName": "6628f3786c4f8a10a65adee4 Rec",
+        "shortName": "STM-46 Rec",
         "description": "An upper receiver for the STM-46 Gen.2 4.6x30 carbine. Equipped with a mount for attaching additional tactical devices."
       }
     },
-    "HandbookParent": "ReceiversAndSlides",
-    "HandbookPrice": 31999,
-    "LootPush": {
-      "LootContainersToAdd": [
-        "5909d89086f77472591234a0",
-        "5909d7cf86f77470ee57d75a",
-        "5909d76c86f77471e53d2adf",
-        "5909d5ef86f77467974efbd8",
-        "578f87ad245977356274f2cc"
-      ],
-      "StaticLootProbability": 5
-    }
+    "handbookParentId": "5b5f764186f77447ec5d7714",
+    "handbookPriceRoubles": 31999,
+    "fleaPriceRoubles": 31999,
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ]
   }
 }
-

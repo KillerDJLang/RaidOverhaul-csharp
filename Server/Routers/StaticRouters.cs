@@ -2,7 +2,6 @@ using System.Reflection;
 using System.Text.Json;
 using RaidOverhaulMain.Callbacks;
 using RaidOverhaulMain.Controllers;
-using RaidOverhaulMain.Generators;
 using RaidOverhaulMain.Helpers;
 using RaidOverhaulMain.Models;
 using SPTarkov.DI.Annotations;
@@ -29,7 +28,6 @@ public class ROStaticRouter : StaticRouter
     private static SeasonalProgression? _seasonsConfig;
     private static LegionProgression? _legionConfig;
     private static RODbEdits _dbController;
-    private static ROItemGenerator _itemGenerator;
     private static DatabaseService _databaseService;
     private static ROHelpers _helpers;
     private static ROBossHelper _bossHelper;
@@ -37,16 +35,13 @@ public class ROStaticRouter : StaticRouter
     private static TraderHelper _traderHelper;
     private static TransferRequestCallbacks _transferRequestCallbacks;
     private static LogToServerRequestCallbacks _serverLogCallbacks;
-    private static JsonUtil _jsonUtil;
     private static ISptLogger<ROStaticRouter> _logger;
 
     public ROStaticRouter(
         ISptLogger<ROStaticRouter> logger,
         JsonUtil jsonUtil,
         TraderHelper traderHelper,
-        HttpResponseUtil httpResponseUtil,
         DatabaseService databaseService,
-        ROItemGenerator itemGenerator,
         ModHelper modHelper,
         ROHelpers helper,
         ROBossHelper bossHelper,
@@ -59,14 +54,12 @@ public class ROStaticRouter : StaticRouter
         _helpers = helper;
         _bossHelper = bossHelper;
         _dbController = dbController;
-        _itemGenerator = itemGenerator;
         _databaseService = databaseService;
         _modHelper = modHelper;
         _traderHelper = traderHelper;
         _transferRequestCallbacks = transferRequestCallbacks;
         _serverLogCallbacks = serverLogCallbacks;
         _logger = logger;
-        _jsonUtil = jsonUtil;
     }
 
     public void PassRouterConfigs(
@@ -96,24 +89,6 @@ public class ROStaticRouter : StaticRouter
             new RouteAction<EmptyRequestData>("/RaidOverhaul/GetServerConfig", async (_, _, _, _) => await HandleRoute(_config)),
             new RouteAction<EmptyRequestData>("/RaidOverhaul/GetWeatherConfig", async (_, _, _, _) => await HandleRoute(_seasonsConfig)),
             new RouteAction<EmptyRequestData>("/RaidOverhaul/GetDebugConfig", async (_, _, _, _) => await HandleRoute(_debugConfig)),
-            new RouteAction<EmptyRequestData>(
-                "/RaidOverhaul/GetLayoutBundles",
-                async (_, _, _, _) =>
-                {
-                    var bundles = _itemGenerator.GetRigLayouts();
-                    var bundlesData = new Dictionary<string, string>();
-                    foreach (var bundle in bundles)
-                    {
-                        var bundleData = await _itemGenerator.GetRigLayoutData(bundle);
-                        if (bundleData?.Length > 0)
-                        {
-                            bundlesData.Add(bundle, Convert.ToBase64String(bundleData));
-                        }
-                    }
-
-                    return _jsonUtil.Serialize(bundlesData) ?? throw new NullReferenceException("Could not serialize payload!");
-                }
-            ),
             new RouteAction<LogToServerRequestData>(
                 "/RaidOverhaul/LogToServer",
                 async (_, info, _, _) => await _serverLogCallbacks.LogToServer(info, _logger)

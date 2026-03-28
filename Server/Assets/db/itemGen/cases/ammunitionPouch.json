@@ -1,7 +1,8 @@
 {
   "67d4373526a3cfb1ff5338bb": {
-    "ItemToClone": "CONTAINER_SICC",
-    "OverrideProperties": {
+    "itemTplToClone": "5d235bb686f77443f4331278",
+    "parentId": "5795f317245977243854e041",
+    "overrideProperties": {
       "Prefab": {
         "path": "Containers/ammo_pouch.bundle",
         "rcid": ""
@@ -18,8 +19,12 @@
             "cellsV": 2,
             "filters": [
               {
-                "ExcludedFilter": ["5448bf274bdc2dfc2f8b456a"],
-                "Filter": ["5485a8684bdc2da71d8b4567"]
+                "ExcludedFilter": [
+                  "5448bf274bdc2dfc2f8b456a"
+                ],
+                "Filter": [
+                  "5485a8684bdc2da71d8b4567"
+                ]
               }
             ],
             "isSortingTable": false,
@@ -38,8 +43,12 @@
             "cellsV": 2,
             "filters": [
               {
-                "ExcludedFilter": ["5448bf274bdc2dfc2f8b456a"],
-                "Filter": ["5485a8684bdc2da71d8b4567"]
+                "ExcludedFilter": [
+                  "5448bf274bdc2dfc2f8b456a"
+                ],
+                "Filter": [
+                  "5485a8684bdc2da71d8b4567"
+                ]
               }
             ],
             "isSortingTable": false,
@@ -58,8 +67,12 @@
             "cellsV": 2,
             "filters": [
               {
-                "ExcludedFilter": ["5448bf274bdc2dfc2f8b456a"],
-                "Filter": ["5485a8684bdc2da71d8b4567"]
+                "ExcludedFilter": [
+                  "5448bf274bdc2dfc2f8b456a"
+                ],
+                "Filter": [
+                  "5485a8684bdc2da71d8b4567"
+                ]
               }
             ],
             "isSortingTable": false,
@@ -71,27 +84,16 @@
         }
       ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Ammunition Pouch (Req)",
         "shortName": "AmmoPouch (R)",
         "description": "A carrying case used by the wolves of the Requisitions Office to bring their spare ammunition into the field. This case was carried on the person of each member once they step foot outside."
       }
     },
-    "HandbookParent": "StorageContainers",
-    "HandbookPrice": 429999,
-    "CloneToFilters": true,
-    "CasePush": {
-      "CaseFiltersToAdd": [
-        "SECURE_ALPHA",
-        "SECURE_BETA",
-        "SECURE_EPSILON",
-        "SECURE_GAMMA",
-        "SECURE_KAPPA",
-        "SECURE_WAIST_POUCH",
-        "SECURE_THETA"
-      ]
-    }
+    "handbookParentId": "5b5f6fa186f77409407a7eb7",
+    "handbookPriceRoubles": 429999,
+    "fleaPriceRoubles": 429999,
+    "addtoSecureFilters": true
   }
 }
-

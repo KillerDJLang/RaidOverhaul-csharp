@@ -1,7 +1,8 @@
 {
   "67c957ce411e6263333a1c38": {
-    "ItemToClone": "CONTAINER_THICC_ITEM_CASE",
-    "OverrideProperties": {
+    "itemTplToClone": "5c0a840b86f7742ffa4f2482",
+    "parentId": "5795f317245977243854e041",
+    "overrideProperties": {
       "Prefab": {
         "path": "Containers/special_storage_crate.bundle",
         "rcid": ""
@@ -84,17 +85,15 @@
         }
       ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Special Storage Crate (Requisitions)",
         "shortName": "SpecCase (R)",
         "description": "A special storage crate rarely used by the Requisitions Office to keep their rarest items safe and secure. The largest and most prized case in Tarkov as of now..."
       }
     },
-    "HandbookParent": "StorageContainers",
-    "HandbookPrice": 2999999,
-    "CloneToFilters": true,
-    "PushToFleaBlacklist": true
+    "handbookParentId": "5b5f6fa186f77409407a7eb7",
+    "handbookPriceRoubles": 2999999,
+    "fleaPriceRoubles": 2999999
   }
 }
-

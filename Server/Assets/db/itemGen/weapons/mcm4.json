@@ -1,7 +1,8 @@
 {
   "6628f50c78434b5effe5ced1": {
-    "ItemToClone": "ASSAULTRIFLE_M4A1",
-    "OverrideProperties": {
+    "itemTplToClone": "5447a9cd4bdc2dbd208b4567",
+    "parentId": "5447b5f14bdc2d61278b4567",
+    "overrideProperties": {
       "Chambers": [
         {
           "_id": "668b403eda9822cd5841f485",
@@ -73,20 +74,608 @@
         }
       ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Multi-Calibre M4A1 Assault Rifle",
         "shortName": "MCM4",
         "description": "A Multi-Calibre variant of the standard M4A1 assault rifle. Modified to be compatible with 5.45, 5.56, 5.7, .300, 7.62 and 9x39 ammunition with the accompanying receivers."
       }
     },
-    "HandbookParent": "AssaultRifles",
-    "HandbookPrice": 51999,
-    "PushMastery": true
+    "handbookParentId": "5b5f78fc86f77409407a7f90",
+    "handbookPriceRoubles": 51999,
+    "fleaPriceRoubles": 51999,
+    "masteries": true,
+    "masterySections": [
+      {
+        "Level3": 900,
+        "Level2": 450,
+        "Templates": [
+          "6628f50c78434b5effe5ced1"
+        ],
+        "Name": "Multi-Calibre M4A1 Assault Rifle"
+      }
+    ],
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ],
+    "addWeaponPreset": true,
+    "weaponPresets": [
+      {
+        "_changeWeaponName": false,
+        "_encyclopedia": "6628f50c78434b5effe5ced1",
+        "_id": "67801a528b7d993ae7b8ab9e",
+        "_items": [
+          {
+            "_id": "07a5af8f7de0e93741ed09a8",
+            "_tpl": "6628f50c78434b5effe5ced1"
+          },
+          {
+            "_id": "f5a30471ccb1356eef6d1515",
+            "_tpl": "59db3a1d86f77429e05b4e92",
+            "parentId": "07a5af8f7de0e93741ed09a8",
+            "slotId": "mod_pistol_grip"
+          },
+          {
+            "_id": "ff5dc008c9be52eadcedd001",
+            "_tpl": "6628f51c8df290deed8983e9",
+            "parentId": "07a5af8f7de0e93741ed09a8",
+            "slotId": "mod_magazine"
+          },
+          {
+            "_id": "07a3a37f6cbe074fe03beae0",
+            "_tpl": "6628f52f246a7106c3c3dd22",
+            "parentId": "07a5af8f7de0e93741ed09a8",
+            "slotId": "mod_reciever"
+          },
+          {
+            "_id": "b174535f50afe8fc0ec4ba29",
+            "_tpl": "5d120a10d7ad1a4e1026ba85",
+            "parentId": "07a5af8f7de0e93741ed09a8",
+            "slotId": "mod_stock"
+          },
+          {
+            "_id": "287b0ac26bcf9d6ce8f745c0",
+            "_tpl": "5d44334ba4b9362b346d1948",
+            "parentId": "07a5af8f7de0e93741ed09a8",
+            "slotId": "mod_charge"
+          },
+          {
+            "_id": "0e5114fc4252115d252ab998",
+            "_tpl": "584924ec24597768f12ae244",
+            "parentId": "07a3a37f6cbe074fe03beae0",
+            "slotId": "mod_scope"
+          },
+          {
+            "_id": "eceff61728e0fd7d749fa9b6",
+            "_tpl": "63d3ce0446bd475bcb50f55f",
+            "parentId": "07a3a37f6cbe074fe03beae0",
+            "slotId": "mod_barrel"
+          },
+          {
+            "_id": "a014913d7d58829ab5eb74f4",
+            "_tpl": "619b5db699fb192e7430664f",
+            "parentId": "07a3a37f6cbe074fe03beae0",
+            "slotId": "mod_handguard"
+          },
+          {
+            "_id": "2d4b0e8d6e7580e06fccb5f2",
+            "_tpl": "5c1780312e221602b66cc189",
+            "parentId": "07a3a37f6cbe074fe03beae0",
+            "slotId": "mod_sight_rear"
+          },
+          {
+            "_id": "60375f7213800c3ed5373b1d",
+            "_tpl": "5d120a28d7ad1a1c8962e295",
+            "parentId": "b174535f50afe8fc0ec4ba29",
+            "slotId": "mod_stock"
+          },
+          {
+            "_id": "2dc80f7eb5f384d0ed143987",
+            "_tpl": "5d02676dd7ad1a049e54f6dc",
+            "parentId": "eceff61728e0fd7d749fa9b6",
+            "slotId": "mod_muzzle"
+          },
+          {
+            "_id": "d67869c5dcce0edd32ffe95a",
+            "_tpl": "63d3ce281fe77d0f2801859e",
+            "parentId": "eceff61728e0fd7d749fa9b6",
+            "slotId": "mod_gas_block"
+          },
+          {
+            "_id": "a7f0665b5404000439171f2d",
+            "_tpl": "6269545d0e57f218e4548ca2",
+            "parentId": "a014913d7d58829ab5eb74f4",
+            "slotId": "mod_mount_000"
+          },
+          {
+            "_id": "bdcff02ef006693d4e0ef2fb",
+            "_tpl": "57cffb66245977632f391a99",
+            "parentId": "a014913d7d58829ab5eb74f4",
+            "slotId": "mod_foregrip"
+          },
+          {
+            "_id": "85a6431d224222f10ea88f0a",
+            "_tpl": "5c17804b2e2216152006c02f",
+            "parentId": "a014913d7d58829ab5eb74f4",
+            "slotId": "mod_sight_front"
+          },
+          {
+            "_id": "d5c41299e72d04ffc83a293c",
+            "_tpl": "5b07dd285acfc4001754240d",
+            "parentId": "a7f0665b5404000439171f2d",
+            "slotId": "mod_tactical"
+          }
+        ],
+        "_name": "MCM4 545",
+        "_parent": "07a5af8f7de0e93741ed09a8",
+        "_type": "Preset"
+      },
+      {
+        "_changeWeaponName": false,
+        "_encyclopedia": "6628f50c78434b5effe5ced1",
+        "_id": "67801a3573c3693c4b84222c",
+        "_items": [
+          {
+            "_id": "6d6f86f937ce5dbdceb0849c",
+            "_tpl": "6628f50c78434b5effe5ced1"
+          },
+          {
+            "_id": "38669ed0070dc3659e0545fb",
+            "_tpl": "59db3a1d86f77429e05b4e92",
+            "parentId": "6d6f86f937ce5dbdceb0849c",
+            "slotId": "mod_pistol_grip"
+          },
+          {
+            "_id": "33a4f57670c6b304bca280d6",
+            "_tpl": "6628f5191c445ab1b8b8cdf5",
+            "parentId": "6d6f86f937ce5dbdceb0849c",
+            "slotId": "mod_magazine"
+          },
+          {
+            "_id": "da0166c095789c0ae780c02e",
+            "_tpl": "6628f52b821b61722b245c10",
+            "parentId": "6d6f86f937ce5dbdceb0849c",
+            "slotId": "mod_reciever"
+          },
+          {
+            "_id": "429b986582cd49832504be8b",
+            "_tpl": "5d120a10d7ad1a4e1026ba85",
+            "parentId": "6d6f86f937ce5dbdceb0849c",
+            "slotId": "mod_stock"
+          },
+          {
+            "_id": "a05d2527c866550e40d21068",
+            "_tpl": "5d44334ba4b9362b346d1948",
+            "parentId": "6d6f86f937ce5dbdceb0849c",
+            "slotId": "mod_charge"
+          },
+          {
+            "_id": "3afc3b09e0610200db3a29cb",
+            "_tpl": "584924ec24597768f12ae244",
+            "parentId": "da0166c095789c0ae780c02e",
+            "slotId": "mod_scope"
+          },
+          {
+            "_id": "06f104bff96060698e392e3e",
+            "_tpl": "63d3ce0446bd475bcb50f55f",
+            "parentId": "da0166c095789c0ae780c02e",
+            "slotId": "mod_barrel"
+          },
+          {
+            "_id": "1cf0124af216f9de6d33450a",
+            "_tpl": "619b5db699fb192e7430664f",
+            "parentId": "da0166c095789c0ae780c02e",
+            "slotId": "mod_handguard"
+          },
+          {
+            "_id": "73a578d6a2adaf133423c81f",
+            "_tpl": "5c1780312e221602b66cc189",
+            "parentId": "da0166c095789c0ae780c02e",
+            "slotId": "mod_sight_rear"
+          },
+          {
+            "_id": "7e34178c167073d8b6184567",
+            "_tpl": "5d120a28d7ad1a1c8962e295",
+            "parentId": "429b986582cd49832504be8b",
+            "slotId": "mod_stock"
+          },
+          {
+            "_id": "02317d5330866a08475614c7",
+            "_tpl": "5d02676dd7ad1a049e54f6dc",
+            "parentId": "06f104bff96060698e392e3e",
+            "slotId": "mod_muzzle"
+          },
+          {
+            "_id": "d6935c70f7a32b06db7bbc4f",
+            "_tpl": "63d3ce281fe77d0f2801859e",
+            "parentId": "06f104bff96060698e392e3e",
+            "slotId": "mod_gas_block"
+          },
+          {
+            "_id": "76f35ca29c353d62aadc7c0b",
+            "_tpl": "6269545d0e57f218e4548ca2",
+            "parentId": "1cf0124af216f9de6d33450a",
+            "slotId": "mod_mount_000"
+          },
+          {
+            "_id": "234580a2be145e0f345e73d5",
+            "_tpl": "57cffb66245977632f391a99",
+            "parentId": "1cf0124af216f9de6d33450a",
+            "slotId": "mod_foregrip"
+          },
+          {
+            "_id": "7d1ebb169da76bd1d6a7d8af",
+            "_tpl": "5c17804b2e2216152006c02f",
+            "parentId": "1cf0124af216f9de6d33450a",
+            "slotId": "mod_sight_front"
+          },
+          {
+            "_id": "d5ebf47a092aeae293abfbb9",
+            "_tpl": "5b07dd285acfc4001754240d",
+            "parentId": "76f35ca29c353d62aadc7c0b",
+            "slotId": "mod_tactical"
+          }
+        ],
+        "_name": "MCM4 9x39",
+        "_parent": "6d6f86f937ce5dbdceb0849c",
+        "_type": "Preset"
+      },
+      {
+        "_changeWeaponName": false,
+        "_encyclopedia": "6628f50c78434b5effe5ced1",
+        "_id": "67801a42e3232969de230870",
+        "_items": [
+          {
+            "_id": "590cb40366d027e18aed9c49",
+            "_tpl": "6628f50c78434b5effe5ced1"
+          },
+          {
+            "_id": "659be0e4c26ec78e23ac47d2",
+            "_tpl": "59db3a1d86f77429e05b4e92",
+            "parentId": "590cb40366d027e18aed9c49",
+            "slotId": "mod_pistol_grip"
+          },
+          {
+            "_id": "3beec977e77f3c56daecec5c",
+            "_tpl": "6628f51e54b4f59a7ade4ef9",
+            "parentId": "590cb40366d027e18aed9c49",
+            "slotId": "mod_magazine"
+          },
+          {
+            "_id": "29633eb01a912c259c3a903a",
+            "_tpl": "6628f531ae7642ade7384366",
+            "parentId": "590cb40366d027e18aed9c49",
+            "slotId": "mod_reciever"
+          },
+          {
+            "_id": "0213bf270925e20bb9d68507",
+            "_tpl": "5d120a10d7ad1a4e1026ba85",
+            "parentId": "590cb40366d027e18aed9c49",
+            "slotId": "mod_stock"
+          },
+          {
+            "_id": "b081adf0e5d66f60977667c1",
+            "_tpl": "5d44334ba4b9362b346d1948",
+            "parentId": "590cb40366d027e18aed9c49",
+            "slotId": "mod_charge"
+          },
+          {
+            "_id": "6c621a5fe4a5694eba22d25e",
+            "_tpl": "584924ec24597768f12ae244",
+            "parentId": "29633eb01a912c259c3a903a",
+            "slotId": "mod_scope"
+          },
+          {
+            "_id": "9f509adb5a2e4d54217bd024",
+            "_tpl": "63d3ce0446bd475bcb50f55f",
+            "parentId": "29633eb01a912c259c3a903a",
+            "slotId": "mod_barrel"
+          },
+          {
+            "_id": "4d932906a9942488b8bb4ff9",
+            "_tpl": "619b5db699fb192e7430664f",
+            "parentId": "29633eb01a912c259c3a903a",
+            "slotId": "mod_handguard"
+          },
+          {
+            "_id": "bbfef1401a3648a353179a66",
+            "_tpl": "5c1780312e221602b66cc189",
+            "parentId": "29633eb01a912c259c3a903a",
+            "slotId": "mod_sight_rear"
+          },
+          {
+            "_id": "c0e23275364de197b5c2ec1d",
+            "_tpl": "5d120a28d7ad1a1c8962e295",
+            "parentId": "0213bf270925e20bb9d68507",
+            "slotId": "mod_stock"
+          },
+          {
+            "_id": "18aa717f44bfe3b93211352a",
+            "_tpl": "5d02676dd7ad1a049e54f6dc",
+            "parentId": "9f509adb5a2e4d54217bd024",
+            "slotId": "mod_muzzle"
+          },
+          {
+            "_id": "2619c8a27dd51846a85f1795",
+            "_tpl": "63d3ce281fe77d0f2801859e",
+            "parentId": "9f509adb5a2e4d54217bd024",
+            "slotId": "mod_gas_block"
+          },
+          {
+            "_id": "d7f7a81fd7138da7fc6eefc2",
+            "_tpl": "6269545d0e57f218e4548ca2",
+            "parentId": "4d932906a9942488b8bb4ff9",
+            "slotId": "mod_mount_000"
+          },
+          {
+            "_id": "fbad0e488ac155a022e9b15c",
+            "_tpl": "57cffb66245977632f391a99",
+            "parentId": "4d932906a9942488b8bb4ff9",
+            "slotId": "mod_foregrip"
+          },
+          {
+            "_id": "6c60d17a8643ef2d47db32a7",
+            "_tpl": "5c17804b2e2216152006c02f",
+            "parentId": "4d932906a9942488b8bb4ff9",
+            "slotId": "mod_sight_front"
+          },
+          {
+            "_id": "fe3abf02bb07f1076bc182b0",
+            "_tpl": "5b07dd285acfc4001754240d",
+            "parentId": "d7f7a81fd7138da7fc6eefc2",
+            "slotId": "mod_tactical"
+          }
+        ],
+        "_name": "MCM4 762",
+        "_parent": "590cb40366d027e18aed9c49",
+        "_type": "Preset"
+      },
+      {
+        "_changeWeaponName": false,
+        "_encyclopedia": "6628f50c78434b5effe5ced1",
+        "_id": "67801a3ccb05b9c7309b2ab3",
+        "_items": [
+          {
+            "_id": "1c91f6b9ea76c5e4a5e20820",
+            "_tpl": "6628f50c78434b5effe5ced1"
+          },
+          {
+            "_id": "3fa9e2b9b2a03de9841391ac",
+            "_tpl": "59db3a1d86f77429e05b4e92",
+            "parentId": "1c91f6b9ea76c5e4a5e20820",
+            "slotId": "mod_pistol_grip"
+          },
+          {
+            "_id": "c1b6fc96672fc3f981eba96c",
+            "_tpl": "6628f511ea0ab10dd0c5e2d4",
+            "parentId": "1c91f6b9ea76c5e4a5e20820",
+            "slotId": "mod_magazine"
+          },
+          {
+            "_id": "069f1dfbca3aa0937605f6da",
+            "_tpl": "6628f529b9886fa300b47de7",
+            "parentId": "1c91f6b9ea76c5e4a5e20820",
+            "slotId": "mod_reciever"
+          },
+          {
+            "_id": "984bbd95e5c32f3fb61d8bd5",
+            "_tpl": "5d120a10d7ad1a4e1026ba85",
+            "parentId": "1c91f6b9ea76c5e4a5e20820",
+            "slotId": "mod_stock"
+          },
+          {
+            "_id": "22a08b25360f51047d54cb7d",
+            "_tpl": "5d44334ba4b9362b346d1948",
+            "parentId": "1c91f6b9ea76c5e4a5e20820",
+            "slotId": "mod_charge"
+          },
+          {
+            "_id": "fcab1a04a63e102a34b63f09",
+            "_tpl": "584924ec24597768f12ae244",
+            "parentId": "069f1dfbca3aa0937605f6da",
+            "slotId": "mod_scope"
+          },
+          {
+            "_id": "fbb1e28b2c1a68bc0b06d721",
+            "_tpl": "63d3ce0446bd475bcb50f55f",
+            "parentId": "069f1dfbca3aa0937605f6da",
+            "slotId": "mod_barrel"
+          },
+          {
+            "_id": "ae6cb9ff02623a264f215201",
+            "_tpl": "619b5db699fb192e7430664f",
+            "parentId": "069f1dfbca3aa0937605f6da",
+            "slotId": "mod_handguard"
+          },
+          {
+            "_id": "de7b6df0da06d589706af299",
+            "_tpl": "5c1780312e221602b66cc189",
+            "parentId": "069f1dfbca3aa0937605f6da",
+            "slotId": "mod_sight_rear"
+          },
+          {
+            "_id": "1c9bd43c9ea6aaaa98c63025",
+            "_tpl": "5d120a28d7ad1a1c8962e295",
+            "parentId": "984bbd95e5c32f3fb61d8bd5",
+            "slotId": "mod_stock"
+          },
+          {
+            "_id": "093cca1b4622bed0ff7732a9",
+            "_tpl": "5d02676dd7ad1a049e54f6dc",
+            "parentId": "fbb1e28b2c1a68bc0b06d721",
+            "slotId": "mod_muzzle"
+          },
+          {
+            "_id": "3f2e53ae8dfee114ca2eca8c",
+            "_tpl": "63d3ce281fe77d0f2801859e",
+            "parentId": "fbb1e28b2c1a68bc0b06d721",
+            "slotId": "mod_gas_block"
+          },
+          {
+            "_id": "a673a6bc939e73b37ab7a220",
+            "_tpl": "6269545d0e57f218e4548ca2",
+            "parentId": "ae6cb9ff02623a264f215201",
+            "slotId": "mod_mount_000"
+          },
+          {
+            "_id": "f6a93b6925090c22babc901b",
+            "_tpl": "57cffb66245977632f391a99",
+            "parentId": "ae6cb9ff02623a264f215201",
+            "slotId": "mod_foregrip"
+          },
+          {
+            "_id": "6332c4ebba14b1506aa44e60",
+            "_tpl": "5c17804b2e2216152006c02f",
+            "parentId": "ae6cb9ff02623a264f215201",
+            "slotId": "mod_sight_front"
+          },
+          {
+            "_id": "dba320720ef8e1ea244b2ec6",
+            "_tpl": "5b07dd285acfc4001754240d",
+            "parentId": "a673a6bc939e73b37ab7a220",
+            "slotId": "mod_tactical"
+          }
+        ],
+        "_name": "MCM4 300",
+        "_parent": "1c91f6b9ea76c5e4a5e20820",
+        "_type": "Preset"
+      },
+      {
+        "_changeWeaponName": false,
+        "_encyclopedia": "6628f50c78434b5effe5ced1",
+        "_id": "67801a4ad3f4a15247709927",
+        "_items": [
+          {
+            "_id": "db1638d88584b10f9d26a85a",
+            "_tpl": "6628f50c78434b5effe5ced1"
+          },
+          {
+            "_id": "2e74e529aaa61f6ddd3b7a00",
+            "_tpl": "59db3a1d86f77429e05b4e92",
+            "parentId": "db1638d88584b10f9d26a85a",
+            "slotId": "mod_pistol_grip"
+          },
+          {
+            "_id": "11a5f28f7437e2a6a94ba5e4",
+            "_tpl": "6628f5244c3764ecf474f23c",
+            "parentId": "db1638d88584b10f9d26a85a",
+            "slotId": "mod_magazine"
+          },
+          {
+            "_id": "234a9d855f8c9a5cfeedb8be",
+            "_tpl": "6628f534d238d16e71d27601",
+            "parentId": "db1638d88584b10f9d26a85a",
+            "slotId": "mod_reciever"
+          },
+          {
+            "_id": "bbac5313efd899c0811acbba",
+            "_tpl": "5d120a10d7ad1a4e1026ba85",
+            "parentId": "db1638d88584b10f9d26a85a",
+            "slotId": "mod_stock"
+          },
+          {
+            "_id": "ec0758898bbde1c49d122168",
+            "_tpl": "5d44334ba4b9362b346d1948",
+            "parentId": "db1638d88584b10f9d26a85a",
+            "slotId": "mod_charge"
+          },
+          {
+            "_id": "b65a41799de1e0c5f468d67c",
+            "_tpl": "584924ec24597768f12ae244",
+            "parentId": "234a9d855f8c9a5cfeedb8be",
+            "slotId": "mod_scope"
+          },
+          {
+            "_id": "69c634ad2e379f37a47ce168",
+            "_tpl": "63d3ce0446bd475bcb50f55f",
+            "parentId": "234a9d855f8c9a5cfeedb8be",
+            "slotId": "mod_barrel"
+          },
+          {
+            "_id": "7f33ca92c798bdc57eebe365",
+            "_tpl": "619b5db699fb192e7430664f",
+            "parentId": "234a9d855f8c9a5cfeedb8be",
+            "slotId": "mod_handguard"
+          },
+          {
+            "_id": "1993a5ffc06f48adc03085aa",
+            "_tpl": "5c1780312e221602b66cc189",
+            "parentId": "234a9d855f8c9a5cfeedb8be",
+            "slotId": "mod_sight_rear"
+          },
+          {
+            "_id": "c033062ad56b6388f1a608bb",
+            "_tpl": "5d120a28d7ad1a1c8962e295",
+            "parentId": "bbac5313efd899c0811acbba",
+            "slotId": "mod_stock"
+          },
+          {
+            "_id": "530a099d127b2112a3b73237",
+            "_tpl": "5d02676dd7ad1a049e54f6dc",
+            "parentId": "69c634ad2e379f37a47ce168",
+            "slotId": "mod_muzzle"
+          },
+          {
+            "_id": "108bd14be99efc10e4b8b08e",
+            "_tpl": "63d3ce281fe77d0f2801859e",
+            "parentId": "69c634ad2e379f37a47ce168",
+            "slotId": "mod_gas_block"
+          },
+          {
+            "_id": "c21cd77a5fec6624a613e158",
+            "_tpl": "6269545d0e57f218e4548ca2",
+            "parentId": "7f33ca92c798bdc57eebe365",
+            "slotId": "mod_mount_000"
+          },
+          {
+            "_id": "30f87c907e73b109a6384866",
+            "_tpl": "57cffb66245977632f391a99",
+            "parentId": "7f33ca92c798bdc57eebe365",
+            "slotId": "mod_foregrip"
+          },
+          {
+            "_id": "194a2d1fc5e1bde3e79f0786",
+            "_tpl": "5c17804b2e2216152006c02f",
+            "parentId": "7f33ca92c798bdc57eebe365",
+            "slotId": "mod_sight_front"
+          },
+          {
+            "_id": "297ba80f5b85fa8b9945c61b",
+            "_tpl": "5b07dd285acfc4001754240d",
+            "parentId": "c21cd77a5fec6624a613e158",
+            "slotId": "mod_tactical"
+          }
+        ],
+        "_name": "MCM4 57",
+        "_parent": "db1638d88584b10f9d26a85a",
+        "_type": "Preset"
+      }
+    ]
   },
   "6628f534d238d16e71d27601": {
-    "ItemToClone": "RECEIVER_MUR1S",
-    "OverrideProperties": {
+    "itemTplToClone": "59bfe68886f7746004266202",
+    "parentId": "55818a304bdc2db5418b457d",
+    "overrideProperties": {
       "ConflictingItems": [
         "5c0d5e4486f77478390952fe",
         "61962b617c6c7b169525f168",
@@ -135,19 +724,44 @@
         "6576f96220d53a5b8f3e395e"
       ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "MCM4 5.7mm Receiver",
         "shortName": "MCM4 57",
         "description": "The MUR-1S modular upper receiver for AR-based weapons, manufactured by Vltor. Fitted with mounts for attaching additional equipment. Chambered in 5.7mm."
       }
     },
-    "HandbookParent": "ReceiversAndSlides",
-    "HandbookPrice": 43999
+    "handbookParentId": "5b5f764186f77447ec5d7714",
+    "handbookPriceRoubles": 43999,
+    "fleaPriceRoubles": 43999,
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ]
   },
   "6628f529b9886fa300b47de7": {
-    "ItemToClone": "RECEIVER_MUR1S",
-    "OverrideProperties": {
+    "itemTplToClone": "59bfe68886f7746004266202",
+    "parentId": "55818a304bdc2db5418b457d",
+    "overrideProperties": {
       "ConflictingItems": [
         "5c0d5e4486f77478390952fe",
         "61962b617c6c7b169525f168",
@@ -197,19 +811,44 @@
         "5cc80f79e4a949033c7343b2"
       ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "MCM4 .300 Receiver",
         "shortName": "MCM4 300",
         "description": "The MUR-1S modular upper receiver for AR-based weapons, manufactured by Vltor. Fitted with mounts for attaching additional equipment. Chambered in .300 blackout."
       }
     },
-    "HandbookParent": "ReceiversAndSlides",
-    "HandbookPrice": 43999
+    "handbookParentId": "5b5f764186f77447ec5d7714",
+    "handbookPriceRoubles": 43999,
+    "fleaPriceRoubles": 43999,
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ]
   },
   "6628f52f246a7106c3c3dd22": {
-    "ItemToClone": "RECEIVER_MUR1S",
-    "OverrideProperties": {
+    "itemTplToClone": "59bfe68886f7746004266202",
+    "parentId": "55818a304bdc2db5418b457d",
+    "overrideProperties": {
       "ConflictingItems": [
         "59e6920f86f77411d82aa167",
         "59e6927d86f77411da468256",
@@ -252,19 +891,44 @@
         "5cc80f79e4a949033c7343b2"
       ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "MCM4 5.45x39mm Receiver",
         "shortName": "MCM4 545",
         "description": "The MUR-1S modular upper receiver for AR-based weapons, manufactured by Vltor. Fitted with mounts for attaching additional equipment. Chambered in 5.45x39mm."
       }
     },
-    "HandbookParent": "ReceiversAndSlides",
-    "HandbookPrice": 43999
+    "handbookParentId": "5b5f764186f77447ec5d7714",
+    "handbookPriceRoubles": 43999,
+    "fleaPriceRoubles": 43999,
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ]
   },
   "6628f531ae7642ade7384366": {
-    "ItemToClone": "RECEIVER_MUR1S",
-    "OverrideProperties": {
+    "itemTplToClone": "59bfe68886f7746004266202",
+    "parentId": "55818a304bdc2db5418b457d",
+    "overrideProperties": {
       "ConflictingItems": [
         "5c0d5e4486f77478390952fe",
         "61962b617c6c7b169525f168",
@@ -311,19 +975,44 @@
         "5cc80f79e4a949033c7343b2"
       ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "MCM4 7.62x39mm Receiver",
         "shortName": "MCM4 762",
         "description": "The MUR-1S modular upper receiver for AR-based weapons, manufactured by Vltor. Fitted with mounts for attaching additional equipment. Chambered in 7.62x39mm."
       }
     },
-    "HandbookParent": "ReceiversAndSlides",
-    "HandbookPrice": 43999
+    "handbookParentId": "5b5f764186f77447ec5d7714",
+    "handbookPriceRoubles": 43999,
+    "fleaPriceRoubles": 43999,
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ]
   },
   "6628f52b821b61722b245c10": {
-    "ItemToClone": "RECEIVER_MUR1S",
-    "OverrideProperties": {
+    "itemTplToClone": "59bfe68886f7746004266202",
+    "parentId": "55818a304bdc2db5418b457d",
+    "overrideProperties": {
       "ConflictingItems": [
         "5c0d5e4486f77478390952fe",
         "61962b617c6c7b169525f168",
@@ -373,19 +1062,44 @@
         "5cc80f79e4a949033c7343b2"
       ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "MCM4 9x39mm Receiver",
         "shortName": "MCM4 9x39",
         "description": "The MUR-1S modular upper receiver for AR-based weapons, manufactured by Vltor. Fitted with mounts for attaching additional equipment. Chambered in 9x39mm."
       }
     },
-    "HandbookParent": "ReceiversAndSlides",
-    "HandbookPrice": 43999
+    "handbookParentId": "5b5f764186f77447ec5d7714",
+    "handbookPriceRoubles": 43999,
+    "fleaPriceRoubles": 43999,
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ]
   },
   "6628f5244c3764ecf474f23c": {
-    "ItemToClone": "MAGAZINE_556X45_BATTLEMAG_30RND",
-    "OverrideProperties": {
+    "itemTplToClone": "5c6d46132e221601da357d56",
+    "parentId": "5448bc234bdc2d3c308b4569",
+    "overrideProperties": {
       "Cartridges": [
         {
           "_name": "cartridges",
@@ -411,19 +1125,44 @@
         }
       ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "5.7mm Magpul PMAG 32-round magazine",
         "shortName": "MCM4 57M",
         "description": "A 32-round polymer Magpul PMAG magazine, for 5.7mm ammunition."
       }
     },
-    "HandbookParent": "Magazines",
-    "HandbookPrice": 7999
+    "handbookParentId": "5b5f754a86f774094242f19b",
+    "handbookPriceRoubles": 7999,
+    "fleaPriceRoubles": 7999,
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ]
   },
   "6628f511ea0ab10dd0c5e2d4": {
-    "ItemToClone": "MAGAZINE_556X45_BATTLEMAG_30RND",
-    "OverrideProperties": {
+    "itemTplToClone": "5c6d46132e221601da357d56",
+    "parentId": "5448bc234bdc2d3c308b4569",
+    "overrideProperties": {
       "Cartridges": [
         {
           "_name": "cartridges",
@@ -448,19 +1187,44 @@
         }
       ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": ".300 blackout Magpul PMAG 32-round magazine",
         "shortName": "MCM4 300M",
         "description": "A 32-round polymer Magpul PMAG magazine, for .300 blackout ammunition."
       }
     },
-    "HandbookParent": "Magazines",
-    "HandbookPrice": 7999
+    "handbookParentId": "5b5f754a86f774094242f19b",
+    "handbookPriceRoubles": 7999,
+    "fleaPriceRoubles": 7999,
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ]
   },
   "6628f51c8df290deed8983e9": {
-    "ItemToClone": "MAGAZINE_556X45_BATTLEMAG_30RND",
-    "OverrideProperties": {
+    "itemTplToClone": "5c6d46132e221601da357d56",
+    "parentId": "5448bc234bdc2d3c308b4569",
+    "overrideProperties": {
       "Cartridges": [
         {
           "_name": "cartridges",
@@ -492,19 +1256,44 @@
         }
       ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "5.45x39mm Magpul PMAG 32-round magazine",
         "shortName": "MCM4 545M",
         "description": "A 32-round polymer Magpul PMAG magazine, for 5.45x39mm ammunition."
       }
     },
-    "HandbookParent": "Magazines",
-    "HandbookPrice": 7999
+    "handbookParentId": "5b5f754a86f774094242f19b",
+    "handbookPriceRoubles": 7999,
+    "fleaPriceRoubles": 7999,
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ]
   },
   "6628f51e54b4f59a7ade4ef9": {
-    "ItemToClone": "MAGAZINE_556X45_BATTLEMAG_30RND",
-    "OverrideProperties": {
+    "itemTplToClone": "5c6d46132e221601da357d56",
+    "parentId": "5448bc234bdc2d3c308b4569",
+    "overrideProperties": {
       "Cartridges": [
         {
           "_name": "cartridges",
@@ -532,19 +1321,44 @@
         }
       ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "7.62x39mm Magpul PMAG 32-round magazine",
         "shortName": "MCM4 762M",
         "description": "A 32-round polymer Magpul PMAG magazine, for 7.62x39mm ammunition."
       }
     },
-    "HandbookParent": "Magazines",
-    "HandbookPrice": 7999
+    "handbookParentId": "5b5f754a86f774094242f19b",
+    "handbookPriceRoubles": 7999,
+    "fleaPriceRoubles": 7999,
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ]
   },
   "6628f5191c445ab1b8b8cdf5": {
-    "ItemToClone": "MAGAZINE_556X45_BATTLEMAG_30RND",
-    "OverrideProperties": {
+    "itemTplToClone": "5c6d46132e221601da357d56",
+    "parentId": "5448bc234bdc2d3c308b4569",
+    "overrideProperties": {
       "Cartridges": [
         {
           "_name": "cartridges",
@@ -569,15 +1383,38 @@
         }
       ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "9x39mm Magpul PMAG 32-round magazine",
         "shortName": "MCM4 939M",
         "description": "A 32-round polymer Magpul PMAG magazine, for 9x39mm ammunition."
       }
     },
-    "HandbookParent": "Magazines",
-    "HandbookPrice": 7999
+    "handbookParentId": "5b5f754a86f774094242f19b",
+    "handbookPriceRoubles": 7999,
+    "fleaPriceRoubles": 7999,
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "6223351bb5d97a7b2c635ca7",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d7cf86f77470ee57d75a",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d5ef86f77467974efbd8",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d89086f77472591234a0",
+        "probability": 150
+      },
+      {
+        "containerName": "5909d76c86f77471e53d2adf",
+        "probability": 150
+      }
+    ]
   }
 }
-

@@ -1,7 +1,8 @@
 {
   "67fefe885041d8c121e93bf8": {
-    "ItemToClone": "CONTAINER_KEY_TOOL",
-    "OverrideProperties": {
+    "itemTplToClone": "59fafd4b86f7745ca07e1232",
+    "parentId": "5795f317245977243854e041",
+    "overrideProperties": {
       "Prefab": {
         "path": "Containers/old_keytool.bundle",
         "rcid": ""
@@ -19,7 +20,10 @@
             "filters": [
               {
                 "ExcludedFilter": [],
-                "Filter": ["5c99f98d86f7745c314214b3", "67449b6c89d5e1ddc603f504"]
+                "Filter": [
+                  "5c99f98d86f7745c314214b3",
+                  "67449b6c89d5e1ddc603f504"
+                ]
               }
             ],
             "isSortingTable": false,
@@ -31,27 +35,16 @@
         }
       ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Old Keytool (Req)",
         "shortName": "Keytool (R)",
         "description": "An old keytool scrounged up by the Req Shop. Not as much space as newer tools but it should do the job for you temporarily."
       }
     },
-    "HandbookParent": "StorageContainers",
-    "HandbookPrice": 409999,
-    "CloneToFilters": true,
-    "CasePush": {
-      "CaseFiltersToAdd": [
-        "SECURE_ALPHA",
-        "SECURE_BETA",
-        "SECURE_EPSILON",
-        "SECURE_GAMMA",
-        "SECURE_KAPPA",
-        "SECURE_WAIST_POUCH",
-        "SECURE_THETA"
-      ]
-    }
+    "handbookParentId": "5b5f6fa186f77409407a7eb7",
+    "handbookPriceRoubles": 409999,
+    "fleaPriceRoubles": 409999,
+    "addtoSecureFilters": true
   }
 }
-

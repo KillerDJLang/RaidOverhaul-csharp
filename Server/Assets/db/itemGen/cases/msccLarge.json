@@ -1,7 +1,8 @@
 {
   "6722252e82ca09a7e62c4d84": {
-    "ItemToClone": "CONTAINER_SICC",
-    "OverrideProperties": {
+    "itemTplToClone": "5d235bb686f77443f4331278",
+    "parentId": "5795f317245977243854e041",
+    "overrideProperties": {
       "Prefab": {
         "path": "Containers/large_medcase.bundle",
         "rcid": ""
@@ -18,7 +19,9 @@
             "cellsV": 2,
             "filters": [
               {
-                "ExcludedFilter": ["5448bf274bdc2dfc2f8b456a"],
+                "ExcludedFilter": [
+                  "5448bf274bdc2dfc2f8b456a"
+                ],
                 "Filter": [
                   "5448f39d4bdc2d0a728b4568",
                   "5448f3a14bdc2d27728b4569",
@@ -44,7 +47,9 @@
             "cellsV": 2,
             "filters": [
               {
-                "ExcludedFilter": ["5448bf274bdc2dfc2f8b456a"],
+                "ExcludedFilter": [
+                  "5448bf274bdc2dfc2f8b456a"
+                ],
                 "Filter": [
                   "5448f39d4bdc2d0a728b4568",
                   "5448f3a14bdc2d27728b4569",
@@ -70,7 +75,9 @@
             "cellsV": 2,
             "filters": [
               {
-                "ExcludedFilter": ["5448bf274bdc2dfc2f8b456a"],
+                "ExcludedFilter": [
+                  "5448bf274bdc2dfc2f8b456a"
+                ],
                 "Filter": [
                   "5448f39d4bdc2d0a728b4568",
                   "5448f3a14bdc2d27728b4569",
@@ -89,27 +96,16 @@
         }
       ]
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Medical Supplies Carrying Case (Large)",
         "shortName": "MSCC (L)",
         "description": "A carrying case used by the wolves of the Requisitions Office to haul their supplies into the field. This case was carried by the medic to ensure a quick response to any serious injuries incurred on a hunt."
       }
     },
-    "HandbookParent": "StorageContainers",
-    "HandbookPrice": 549999,
-    "CloneToFilters": true,
-    "CasePush": {
-      "CaseFiltersToAdd": [
-        "SECURE_ALPHA",
-        "SECURE_BETA",
-        "SECURE_EPSILON",
-        "SECURE_GAMMA",
-        "SECURE_KAPPA",
-        "SECURE_WAIST_POUCH",
-        "SECURE_THETA"
-      ]
-    }
+    "handbookParentId": "5b5f6fa186f77409407a7eb7",
+    "handbookPriceRoubles": 549999,
+    "fleaPriceRoubles": 549999,
+    "addtoSecureFilters": true
   }
 }
-

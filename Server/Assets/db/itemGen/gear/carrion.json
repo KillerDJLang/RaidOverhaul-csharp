@@ -1,7 +1,8 @@
 {
   "6621b1e0bd80eeb4de0c9ed8": {
-    "ItemToClone": "ARMOR_HEXGRID",
-    "OverrideProperties": {
+    "itemTplToClone": "5fd4c474dd870108a754b241",
+    "parentId": "57bef4c42459772e8d35a53b",
+    "overrideProperties": {
       "Prefab": {
         "path": "ArmoredVests/legion_armor.bundle",
         "rcid": ""
@@ -9,16 +10,68 @@
       "Height": 3,
       "Width": 3
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Legions Armor (Carrion)",
         "shortName": "Carrion",
         "description": "This custom plate carrier is worn by the mysterious Legion. Nicknamed `Carrion` due to the likelihood you will find this being worn in the midst of the bloodiest battles."
       }
     },
-    "HandbookParent": "BodyArmor",
-    "HandbookPrice": 209999,
-    "CloneToFilters": true
+    "handbookParentId": "5b5f701386f774093f2ecf0f",
+    "handbookPriceRoubles": 209999,
+    "fleaPriceRoubles": 209999,
+    "addWeaponPreset": true,
+    "weaponPresets": [
+      {
+        "_changeWeaponName": false,
+        "_encyclopedia": "6621b1e0bd80eeb4de0c9ed8",
+        "_id": "67801a7d83ffd332b33c8471",
+        "_items": [
+          {
+            "_id": "6621b3ac4404ba2495f3247a",
+            "_tpl": "6621b1e0bd80eeb4de0c9ed8"
+          },
+          {
+            "_id": "6576ec5406a990316201e800",
+            "_tpl": "656faf0ca0dce000a2020f77",
+            "parentId": "6621b3ac4404ba2495f3247a",
+            "slotId": "front_plate"
+          },
+          {
+            "_id": "6576ec5406a990316201e801",
+            "_tpl": "656faf0ca0dce000a2020f77",
+            "parentId": "6621b3ac4404ba2495f3247a",
+            "slotId": "back_plate"
+          },
+          {
+            "_id": "6621c232038234744f2226cc",
+            "_tpl": "6575ea3060703324250610da",
+            "parentId": "6621b3ac4404ba2495f3247a",
+            "slotId": "Soft_armor_front"
+          },
+          {
+            "_id": "6621c23aff6fa7bcfaf8b8ff",
+            "_tpl": "6575ea4cf6a13a7b7100adc4",
+            "parentId": "6621b3ac4404ba2495f3247a",
+            "slotId": "Soft_armor_back"
+          },
+          {
+            "_id": "6621c23ed08e69bc9b5fa97e",
+            "_tpl": "6575ea5cf6a13a7b7100adc8",
+            "parentId": "6621b3ac4404ba2495f3247a",
+            "slotId": "Soft_armor_left"
+          },
+          {
+            "_id": "6621c24408b376f0a6b6f00b",
+            "_tpl": "6575ea6760703324250610de",
+            "parentId": "6621b3ac4404ba2495f3247a",
+            "slotId": "soft_armor_right"
+          }
+        ],
+        "_name": "Carrion Standard",
+        "_parent": "6621b3ac4404ba2495f3247a",
+        "_type": "Preset"
+      }
+    ]
   }
 }
-

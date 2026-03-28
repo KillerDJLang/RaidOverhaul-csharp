@@ -1,7 +1,8 @@
 {
   "668b3c71042c73c6f9b00704": {
-    "ItemToClone": "INFO_BLUE_FOLDERS",
-    "OverrideProperties": {
+    "itemTplToClone": "6389c8c5dbfd5e4b95197e6b",
+    "parentId": "5448ecbe4bdc2d60728b4568",
+    "overrideProperties": {
       "Prefab": {
         "path": "Items/requisition_slip.bundle",
         "rcid": ""
@@ -11,32 +12,45 @@
       "StackMaxSize": 99,
       "BackgroundColor": "green",
       "StackMaxRandom": 25,
-      "StackMinRandom": 1
+      "StackMinRandom": 1,
+      "Weight": 0
     },
-    "LocalePush": {
+    "locales": {
       "en": {
         "name": "Requisition Slips",
         "shortName": "ReqSlips",
         "description": "A requisition slip used to trade with the Requisitions Office. You'll want to keep a stack of these handy in case you run into trouble and need some quick provisions. A larger denomination for trading apparently."
       }
     },
-    "Handbook": {
-      "HandbookParent": "5b47574386f77428ca22b341",
-      "HandbookPrice": 53999
-    },
-    "CloneToFilters": true,
-    "LootPush": {
-      "LootContainersToAdd": [
-        "LOOTCONTAINER_SAFE",
-        "LOOTCONTAINER_COMMON_FUND_STASH",
-        "LOOTCONTAINER_CASH_REGISTER",
-        "LOOTCONTAINER_CASH_REGISTER_TAR22"
-      ],
-      "StaticLootProbability": 150
-    },
-    "CasePush": {
-      "CaseFiltersToAdd": ["CONTAINER_DOCS", "CONTAINER_SICC", "CONTAINER_WALLET", "CONTAINER_WZ", "CONTAINER_MONEY"]
-    }
+    "handbookParentId": "5b5f78b786f77447ed5636af",
+    "handbookPriceRoubles": 53999,
+    "fleaPriceRoubles": 53999,
+    "addtoStaticLootContainers": true,
+    "staticLootContainers": [
+      {
+        "containerName": "578f8782245977354405a1e3",
+        "probability": 150
+      },
+      {
+        "containerName": "5d07b91b86f7745a077a9432",
+        "probability": 150
+      },
+      {
+        "containerName": "578f879c24597735401e6bc6",
+        "probability": 150
+      },
+      {
+        "containerName": "5ad74cf586f774391278f6f0",
+        "probability": 150
+      },
+      {
+        "containerName": "66acff0a1d8e1083b303f5af",
+        "probability": 150
+      },
+      {
+        "containerName": "64d11702dd0cd96ab82c3280",
+        "probability": 150
+      }
+    ]
   }
 }
-

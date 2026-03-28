@@ -32,13 +32,11 @@ public class RODbEdits(
     private readonly RagfairConfig _ragfairConfig = configServer.GetConfig<RagfairConfig>();
     private static ConfigFile? _config;
     private static AmmoStackList? _ammoList;
-    private static Dictionary<MongoId, Preset>? _presetFile;
 
-    public void PassDbConfigs(ConfigFile config, AmmoStackList ammoList, Dictionary<MongoId, Preset> presetFile)
+    public void PassDbConfigs(ConfigFile config, AmmoStackList ammoList)
     {
         _config = config;
         _ammoList = ammoList;
-        _presetFile = presetFile;
     }
 
     public void BuildDbEdits()
@@ -357,14 +355,6 @@ public class RODbEdits(
             foreach (var slot in uhPockets.Properties.Slots)
             {
                 slot.Properties.Filters.FirstOrDefault().Filter = new HashSet<MongoId>() { "54009119af1c881c07000029" };
-            }
-        }
-
-        if (_config.EnableCustomItems)
-        {
-            foreach (var (itemPreset, presetData) in _presetFile)
-            {
-                presets.ItemPresets[itemPreset] = presetData;
             }
         }
 

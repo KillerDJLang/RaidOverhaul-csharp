@@ -8,7 +8,6 @@ using Fika.Core.Modding;
 using Fika.Core.Modding.Events;
 using Fika.Core.Networking;
 using Fika.Core.Networking.LiteNetLib;
-using Fika.Core.Networking.LiteNetLib.Utils;
 using RaidOverhaul.FikaModule.Packets;
 using RaidOverhaul.Helpers;
 

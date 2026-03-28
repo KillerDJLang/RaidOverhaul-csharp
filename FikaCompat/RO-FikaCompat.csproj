@@ -92,13 +92,13 @@
       <HintPath>..\..\..\EscapeFromTarkov_Data\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
     <Reference Include="Fika.Core">
-      <HintPath>..\Fika.Core.dll</HintPath>
+      <HintPath>..\References\Fika.Core.dll</HintPath>
     </Reference>
     <Reference Include="UnityToolkit">
-      <HintPath>..\UnityToolkit\UnityToolkit.dll</HintPath>
+      <HintPath>..\References\UnityToolkit\UnityToolkit.dll</HintPath>
     </Reference>
     <Reference Include="UniTask">
-      <HintPath>..\UnityToolkit\UniTask.dll</HintPath>
+      <HintPath>..\References\UnityToolkit\UniTask.dll</HintPath>
     </Reference>
   </ItemGroup>
 
