@@ -2,9 +2,7 @@
 
 To start, I want to give a huge thanks to Kobrakon ([Immersive Raids](https://forge.sp-tarkov.com/mod/642/immersive-raids)) for the base of features that I've worked off of and CJ for being patient and helping me get this all up and running (teaching me tons along the way). Absolute legends and none of this would've been possible without them!!
 
-Hope you enjoy
-
-If you enjoy what I do and want to buy me a coffee to support my totally not an addiction, you can check out my ko-fi here → [DJ's ko-fi](https://ko-fi.com/djlang)
+Hope you enjoy 💙
 
 ---
 
