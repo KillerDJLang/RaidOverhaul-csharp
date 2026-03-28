@@ -288,7 +288,7 @@ I always appreciate the support and love but I needed to take a wee break from t
 
 All issues can be reported on my GitHub issues section for RO found here:
 
-- [Raid Overhaul GitHub 4.x.x](https://github.com/KillerDJLang/Raid-Overhaul-4.x.x/issues)
+- [Raid Overhaul GitHub 4.x.x](https://github.com/KillerDJLang/RaidOverhaul-csharp/issues)
 - [Raid Overhaul GitHub ~3.11](https://github.com/KillerDJLang/Raid-Overhaul/issues)
 
 ---
