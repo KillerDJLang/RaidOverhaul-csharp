@@ -107,18 +107,6 @@ namespace RaidOverhaul.Helpers
             RequestHandler.PutJson("/RaidOverhaul/LogToServer", new { message = message }.ToJson(_defaultJsonConverters));
         }
 
-        public static readonly EquipmentSlot[] ArmbandFas = { EquipmentSlot.Pockets, EquipmentSlot.TacticalVest, EquipmentSlot.ArmBand };
-
-        public static readonly EquipmentSlot[] ArmbandAas =
-        {
-            EquipmentSlot.TacticalVest,
-            EquipmentSlot.ArmorVest,
-            EquipmentSlot.Headwear,
-            EquipmentSlot.FaceCover,
-            EquipmentSlot.Eyewear,
-            EquipmentSlot.ArmBand,
-        };
-
         public static void GetWeatherFields()
         {
             FogField = AccessTools.Field(typeof(WeatherDebug), "Fog");

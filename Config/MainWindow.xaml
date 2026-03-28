@@ -911,7 +911,7 @@
                                         />
                                     </DockPanel>
                                     <DockPanel Margin="4,8">
-                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Random Event Time Start Max (Minutes)" />
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Random Event Time Start Min (Minutes)" />
                                         <TextBox
                                             Style="{StaticResource NumericBox}"
                                             Text="{Binding Weighting.RandomEventRangeMinimum, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"

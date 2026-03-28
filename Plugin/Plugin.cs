@@ -146,12 +146,6 @@ namespace RaidOverhaul
             new RandomizeDefaultStatePatch().Enable();
             new EventExfilPatch().Enable();
 
-            Fas = Fas ?? typeof(Inventory).GetField("FastAccessSlots");
-            Fas?.SetValue(Fas, Utils.ArmbandFas);
-
-            Aas = Aas ?? typeof(Inventory).GetField("ArmorSlots");
-            Aas?.SetValue(Aas, Utils.ArmbandAas);
-
             if (ConfigController.DebugConfig.DebugMode)
             {
                 ConsoleCommands.RegisterCC();
