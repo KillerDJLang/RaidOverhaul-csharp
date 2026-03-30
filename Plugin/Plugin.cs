@@ -7,9 +7,7 @@ using BepInEx.Bootstrap;
 using BepInEx.Logging;
 using Comfort.Common;
 using EFT;
-using EFT.InventoryLogic;
 using EFT.UI;
-using LegionPrepatch.Helpers;
 using RaidOverhaul.Checkers;
 using RaidOverhaul.Configs;
 using RaidOverhaul.Controllers;
@@ -17,6 +15,7 @@ using RaidOverhaul.Fika;
 using RaidOverhaul.Helpers;
 using RaidOverhaul.Models;
 using RaidOverhaul.Patches;
+using RaidOverhaulPrepatch.Helpers;
 using SPT.Reflection.Utils;
 using UnityEngine;
 
@@ -27,8 +26,9 @@ using UnityEngine;
 
 namespace RaidOverhaul
 {
+    [BepInDependency("me.sol.sain", BepInDependency.DependencyFlags.SoftDependency)]
+    [BepInDependency("xyz.drakia.bigbrain", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency("com.arys.unitytoolkit", BepInDependency.DependencyFlags.HardDependency)]
-    [BepInDependency("com.wtt.commonlib", BepInDependency.DependencyFlags.HardDependency)]
     [BepInPlugin(ClientInfo.ROGUID, ClientInfo.ROPluginName, ClientInfo.PluginVersion)]
     public class Plugin : BaseUnityPlugin
     {
@@ -44,6 +44,7 @@ namespace RaidOverhaul
         internal static SeasonalWeatherController _wScript;
         internal static BodyCleanup _bcScript;
         internal static InRaidUIController _smScript;
+        internal static InvasionController _icScript;
         internal static ManualLogSource _log;
 
         internal static ISession _session;
@@ -67,9 +68,6 @@ namespace RaidOverhaul
         {
             get { return ROPlayer.HandsController as Player.FirearmController; }
         }
-
-        private FieldInfo Fas { get; set; }
-        private FieldInfo Aas { get; set; }
 
         private static bool RealismDetected { get; set; }
         private static bool StandaloneDetected { get; set; }
@@ -99,11 +97,12 @@ namespace RaidOverhaul
             Logger.LogInfo("Loading Raid Overhaul");
             _hook = new GameObject("Event Object");
 
-            _ecScript = _hook.AddComponent<EventController>();
-            _dcScript = _hook.AddComponent<DoorController>();
-            _wScript = _hook.AddComponent<SeasonalWeatherController>();
-            _bcScript = _hook.AddComponent<BodyCleanup>();
-            _smScript = _hook.AddComponent<InRaidUIController>();
+            _ecScript = _hook.GetOrAddComponent<EventController>();
+            _dcScript = _hook.GetOrAddComponent<DoorController>();
+            _wScript = _hook.GetOrAddComponent<SeasonalWeatherController>();
+            _bcScript = _hook.GetOrAddComponent<BodyCleanup>();
+            _smScript = _hook.GetOrAddComponent<InRaidUIController>();
+            _icScript = _hook.GetOrAddComponent<InvasionController>();
 
             DontDestroyOnLoad(_hook);
             _hook.SetActive(true);
@@ -145,6 +144,7 @@ namespace RaidOverhaul
             new EnableEntryPointPatch().Enable();
             new RandomizeDefaultStatePatch().Enable();
             new EventExfilPatch().Enable();
+            new BotNVGPatch().Enable();
 
             if (ConfigController.DebugConfig.DebugMode)
             {
@@ -162,11 +162,12 @@ namespace RaidOverhaul
                 if (foundObject != null)
                 {
                     _hook = foundObject;
-                    _wScript = _hook.GetComponent<SeasonalWeatherController>();
-                    _smScript = _hook.GetComponent<InRaidUIController>();
-                    _ecScript = _hook.GetComponent<EventController>();
-                    _dcScript = _hook.GetComponent<DoorController>();
-                    _bcScript = _hook.GetComponent<BodyCleanup>();
+                    _wScript = _hook.GetOrAddComponent<SeasonalWeatherController>();
+                    _smScript = _hook.GetOrAddComponent<InRaidUIController>();
+                    _ecScript = _hook.GetOrAddComponent<EventController>();
+                    _dcScript = _hook.GetOrAddComponent<DoorController>();
+                    _bcScript = _hook.GetOrAddComponent<BodyCleanup>();
+                    _icScript = _hook.GetOrAddComponent<InvasionController>();
                 }
                 else
                 {
@@ -192,6 +193,11 @@ namespace RaidOverhaul
             if (_bcScript != null && _bcScript.enabled)
             {
                 _bcScript.ManualUpdate();
+            }
+
+            if (_icScript != null && _icScript.enabled)
+            {
+                _icScript.ManualUpdate();
             }
 
             if (Chainloader.PluginInfos.ContainsKey(Utils.RealismKey) && PreloaderUI.Instantiated && !RealismDetected)
@@ -228,11 +234,12 @@ namespace RaidOverhaul
         private void RecreateGameObject()
         {
             _hook = new GameObject("Event Object");
-            _ecScript = _hook.AddComponent<EventController>();
-            _dcScript = _hook.AddComponent<DoorController>();
-            _wScript = _hook.AddComponent<SeasonalWeatherController>();
-            _bcScript = _hook.AddComponent<BodyCleanup>();
-            _smScript = _hook.AddComponent<InRaidUIController>();
+            _ecScript = _hook.GetOrAddComponent<EventController>();
+            _dcScript = _hook.GetOrAddComponent<DoorController>();
+            _wScript = _hook.GetOrAddComponent<SeasonalWeatherController>();
+            _bcScript = _hook.GetOrAddComponent<BodyCleanup>();
+            _smScript = _hook.GetOrAddComponent<InRaidUIController>();
+            _icScript = _hook.GetOrAddComponent<InvasionController>();
             DontDestroyOnLoad(_hook);
             _hook.SetActive(true);
         }

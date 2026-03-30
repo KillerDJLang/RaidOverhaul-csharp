@@ -105,7 +105,6 @@ public sealed class ROMain(
             var devFilesPath = Path.Combine("db", "devFiles");
             var config = helpers.LoadConfig<ConfigFile>(assembly, "config", "config.json");
             var debugConfig = helpers.LoadConfig<DebugFile>(assembly, devFilesPath, "debugOptions.json");
-            var legionConfig = helpers.LoadConfig<LegionProgression>(assembly, "config", "legionProgressionFile.json");
             var botLoadouts = Path.Combine("db", "bots", "botLoadouts");
             var typeList = new List<string> { "bosslegion", "legionnaire" };
             var typeDictionary = new Dictionary<int, string>() { { 199, "bosslegion" }, { 200, "legionnaire" } };
@@ -154,26 +153,7 @@ public sealed class ROMain(
 
             if (config.EnableCustomBoss)
             {
-                if (config.UseLegionGlobalSpawnChance)
-                {
-                    roBossHelper.SetBossSpawns(
-                        assembly,
-                        Path.Combine("db", "bots"),
-                        "botSpawns.json",
-                        debugConfig,
-                        config.GlobalSpawnChance
-                    );
-                }
-                else if (!config.UseLegionGlobalSpawnChance)
-                {
-                    roBossHelper.SetBossSpawns(
-                        assembly,
-                        Path.Combine("db", "bots"),
-                        "botSpawns.json",
-                        debugConfig,
-                        legionConfig.LegionChance
-                    );
-                }
+                roBossHelper.SetBossSpawns(debugConfig);
             }
 
             ROLogger.Log(logger, "Custom bots finished loading", LogTextColor.Magenta);

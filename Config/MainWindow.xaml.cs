@@ -5,10 +5,10 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Navigation;
 using System.Windows.Threading;
-using ROConfig.Models;
-using ROConfig.ViewModels;
+using RaidOverhaulConfig.Models;
+using RaidOverhaulConfig.ViewModels;
 
-namespace ROConfig;
+namespace RaidOverhaulConfig;
 
 public partial class MainWindow : Window
 {
@@ -77,8 +77,36 @@ public partial class MainWindow : Window
         File.WriteAllText(_weightingsFilePath!, JsonSerializer.Serialize(_vm.Weighting, WriteOptions));
     }
 
+    private bool ValidateConfig(out string error)
+    {
+        var cfg = _vm.Config;
+
+        int weatherCount = new[] { cfg.AllSeasons, cfg.NoWinter, cfg.SeasonalProgression, cfg.WinterWonderland }
+            .Count(x => x);
+        if (weatherCount > 1)
+        {
+            error = "⚠  Only one Weather & Season option can be active at a time.";
+            return false;
+        }
+
+        if (cfg.BasicStackTuningEnabled && cfg.AdvancedStackTuningEnabled)
+        {
+            error = "⚠  Basic Stack Tuning and Advanced Stack Tuning cannot both be enabled.";
+            return false;
+        }
+
+        error = string.Empty;
+        return true;
+    }
+
     private void Save_Click(object sender, RoutedEventArgs e)
     {
+        if (!ValidateConfig(out var error))
+        {
+            ShowFeedback(error, (SolidColorBrush)FindResource("RevertedFg"), seconds: 4);
+            return;
+        }
+
         SaveAll();
         ShowFeedback("✓  Configuration saved!", (SolidColorBrush)FindResource("SavedFg"));
     }
@@ -95,13 +123,13 @@ public partial class MainWindow : Window
         e.Handled = true;
     }
 
-    private void ShowFeedback(string message, SolidColorBrush color)
+    private void ShowFeedback(string message, SolidColorBrush color, double seconds = 2)
     {
         StatusLabel.Foreground = color;
         StatusLabel.Text = message;
 
         _feedbackTimer?.Stop();
-        _feedbackTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(2) };
+        _feedbackTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(seconds) };
         _feedbackTimer.Tick += (_, _) =>
         {
             StatusLabel.Text = string.Empty;

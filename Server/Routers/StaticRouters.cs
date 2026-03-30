@@ -89,6 +89,7 @@ public class ROStaticRouter : StaticRouter
             new RouteAction<EmptyRequestData>("/RaidOverhaul/GetServerConfig", async (_, _, _, _) => await HandleRoute(_config)),
             new RouteAction<EmptyRequestData>("/RaidOverhaul/GetWeatherConfig", async (_, _, _, _) => await HandleRoute(_seasonsConfig)),
             new RouteAction<EmptyRequestData>("/RaidOverhaul/GetDebugConfig", async (_, _, _, _) => await HandleRoute(_debugConfig)),
+            new RouteAction<EmptyRequestData>("/RaidOverhaul/GetLegionConfig", async (_, _, _, _) => await HandleRoute(_legionConfig)),
             new RouteAction<LogToServerRequestData>(
                 "/RaidOverhaul/LogToServer",
                 async (_, info, _, _) => await _serverLogCallbacks.LogToServer(info, _logger)
@@ -191,16 +192,14 @@ public class ROStaticRouter : StaticRouter
         }
         if (_config.EnableCustomBoss)
         {
-            var botFilesPath = Path.Combine("db", "botFiles");
-
             if (_config.UseLegionGlobalSpawnChance)
             {
-                _bossHelper.SetBossSpawns(assembly, botFilesPath, "botSpawns.json", _debugConfig, _config.GlobalSpawnChance);
+                _bossHelper.SetBossSpawns(_debugConfig);
             }
             else
             {
                 HandleLegionProgression(info);
-                _bossHelper.SetBossSpawns(assembly, botFilesPath, "botSpawns.json", _debugConfig, _legionConfig.LegionChance);
+                _bossHelper.SetBossSpawns(_debugConfig);
             }
         }
 
@@ -397,8 +396,7 @@ public class ROStaticRouter : StaticRouter
         }
 
         var assembly = Assembly.GetExecutingAssembly();
-        var legionProgressionData = new LegionProgression();
-        legionProgressionData.LegionChance = bossLegionChance;
+        var legionProgressionData = new LegionProgression { LegionChance = bossLegionChance };
 
         _helpers.WriteConfigFile(legionProgressionData, assembly, "config", "legionProgressionFile.json");
 

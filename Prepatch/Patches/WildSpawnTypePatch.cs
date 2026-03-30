@@ -5,7 +5,7 @@ using BepInEx.Logging;
 using Mono.Cecil;
 using MoreBotsAPI;
 
-namespace LegionPrepatch.Patches
+namespace RaidOverhaulPrepatch.Patches
 {
     public static class LegionWildSpawnTypePatch
     {

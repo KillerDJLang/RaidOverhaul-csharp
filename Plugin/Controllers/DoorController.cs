@@ -80,7 +80,7 @@ namespace RaidOverhaul.Controllers
         private async UniTaskVoid DoorEvents()
         {
             await UniTask.WaitForSeconds(
-                UnityEngine.Random.Range(
+                Random.Range(
                     ConfigController.EventConfig.DoorEventRangeMinimumServer,
                     ConfigController.EventConfig.DoorEventRangeMaximumServer
                 ) * 60f
@@ -266,7 +266,7 @@ namespace RaidOverhaul.Controllers
                     continue;
                 }
 
-                var randomValue = UnityEngine.Random.Range(0, 100);
+                var randomValue = Random.Range(0, 100);
 
                 if (randomValue < 50)
                 {
@@ -310,7 +310,7 @@ namespace RaidOverhaul.Controllers
 
             foreach (var lamp in lamps)
             {
-                if (UnityEngine.Random.Range(0, 100) < 25)
+                if (Random.Range(0, 100) < 25)
                 {
                     FikaBridge.SendRaidStartLampStateChangePacket(lamp.Id);
                     lamp.Switch(Turnable.EState.Off);

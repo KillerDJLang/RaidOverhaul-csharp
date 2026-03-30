@@ -39,14 +39,13 @@ namespace RaidOverhaul.Patches
             _maidOnStandby = false;
         }
 
-        internal static async UniTask MaidServiceRun()
+        internal static void MaidServiceRun()
         {
             if (!Utils.IsInRaid())
             {
                 return;
             }
 
-            await UniTask.WaitForSeconds(10);
             _distanceSquaredThreshold = DJConfig.DistToClean.Value * DJConfig.DistToClean.Value;
             CleanupDeadBots();
         }

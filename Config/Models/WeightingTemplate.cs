@@ -1,4 +1,4 @@
-namespace ROConfig.Models;
+namespace RaidOverhaulConfig.Models;
 
 public class WeightingTemplate
 {

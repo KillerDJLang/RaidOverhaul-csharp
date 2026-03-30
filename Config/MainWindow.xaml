@@ -1,8 +1,8 @@
 <Window
-    x:Class="ROConfig.MainWindow"
+    x:Class="RaidOverhaulConfig.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:ROConfig"
+    xmlns:local="clr-namespace:RaidOverhaulConfig"
     Title="Raid Overhaul Config by nameless ♥"
     Height="1020"
     Width="1020"

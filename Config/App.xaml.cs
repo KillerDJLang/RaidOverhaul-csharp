@@ -1,8 +1,5 @@
 ﻿using System.Windows;
 
-namespace ROConfig;
+namespace RaidOverhaulConfig;
 
-public partial class App : Application
-{
-}
-
+public partial class App : Application { }

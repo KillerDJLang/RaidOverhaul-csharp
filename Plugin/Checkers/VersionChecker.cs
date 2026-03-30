@@ -4,7 +4,7 @@ using BepInEx;
 using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using BepInEx.Logging;
-using LegionPrepatch.Helpers;
+using RaidOverhaulPrepatch.Helpers;
 using UnityEngine;
 
 namespace RaidOverhaul.Checkers

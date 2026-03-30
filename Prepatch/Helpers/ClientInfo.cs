@@ -1,4 +1,4 @@
-﻿namespace LegionPrepatch.Helpers
+﻿namespace RaidOverhaulPrepatch.Helpers
 {
     public static class ClientInfo
     {

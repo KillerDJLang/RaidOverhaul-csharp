@@ -9,6 +9,7 @@ namespace RaidOverhaul.Controllers
         public static DebugConfigs DebugConfig = new DebugConfigs();
         public static EventsConfig EventConfig = new EventsConfig();
         public static SeasonalConfig SeasonConfig = new SeasonalConfig();
+        public static LegionProgressionConfig LegionConfig = new LegionProgressionConfig();
         public static Flags Flags = new Flags();
     }
 }

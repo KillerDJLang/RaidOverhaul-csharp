@@ -1,8 +1,8 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using ROConfig.Models;
+using RaidOverhaulConfig.Models;
 
-namespace ROConfig.ViewModels;
+namespace RaidOverhaulConfig.ViewModels;
 
 public class MainViewModel : INotifyPropertyChanged
 {
