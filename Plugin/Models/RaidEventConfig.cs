@@ -64,6 +64,9 @@ namespace RaidOverhaul.Models
         [JsonProperty("ArtilleryEvent")]
         public int ArtilleryEventWeights;
 
+        [JsonProperty("InvasionEvent")]
+        public int InvasionEventWeights;
+
         [JsonProperty("RandomEventRangeMinimum")]
         public float RandomEventRangeMinimumServer;
 

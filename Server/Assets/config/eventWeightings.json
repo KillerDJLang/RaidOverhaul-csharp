@@ -19,6 +19,7 @@
   "MaxLLEvent": 5,
   "LockdownEvent": 10,
   "ArtilleryEvent": 10,
+  "InvasionEvent": 10,
   "RandomEventRangeMinimum": 5,
   "RandomEventRangeMaximum": 25
 }

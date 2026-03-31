@@ -101,6 +101,9 @@ namespace RaidOverhaul.Helpers
             var artyWeighting = DJConfig.RandomEventsToEnable.Value.HasFlag(DJConfig.RaidEvents.Artillery)
                 ? ConfigController.EventConfig.ArtilleryEventWeights
                 : 0;
+            var invasionWeighting = DJConfig.RandomEventsToEnable.Value.HasFlag(DJConfig.RaidEvents.Invasion)
+                ? ConfigController.EventConfig.InvasionEventWeights
+                : 0;
 
             WeightedEvents = new List<(Action, int)>
             {
@@ -119,6 +122,7 @@ namespace RaidOverhaul.Helpers
                 (Plugin._ecScript.DoMaxLLEvent, maxLLWeighting),
                 (Plugin._ecScript.DoLockDownEventWrapper, exfilWeighting),
                 (Plugin._ecScript.DoArtyEventWrapper, artyWeighting),
+                (Plugin._ecScript.StartInvasion, invasionWeighting),
             };
         }
     }

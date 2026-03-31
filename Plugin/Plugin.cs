@@ -44,7 +44,6 @@ namespace RaidOverhaul
         internal static SeasonalWeatherController _wScript;
         internal static BodyCleanup _bcScript;
         internal static InRaidUIController _smScript;
-        internal static InvasionController _icScript;
         internal static ManualLogSource _log;
 
         internal static ISession _session;
@@ -102,13 +101,13 @@ namespace RaidOverhaul
             _wScript = _hook.GetOrAddComponent<SeasonalWeatherController>();
             _bcScript = _hook.GetOrAddComponent<BodyCleanup>();
             _smScript = _hook.GetOrAddComponent<InRaidUIController>();
-            _icScript = _hook.GetOrAddComponent<InvasionController>();
 
             DontDestroyOnLoad(_hook);
             _hook.SetActive(true);
 
             ConfigController.EventConfig = Utils.Get<EventsConfig>("/RaidOverhaul/GetEventConfig");
             ConfigController.ServerConfig = Utils.Get<ServerConfigs>("/RaidOverhaul/GetServerConfig");
+            ConfigController.LegionConfig = Utils.Get<LegionProgressionConfig>("/RaidOverhaul/GetLegionConfig");
             ConfigController.DebugConfig = Utils.Get<DebugConfigs>("/RaidOverhaul/GetDebugConfig");
             Weighting.InitWeightings();
 
@@ -167,7 +166,6 @@ namespace RaidOverhaul
                     _ecScript = _hook.GetOrAddComponent<EventController>();
                     _dcScript = _hook.GetOrAddComponent<DoorController>();
                     _bcScript = _hook.GetOrAddComponent<BodyCleanup>();
-                    _icScript = _hook.GetOrAddComponent<InvasionController>();
                 }
                 else
                 {
@@ -193,11 +191,6 @@ namespace RaidOverhaul
             if (_bcScript != null && _bcScript.enabled)
             {
                 _bcScript.ManualUpdate();
-            }
-
-            if (_icScript != null && _icScript.enabled)
-            {
-                _icScript.ManualUpdate();
             }
 
             if (Chainloader.PluginInfos.ContainsKey(Utils.RealismKey) && PreloaderUI.Instantiated && !RealismDetected)
@@ -239,7 +232,6 @@ namespace RaidOverhaul
             _wScript = _hook.GetOrAddComponent<SeasonalWeatherController>();
             _bcScript = _hook.GetOrAddComponent<BodyCleanup>();
             _smScript = _hook.GetOrAddComponent<InRaidUIController>();
-            _icScript = _hook.GetOrAddComponent<InvasionController>();
             DontDestroyOnLoad(_hook);
             _hook.SetActive(true);
         }

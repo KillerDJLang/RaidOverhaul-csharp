@@ -262,6 +262,7 @@ The config files are all located in the server side of the mod at `user/mods/Rai
 "MaxLLEvent"               // Weight for the Max Loyalty Level random event.
 "LockdownEvent"            // Weight for the Lockdown random event.
 "ArtilleryEvent"           // Weight for the Artillery random event.
+"InvasionEvent"            // Weight for the Invasion random event.
 "RandomEventRangeMinimum"  // The minimum time into a raid before a random event can trigger.
 "RandomEventRangeMaximum"  // The maximum time into a raid before a random event can trigger.
 ```

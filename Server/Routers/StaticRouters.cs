@@ -194,12 +194,12 @@ public class ROStaticRouter : StaticRouter
         {
             if (_config.UseLegionGlobalSpawnChance)
             {
-                _bossHelper.SetBossSpawns(_debugConfig);
+                _bossHelper.SetBossSpawns(_config, _legionConfig, _debugConfig);
             }
             else
             {
                 HandleLegionProgression(info);
-                _bossHelper.SetBossSpawns(_debugConfig);
+                _bossHelper.SetBossSpawns(_config, _legionConfig, _debugConfig);
             }
         }
 

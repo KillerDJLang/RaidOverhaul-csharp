@@ -289,6 +289,9 @@ public class EventsConfigFile
     [JsonPropertyName("ArtilleryEvent")]
     public int ArtilleryEvent { get; set; }
 
+    [JsonPropertyName("InvasionEvent")]
+    public int InvasionEvent { get; set; }
+
     [JsonPropertyName("RandomEventRangeMinimum")]
     public float RandomEventRangeMinimum { get; set; }
 

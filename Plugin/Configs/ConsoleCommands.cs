@@ -10,28 +10,28 @@ namespace RaidOverhaul.Configs
     {
         public static void RegisterCC()
         {
-            ConsoleScreen.Processor.RegisterCommand("DoHealEvent", new Action(Plugin._ecScript.DoHealPlayer));
-            ConsoleScreen.Processor.RegisterCommand("DoDamageEvent", new Action(Plugin._ecScript.DoDamageEvent));
-            ConsoleScreen.Processor.RegisterCommand("DoArmorEvent", new Action(Plugin._ecScript.DoArmorRepair));
-            ConsoleScreen.Processor.RegisterCommand("DoAirdropEvent", new Action(Plugin._ecScript.DoAirdropEvent));
-            ConsoleScreen.Processor.RegisterCommand("DoFunnyEvent", new Action(Plugin._ecScript.DoFunnyWrapper));
-            ConsoleScreen.Processor.RegisterCommand("DoBlackoutEvent", new Action(Plugin._ecScript.DoBlackoutEventWrapper));
-            ConsoleScreen.Processor.RegisterCommand("DoSkillEvent", new Action(Plugin._ecScript.DoSkillEvent));
-            ConsoleScreen.Processor.RegisterCommand("DoMetabolismEvent", new Action(Plugin._ecScript.DoMetabolismEvent));
-            ConsoleScreen.Processor.RegisterCommand("DoMalfEvent", new Action(Plugin._ecScript.DoMalfEventWrapper));
-            ConsoleScreen.Processor.RegisterCommand("DoLLEvent", new Action(Plugin._ecScript.DoLLEvent));
-            ConsoleScreen.Processor.RegisterCommand("DoBerserkEvent", new Action(Plugin._ecScript.DoBerserkEventWrapper));
-            ConsoleScreen.Processor.RegisterCommand("DoWeightEvent", new Action(Plugin._ecScript.DoWeightEventWrapper));
-            ConsoleScreen.Processor.RegisterCommand("DoMaxLLEvent", new Action(Plugin._ecScript.DoMaxLLEvent));
-            ConsoleScreen.Processor.RegisterCommand("DoRepCorrect", new Action(Plugin._ecScript.CorrectRep));
-            ConsoleScreen.Processor.RegisterCommand("DoLockdownEvent", new Action(Plugin._ecScript.DoLockDownEventWrapper));
-            ConsoleScreen.Processor.RegisterCommand("DoArtilleryEvent", new Action(Plugin._ecScript.DoArtyEventWrapper));
-            ConsoleScreen.Processor.RegisterCommand("RunTrain", new Action(Plugin._ecScript.RunTrainWrapper));
-            ConsoleScreen.Processor.RegisterCommand("DoPmcExfil", new Action(Plugin._ecScript.DoPmcExfilEventWrapper));
-            ConsoleScreen.Processor.RegisterCommand("ExfilNow", new Action(Plugin._ecScript.ExfilNow));
+            ConsoleScreen.Processor.RegisterCommand("ROHeal", new Action(Plugin._ecScript.DoHealPlayer));
+            ConsoleScreen.Processor.RegisterCommand("RODamage", new Action(Plugin._ecScript.DoDamageEvent));
+            ConsoleScreen.Processor.RegisterCommand("ROArmor", new Action(Plugin._ecScript.DoArmorRepair));
+            ConsoleScreen.Processor.RegisterCommand("ROAirdrop", new Action(Plugin._ecScript.DoAirdropEvent));
+            ConsoleScreen.Processor.RegisterCommand("ROFunny", new Action(Plugin._ecScript.DoFunnyWrapper));
+            ConsoleScreen.Processor.RegisterCommand("ROBlackout", new Action(Plugin._ecScript.DoBlackoutEventWrapper));
+            ConsoleScreen.Processor.RegisterCommand("ROSkill", new Action(Plugin._ecScript.DoSkillEvent));
+            ConsoleScreen.Processor.RegisterCommand("ROMetabolism", new Action(Plugin._ecScript.DoMetabolismEvent));
+            ConsoleScreen.Processor.RegisterCommand("ROMalf", new Action(Plugin._ecScript.DoMalfEventWrapper));
+            ConsoleScreen.Processor.RegisterCommand("ROLL", new Action(Plugin._ecScript.DoLLEvent));
+            ConsoleScreen.Processor.RegisterCommand("ROBerserk", new Action(Plugin._ecScript.DoBerserkEventWrapper));
+            ConsoleScreen.Processor.RegisterCommand("ROWeight", new Action(Plugin._ecScript.DoWeightEventWrapper));
+            ConsoleScreen.Processor.RegisterCommand("ROMaxLL", new Action(Plugin._ecScript.DoMaxLLEvent));
+            ConsoleScreen.Processor.RegisterCommand("RORepCorrect", new Action(Plugin._ecScript.CorrectRep));
+            ConsoleScreen.Processor.RegisterCommand("ROLockdown", new Action(Plugin._ecScript.DoLockDownEventWrapper));
+            ConsoleScreen.Processor.RegisterCommand("ROArtillery", new Action(Plugin._ecScript.DoArtyEventWrapper));
+            ConsoleScreen.Processor.RegisterCommand("RORunTrain", new Action(Plugin._ecScript.RunTrainWrapper));
+            ConsoleScreen.Processor.RegisterCommand("ROPmcExfil", new Action(Plugin._ecScript.DoPmcExfilEventWrapper));
+            ConsoleScreen.Processor.RegisterCommand("ROExfilNow", new Action(Plugin._ecScript.ExfilNow));
+            ConsoleScreen.Processor.RegisterCommand("ROInvasion", new Action(Plugin._ecScript.StartInvasion));
             ConsoleScreen.Processor.RegisterCommand("GetWeaponIds", new Action(GetAllWeaponIDs));
             ConsoleScreen.Processor.RegisterCommand("GetAllIds", new Action(GetAllItemIDs));
-            //ConsoleScreen.Processor.RegisterCommand("DoGearExfil", new Action(Plugin.ECScript.DoGearExfilEvent));
         }
 
         private static void GetAllWeaponIDs()

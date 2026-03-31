@@ -24,6 +24,7 @@ namespace RaidOverhaul.Configs
             ShoppingSpree = 4096,
             ExfilLockdown = 8192,
             Artillery = 16384,
+            Invasion = 32768,
 
             All =
                 Damage
@@ -40,7 +41,8 @@ namespace RaidOverhaul.Configs
                 | NoJokesHere
                 | ShoppingSpree
                 | ExfilLockdown
-                | Artillery,
+                | Artillery
+                | Invasion,
         }
 
         [Flags]
@@ -76,7 +78,6 @@ namespace RaidOverhaul.Configs
         public static ConfigEntry<bool> SpecialReqFeatures;
 
         public static ConfigEntry<KeyboardShortcut> SpecialReqFeaturesBinding;
-        public static ConfigEntry<bool> SpawnLegionInvasion { get; set; }
 
         public static void BindConfig(ConfigFile cfg)
         {
@@ -354,21 +355,6 @@ namespace RaidOverhaul.Configs
             );
 
             #endregion
-
-            #region Debug
-
-            SpawnLegionInvasion = cfg.Bind(
-                "7. Debug",
-                "Spawn Legion Invasion",
-                true,
-                new ConfigDescription(
-                    "Start the Legion Invasion Event. Only available in raid.",
-                    null,
-                    new ConfigurationManagerAttributes { Order = 1, CustomDrawer = LegionInvasion }
-                )
-            );
-
-            #endregion
         }
 
         public static void MaidService(ConfigEntryBase entry)
@@ -377,16 +363,6 @@ namespace RaidOverhaul.Configs
             if (button)
             {
                 Patches.BodyCleanup.MaidServiceRun();
-            }
-        }
-
-        public static void LegionInvasion(ConfigEntryBase entry)
-        {
-            var button = GUILayout.Button("Legion Invasion", GUILayout.ExpandWidth(true));
-            if (button)
-            {
-                Plugin._icScript.StartInvasion("legionInvasion");
-                Plugin._icScript._invasionHasRun = true;
             }
         }
     }

@@ -105,6 +105,7 @@ public sealed class ROMain(
             var devFilesPath = Path.Combine("db", "devFiles");
             var config = helpers.LoadConfig<ConfigFile>(assembly, "config", "config.json");
             var debugConfig = helpers.LoadConfig<DebugFile>(assembly, devFilesPath, "debugOptions.json");
+            var legionConfig = helpers.LoadConfig<LegionProgression>(assembly, "config", "legionProgressionFile.json");
             var botLoadouts = Path.Combine("db", "bots", "botLoadouts");
             var typeList = new List<string> { "bosslegion", "legionnaire" };
             var typeDictionary = new Dictionary<int, string>() { { 199, "bosslegion" }, { 200, "legionnaire" } };
@@ -125,12 +126,10 @@ public sealed class ROMain(
             customBotTypeService.AddCustomWildSpawnTypeNames(typeDictionary);
 
             factionService.AddEnemyByFaction(typeList, "savage");
-            factionService.AddEnemyByFaction(typeList, "rogues");
             factionService.AddEnemyByFaction(typeList, "usec");
             factionService.AddEnemyByFaction(typeList, "bear");
             factionService.AddEnemyByFaction(typeList, "infected");
             factionService.AddEnemyByFaction("savage", "legion");
-            factionService.AddEnemyByFaction("rogues", "legion");
             factionService.AddEnemyByFaction("usec", "legion");
             factionService.AddEnemyByFaction("bear", "legion");
             factionService.AddEnemyByFaction("infected", "legion");
@@ -153,7 +152,7 @@ public sealed class ROMain(
 
             if (config.EnableCustomBoss)
             {
-                roBossHelper.SetBossSpawns(debugConfig);
+                roBossHelper.SetBossSpawns(config, legionConfig, debugConfig);
             }
 
             ROLogger.Log(logger, "Custom bots finished loading", LogTextColor.Magenta);

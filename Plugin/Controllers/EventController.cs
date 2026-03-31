@@ -39,6 +39,7 @@ namespace RaidOverhaul.Controllers
         private bool _weightEventHasRun;
         private bool _artyEventHasRun;
         private bool _blackoutEventHasRun;
+        internal bool _invasionHasRun;
         private bool _hasInitializedReflection;
         private bool _isReady;
         private bool _exfilUIChanged;
@@ -212,6 +213,7 @@ namespace RaidOverhaul.Controllers
             _cachedExtractionPanel = null;
             _cachedExitPanels = null;
             _blackoutEventHasRun = false;
+            _invasionHasRun = false;
         }
 
         private async UniTaskVoid StartEvents()
@@ -1372,6 +1374,37 @@ namespace RaidOverhaul.Controllers
                 ExitStatus.Survived,
                 Singleton<GameWorld>.Instance.ExfiltrationController.ExfiltrationPoints.FirstOrDefault().name
             );
+        }
+
+        internal void StartInvasion()
+        {
+            if (_invasionHasRun)
+            {
+                Weighting.DoRandomEvent(Weighting.WeightedEvents);
+                return;
+            }
+
+            var invasionEvents = new string[]
+            {
+                "legionInvasion",
+                "legionnaireInvasion",
+                "tagInvasion",
+                "killInvasion",
+                "gluInvasion",
+                "goonsInvasion",
+                "zryInvasion",
+                "sanInvasion",
+                "kolInvasion",
+                "kabInvasion",
+                "reshInvasion",
+                "shturInvasion",
+                "rogueInvasion",
+            };
+            var selectedEvent = invasionEvents[Random.Range(0, invasionEvents.Length)];
+
+            Singleton<BotEventHandler>.Instance.AnyEvent(selectedEvent);
+            _log.LogInfo($"[Raid Overhaul] Starting invasion event {selectedEvent}");
+            _invasionHasRun = true;
         }
 
         public void CleanForNewEvent()

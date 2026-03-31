@@ -796,7 +796,7 @@
                                 Background="Transparent"
                                 Foreground="{StaticResource TextDim}"
                                 BorderThickness="0"
-                                FontSize="12"
+                                FontSize="16"
                                 TextWrapping="Wrap"
                                 Margin="4,0,4,10"
                                 Text="The weighting for each event is calculated as a sum. It IS NOT a percent chance.&#x0a;&#x0a;Similar to how a lottery works, all event weightings are put together and a random number is pulled with the corresponding event set to run.&#x0a;&#x0a;The higher an events weighting, the more likely that event &quot;number&quot; will be pulled."
@@ -908,6 +908,13 @@
                                         <TextBox
                                             Style="{StaticResource NumericBox}"
                                             Text="{Binding Weighting.ArtilleryEvent, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Invasion Event" />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Weighting.InvasionEvent, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                                         />
                                     </DockPanel>
                                     <DockPanel Margin="4,8">
