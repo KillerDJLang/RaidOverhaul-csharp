@@ -53,19 +53,19 @@ public class ROBossHelper(ISptLogger<ROBossHelper> logger, DatabaseService datab
                 {
                     BossEscortType = "followerGluharAssault",
                     BossEscortAmount = "2",
-                    BossEscortDifficulty = new ListOrT<string>(null, "normal"),
+                    BossEscortDifficulty = new ListOrT<string>(["normal"], null),
                 },
                 new BossSupport
                 {
                     BossEscortType = "followerGluharSecurity",
                     BossEscortAmount = "2",
-                    BossEscortDifficulty = new ListOrT<string>(null, "normal"),
+                    BossEscortDifficulty = new ListOrT<string>(["normal"], null),
                 },
                 new BossSupport
                 {
                     BossEscortType = "followerGluharScout",
                     BossEscortAmount = "2",
-                    BossEscortDifficulty = new ListOrT<string>(null, "normal"),
+                    BossEscortDifficulty = new ListOrT<string>(["normal"], null),
                 },
             ]
         ),
@@ -79,19 +79,19 @@ public class ROBossHelper(ISptLogger<ROBossHelper> logger, DatabaseService datab
                 {
                     BossEscortType = "followerBigPipe",
                     BossEscortAmount = "1",
-                    BossEscortDifficulty = new ListOrT<string>(null, "normal"),
+                    BossEscortDifficulty = new ListOrT<string>(["normal"], null),
                 },
                 new BossSupport
                 {
                     BossEscortType = "followerBirdEye",
                     BossEscortAmount = "1",
-                    BossEscortDifficulty = new ListOrT<string>(null, "normal"),
+                    BossEscortDifficulty = new ListOrT<string>(["normal"], null),
                 },
                 new BossSupport
                 {
                     BossEscortType = "followerGluharScout",
                     BossEscortAmount = "0",
-                    BossEscortDifficulty = new ListOrT<string>(null, "normal"),
+                    BossEscortDifficulty = new ListOrT<string>(["normal"], null),
                 },
             ]
         ),
@@ -107,19 +107,19 @@ public class ROBossHelper(ISptLogger<ROBossHelper> logger, DatabaseService datab
                 {
                     BossEscortType = "followerKolontayAssault",
                     BossEscortAmount = "2",
-                    BossEscortDifficulty = new ListOrT<string>(null, "normal"),
+                    BossEscortDifficulty = new ListOrT<string>(["normal"], null),
                 },
                 new BossSupport
                 {
                     BossEscortType = "followerKolontaySecurity",
                     BossEscortAmount = "2",
-                    BossEscortDifficulty = new ListOrT<string>(null, "normal"),
+                    BossEscortDifficulty = new ListOrT<string>(["normal"], null),
                 },
                 new BossSupport
                 {
                     BossEscortType = "followerGluharScout",
                     BossEscortAmount = "0",
-                    BossEscortDifficulty = new ListOrT<string>(null, "normal"),
+                    BossEscortDifficulty = new ListOrT<string>(["normal"], null),
                 },
             ]
         ),
@@ -133,19 +133,19 @@ public class ROBossHelper(ISptLogger<ROBossHelper> logger, DatabaseService datab
                 {
                     BossEscortType = "followerBoar",
                     BossEscortAmount = "4",
-                    BossEscortDifficulty = new ListOrT<string>(null, "normal"),
+                    BossEscortDifficulty = new ListOrT<string>(["normal"], null),
                 },
                 new BossSupport
                 {
                     BossEscortType = "followerBoarClose1",
                     BossEscortAmount = "1",
-                    BossEscortDifficulty = new ListOrT<string>(null, "normal"),
+                    BossEscortDifficulty = new ListOrT<string>(["normal"], null),
                 },
                 new BossSupport
                 {
                     BossEscortType = "followerBoarClose2",
                     BossEscortAmount = "1",
-                    BossEscortDifficulty = new ListOrT<string>(null, "normal"),
+                    BossEscortDifficulty = new ListOrT<string>(["normal"], null),
                 },
             ]
         ),
@@ -174,7 +174,7 @@ public class ROBossHelper(ISptLogger<ROBossHelper> logger, DatabaseService datab
 
                 var spawns = locations.GetDictionary()[locations.GetMappedKey(map)].Base.BossLocationSpawn;
 
-                spawns.RemoveAll(x => x.BossName.Contains("legion"));
+                spawns.RemoveAll(x => x.BossName.Contains("bosslegion"));
                 spawns.RemoveAll(x => x.TriggerId.Contains("Invasion"));
 
                 AddInvasionsToMaps(map, spawns, debugConfig);
@@ -225,7 +225,7 @@ public class ROBossHelper(ISptLogger<ROBossHelper> logger, DatabaseService datab
         {
             BossChance = spawnChance,
             BossDifficulty = "normal",
-            BossEscortAmount = "2",
+            BossEscortAmount = SetEscortCount(2, 4, randomUtil),
             BossEscortDifficulty = "normal",
             BossEscortType = "legionnaire",
             BossName = "bosslegion",
@@ -235,27 +235,7 @@ public class ROBossHelper(ISptLogger<ROBossHelper> logger, DatabaseService datab
             IgnoreMaxBots = true,
             IsRandomTimeSpawn = false,
             SpawnMode = ["regular", "pve"],
-            Supports =
-            [
-                new BossSupport
-                {
-                    BossEscortType = "legionnaire",
-                    BossEscortAmount = "2",
-                    BossEscortDifficulty = new ListOrT<string>(null, "normal"),
-                },
-                new BossSupport
-                {
-                    BossEscortType = "exUsec",
-                    BossEscortAmount = "2",
-                    BossEscortDifficulty = new ListOrT<string>(null, "normal"),
-                },
-                new BossSupport
-                {
-                    BossEscortType = "followerGluharScout",
-                    BossEscortAmount = "0",
-                    BossEscortDifficulty = new ListOrT<string>(null, "normal"),
-                },
-            ],
+            Supports = null,
             Time = -1,
             TriggerId = "",
             TriggerName = "",

@@ -1403,8 +1403,18 @@ namespace RaidOverhaul.Controllers
             var selectedEvent = invasionEvents[Random.Range(0, invasionEvents.Length)];
 
             Singleton<BotEventHandler>.Instance.AnyEvent(selectedEvent);
-            _log.LogInfo($"[Raid Overhaul] Starting invasion event {selectedEvent}");
             _invasionHasRun = true;
+
+            NotificationManagerClass.DisplayMessageNotification(
+                "Invasion Event: Bosses incoming.",
+                ENotificationDurationType.Long,
+                ENotificationIconType.Alert
+            );
+
+            if (ConfigController.DebugConfig.DebugMode)
+            {
+                Utils.LogToServerConsole($"[{selectedEvent}] Invasion Event has run");
+            }
         }
 
         public void CleanForNewEvent()
