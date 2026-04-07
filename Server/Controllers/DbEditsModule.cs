@@ -17,7 +17,7 @@ using SPTarkov.Server.Core.Utils;
 
 namespace RaidOverhaulMain.Controllers;
 
-[Injectable(TypePriority = OnLoadOrder.PostDBModLoader + 102)]
+[Injectable(TypePriority = OnLoadOrder.PostDBModLoader + 12)]
 public class RODbEdits(
     ISptLogger<RODbEdits> logger,
     DatabaseService databaseService,

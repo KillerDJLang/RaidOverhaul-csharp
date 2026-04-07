@@ -1,4 +1,5 @@
 using SPTarkov.DI.Annotations;
+using SPTarkov.Server.Core.DI;
 using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
 using SPTarkov.Server.Core.Models.Utils;
@@ -7,7 +8,7 @@ using Path = System.IO.Path;
 
 namespace RaidOverhaulMain.Helpers;
 
-[Injectable]
+[Injectable(TypePriority = OnLoadOrder.PostDBModLoader + 10)]
 public class ROJsonHelper(ISptLogger<ROJsonHelper> logger, JsonUtil jsonUtil)
 {
     public List<T> LoadCombinedJsons<T>(string directoryPath)

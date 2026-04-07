@@ -10,7 +10,7 @@
   "customization_seller": false,
   "discount": 0,
   "discount_end": 0,
-  "gridHeight": 300,
+  "gridHeight": 1000,
   "insurance": {
     "availability": false,
     "min_payment": 0,
@@ -21,7 +21,7 @@
   },
   "isCanTransferItems": false,
   "items_buy": {
-    "category": ["5448ecbe4bdc2d60728b4568"],
+    "category": [ "5448ecbe4bdc2d60728b4568" ],
     "id_list": []
   },
   "items_buy_prohibited": {

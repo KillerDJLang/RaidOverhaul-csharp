@@ -9,7 +9,7 @@ using SPTarkov.Server.Core.Utils.Cloners;
 
 namespace RaidOverhaulMain.Helpers;
 
-[Injectable(TypePriority = OnLoadOrder.PostDBModLoader + 1)]
+[Injectable(TypePriority = OnLoadOrder.PostDBModLoader + 10)]
 public class ROTraderHelper(ISptLogger<ROTraderHelper> logger, ICloner cloner, DatabaseService databaseService)
 {
     public void SetTraderUpdateTime(TraderConfig traderConfig, TraderBase baseJson, int refreshTimeSecondsMin, int refreshTimeSecondsMax)

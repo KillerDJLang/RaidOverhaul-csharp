@@ -1384,25 +1384,7 @@ namespace RaidOverhaul.Controllers
                 return;
             }
 
-            var invasionEvents = new string[]
-            {
-                "legionInvasion",
-                "legionnaireInvasion",
-                "tagInvasion",
-                "killInvasion",
-                "gluInvasion",
-                "goonsInvasion",
-                "zryInvasion",
-                "sanInvasion",
-                "kolInvasion",
-                "kabInvasion",
-                "reshInvasion",
-                "shturInvasion",
-                "rogueInvasion",
-            };
-            var selectedEvent = invasionEvents[Random.Range(0, invasionEvents.Length)];
-
-            Singleton<BotEventHandler>.Instance.AnyEvent(selectedEvent);
+            InvasionController.StartInvasion();
             _invasionHasRun = true;
 
             NotificationManagerClass.DisplayMessageNotification(
@@ -1413,7 +1395,7 @@ namespace RaidOverhaul.Controllers
 
             if (ConfigController.DebugConfig.DebugMode)
             {
-                Utils.LogToServerConsole($"[{selectedEvent}] Invasion Event has run");
+                Utils.LogToServerConsole("Invasion Event has started");
             }
         }
 

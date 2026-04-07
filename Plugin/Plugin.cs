@@ -44,6 +44,7 @@ namespace RaidOverhaul
         internal static SeasonalWeatherController _wScript;
         internal static BodyCleanup _bcScript;
         internal static InRaidUIController _smScript;
+        internal static DebugUIController _dbgScript;
         internal static ManualLogSource _log;
 
         internal static ISession _session;
@@ -94,6 +95,12 @@ namespace RaidOverhaul
 
             _log = Logger;
             Logger.LogInfo("Loading Raid Overhaul");
+
+            ConfigController.EventConfig = Utils.Get<EventsConfig>("/RaidOverhaul/GetEventConfig");
+            ConfigController.ServerConfig = Utils.Get<ServerConfigs>("/RaidOverhaul/GetServerConfig");
+            ConfigController.LegionConfig = Utils.Get<LegionProgressionConfig>("/RaidOverhaul/GetLegionConfig");
+            ConfigController.DebugConfig = Utils.Get<DebugConfigs>("/RaidOverhaul/GetDebugConfig");
+
             _hook = new GameObject("Event Object");
 
             _ecScript = _hook.GetOrAddComponent<EventController>();
@@ -101,14 +108,14 @@ namespace RaidOverhaul
             _wScript = _hook.GetOrAddComponent<SeasonalWeatherController>();
             _bcScript = _hook.GetOrAddComponent<BodyCleanup>();
             _smScript = _hook.GetOrAddComponent<InRaidUIController>();
+            if (ConfigController.DebugConfig.DebugMode)
+            {
+                _dbgScript = _hook.GetOrAddComponent<DebugUIController>();
+            }
 
             DontDestroyOnLoad(_hook);
             _hook.SetActive(true);
 
-            ConfigController.EventConfig = Utils.Get<EventsConfig>("/RaidOverhaul/GetEventConfig");
-            ConfigController.ServerConfig = Utils.Get<ServerConfigs>("/RaidOverhaul/GetServerConfig");
-            ConfigController.LegionConfig = Utils.Get<LegionProgressionConfig>("/RaidOverhaul/GetLegionConfig");
-            ConfigController.DebugConfig = Utils.Get<DebugConfigs>("/RaidOverhaul/GetDebugConfig");
             Weighting.InitWeightings();
 
             Utils.GetWeatherFields();
@@ -145,11 +152,6 @@ namespace RaidOverhaul
             new EventExfilPatch().Enable();
             new BotNVGPatch().Enable();
 
-            if (ConfigController.DebugConfig.DebugMode)
-            {
-                ConsoleCommands.RegisterCC();
-            }
-
             TryInitFikaAssembly();
         }
 
@@ -161,21 +163,20 @@ namespace RaidOverhaul
                 if (foundObject != null)
                 {
                     _hook = foundObject;
-                    _wScript = _hook.GetOrAddComponent<SeasonalWeatherController>();
-                    _smScript = _hook.GetOrAddComponent<InRaidUIController>();
                     _ecScript = _hook.GetOrAddComponent<EventController>();
                     _dcScript = _hook.GetOrAddComponent<DoorController>();
+                    _wScript = _hook.GetOrAddComponent<SeasonalWeatherController>();
                     _bcScript = _hook.GetOrAddComponent<BodyCleanup>();
+                    _smScript = _hook.GetOrAddComponent<InRaidUIController>();
+                    if (ConfigController.DebugConfig.DebugMode)
+                    {
+                        _dbgScript = _hook.GetOrAddComponent<DebugUIController>();
+                    }
                 }
                 else
                 {
                     RecreateGameObject();
                 }
-            }
-
-            if (_smScript != null && _smScript.enabled)
-            {
-                _smScript.ManualUpdate();
             }
 
             if (_ecScript != null && _ecScript.enabled)
@@ -191,6 +192,16 @@ namespace RaidOverhaul
             if (_bcScript != null && _bcScript.enabled)
             {
                 _bcScript.ManualUpdate();
+            }
+
+            if (_smScript != null && _smScript.enabled)
+            {
+                _smScript.ManualUpdate();
+            }
+
+            if (_dbgScript != null && _dbgScript.enabled)
+            {
+                _dbgScript.ManualUpdate();
             }
 
             if (Chainloader.PluginInfos.ContainsKey(Utils.RealismKey) && PreloaderUI.Instantiated && !RealismDetected)
@@ -232,6 +243,10 @@ namespace RaidOverhaul
             _wScript = _hook.GetOrAddComponent<SeasonalWeatherController>();
             _bcScript = _hook.GetOrAddComponent<BodyCleanup>();
             _smScript = _hook.GetOrAddComponent<InRaidUIController>();
+            if (ConfigController.DebugConfig.DebugMode)
+            {
+                _dbgScript = _hook.GetOrAddComponent<DebugUIController>();
+            }
             DontDestroyOnLoad(_hook);
             _hook.SetActive(true);
         }

@@ -30,7 +30,7 @@ namespace RaidOverhaulPrepatch.Patches
             // lead
             var bot = new CustomWildSpawnType(199, "bosslegion", "Legion", baseBrainInt, true, true, false);
 
-            bot.SetCountAsBossForStatistics(false);
+            bot.SetCountAsBossForStatistics(true);
             bot.SetShouldUseFenceNoBossAttack(false, false);
             bot.SetExcludedDifficulties(new List<int> { 0, 2, 3 });
 

@@ -14,7 +14,7 @@ using Path = System.IO.Path;
 
 namespace RaidOverhaulMain.Controllers;
 
-[Injectable(TypePriority = OnLoadOrder.PostDBModLoader + 101)]
+[Injectable(TypePriority = OnLoadOrder.PostDBModLoader + 11)]
 public class ROTrader(
     ISptLogger<ROTrader> logger,
     ConfigServer configServer,
@@ -61,6 +61,10 @@ public class ROTrader(
                     "Requisitions Office",
                     "A collection of Ex-PMC's and rogue Scavs who formed a group to aid others in Tarkov. They routinely scour the battlefield for any leftover supplies and aren't afraid to fight their old comrades for it. They may not be the most trustworthy but they do have some much needed provisions in stock."
                 );
+                if (_config.EnableCustomItems)
+                {
+                    assortHelper.AddCustomItemsToTraderShop(helpers.FetchIdFromMap("ReqShop", ClassMaps.TraderMaps), _debugConfig);
+                }
                 assortHelper.GenerateTraderAssorts(helpers.FetchIdFromMap("ReqShop", ClassMaps.TraderMaps), _debugConfig);
                 questHelper.CreateCustomQuests(assembly, questPath);
             }
@@ -75,12 +79,12 @@ public class ROTrader(
                     "Requisitions Office",
                     "A collection of Ex-PMC's and rogue Scavs who formed a group to aid others in Tarkov. They routinely scour the battlefield for any leftover supplies and aren't afraid to fight their old comrades for it. They may not be the most trustworthy but they do have some much needed provisions in stock."
                 );
+                if (_config.EnableCustomItems)
+                {
+                    assortHelper.AddCustomItemsToTraderShop(helpers.FetchIdFromMap("ReqShop", ClassMaps.TraderMaps), _debugConfig);
+                }
                 assortHelper.GenerateTraderAssorts(helpers.FetchIdFromMap("ReqShop", ClassMaps.TraderMaps), _debugConfig);
                 questHelper.CreateCustomQuests(assembly, questPathNoBoss);
-            }
-            if (_config.EnableCustomItems)
-            {
-                assortHelper.AddCustomItemsToTraderShop(helpers.FetchIdFromMap("ReqShop", ClassMaps.TraderMaps), _debugConfig);
             }
             ROLogger.Log(logger, "Requisition Shop finished loading", LogTextColor.Magenta);
         }

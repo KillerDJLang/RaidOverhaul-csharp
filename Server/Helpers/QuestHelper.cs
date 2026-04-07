@@ -12,7 +12,7 @@ using Path = System.IO.Path;
 
 namespace RaidOverhaulMain.Helpers;
 
-[Injectable(TypePriority = OnLoadOrder.PostDBModLoader + 1)]
+[Injectable(TypePriority = OnLoadOrder.PostDBModLoader + 10)]
 public class ROQuestHelper(
     ISptLogger<ROQuestHelper> logger,
     DatabaseService databaseService,

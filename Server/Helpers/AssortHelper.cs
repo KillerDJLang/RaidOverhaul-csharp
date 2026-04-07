@@ -18,7 +18,7 @@ using Path = System.IO.Path;
 
 namespace RaidOverhaulMain.Helpers;
 
-[Injectable(TypePriority = OnLoadOrder.PostDBModLoader + 1)]
+[Injectable(TypePriority = OnLoadOrder.PostDBModLoader + 10)]
 public class ROAssortHelper(
     ISptLogger<ROAssortHelper> logger,
     DatabaseService databaseService,

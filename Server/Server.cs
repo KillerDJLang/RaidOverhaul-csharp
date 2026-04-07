@@ -37,7 +37,7 @@ public sealed record ModMetadata : AbstractModMetadata
     public override string License { get; init; } = "CC BY-NC-ND 4.0";
 }
 
-[Injectable(TypePriority = OnLoadOrder.PostDBModLoader + 99000)]
+[Injectable(TypePriority = OnLoadOrder.PostDBModLoader + 10)]
 public sealed class ROMain(
     WTTServerCommonLib.WTTServerCommonLib wttCommon,
     ISptLogger<ROMain> logger,
@@ -87,7 +87,7 @@ public sealed class ROMain(
         await Task.CompletedTask;
     }
 
-    [Injectable(InjectionType = InjectionType.Singleton, TypePriority = OnLoadOrder.PostDBModLoader + 99002)]
+    [Injectable(InjectionType = InjectionType.Singleton, TypePriority = OnLoadOrder.PostDBModLoader + 99001)]
     public sealed class ROBotSetup(
         ISptLogger<ROMain> logger,
         MoreBotsServer.MoreBotsAPI moreBotsLib,
@@ -161,7 +161,7 @@ public sealed class ROMain(
         }
     }
 
-    [Injectable(InjectionType = InjectionType.Singleton, TypePriority = OnLoadOrder.PostDBModLoader + 99001)]
+    [Injectable(InjectionType = InjectionType.Singleton, TypePriority = OnLoadOrder.PostDBModLoader + 11)]
     public sealed class ROLegionFaction(MoreBotsServer.Services.FactionService factionService) : IOnLoad
     {
         public async Task OnLoad()

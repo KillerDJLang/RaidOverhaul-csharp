@@ -12,7 +12,7 @@ using WTTServerCommonLib.Services;
 
 namespace RaidOverhaulMain.Controllers;
 
-[Injectable(TypePriority = OnLoadOrder.PostDBModLoader + 100)]
+[Injectable(TypePriority = OnLoadOrder.PostDBModLoader + 10)]
 public class ROCustomItems(
     ISptLogger<ROCustomItems> logger,
     DatabaseService databaseService,

@@ -7,7 +7,7 @@ using SPTarkov.Server.Core.Services;
 
 namespace RaidOverhaulMain.Helpers;
 
-[Injectable(TypePriority = OnLoadOrder.PostDBModLoader + 1)]
+[Injectable(TypePriority = OnLoadOrder.PostDBModLoader + 10)]
 public class ROFluentTraderAssortHelper(DatabaseService databaseService, ISptLogger<ROFluentTraderAssortHelper> logger)
 {
     private readonly List<Item> _itemsToSell = [];
