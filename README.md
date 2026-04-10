@@ -136,7 +136,7 @@ The config files are all located in the server side of the mod at `user/mods/Rai
 "EnableExtendedRaids"  // Lets you set a custom max time limit for your raids.
 "TimeLimit"            // The max length of your raids in minutes if "Enable Extended Raids" is enabled.
 "HolsterAnything"      // Allows you to holster any weapon in your sidearm slot.
-"LowerExamineTime"     // (No tooltip provided)
+"LowerExamineTime"     // Lowers the examine time on all items loaded before this mod. Makes examine time almost instant.
 "SpecialSlotChanges"   // Lets you put anything into your special slots. A bit game breaking but great if you want to be the biggest loot goblin around.
 "ChangeBackpackSizes"  // Changes the internal sizes of most of the backpacks in the game. Makes them all slightly (massively for boss backpacks) bigger. Useful if you intend on staying and looting in raid a lot longer with Extended Raids enabled.
 "ModifyEnemyBotHealth" // Changes all enemy bot health to be the same as the player. Makes life less stressful when you run into a boss or raiders an hour+ into a raid.
