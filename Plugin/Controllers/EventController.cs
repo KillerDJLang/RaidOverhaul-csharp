@@ -204,6 +204,7 @@ namespace RaidOverhaul.Controllers
             _artyEventHasRun = false;
             _blackoutEventHasRun = false;
             _pmcExfilEventRunning = false;
+            _eventIsRunning = false;
             _skillEventCount = 0;
             _repairEventCount = 0;
             _healthEventCount = 0;
@@ -579,6 +580,7 @@ namespace RaidOverhaul.Controllers
             if (selectedSkill.Locked)
             {
                 DoSkillEvent();
+                return;
             }
 
             if (chance >= 0 && chance <= 55)
@@ -1205,6 +1207,8 @@ namespace RaidOverhaul.Controllers
 
             if (!InvalidArtilleryLocations.Contains(ROPlayer.Location) && !_artyEventHasRun)
             {
+                _artyEventHasRun = true;
+
                 NotificationManagerClass.DisplayMessageNotification(
                     "Artillery Event: Get to cover. Shelling will commence in 30 seconds",
                     ENotificationDurationType.Long,

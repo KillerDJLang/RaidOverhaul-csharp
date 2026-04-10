@@ -2,12 +2,9 @@
 using RaidOverhaulMain.Helpers;
 using RaidOverhaulMain.Models;
 using SPTarkov.DI.Annotations;
-using SPTarkov.Server.Core.DI;
 using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Eft.Common;
-using SPTarkov.Server.Core.Models.Eft.Hideout;
 using SPTarkov.Server.Core.Models.Enums;
-using SPTarkov.Server.Core.Models.Enums.Hideout;
 using SPTarkov.Server.Core.Models.Logging;
 using SPTarkov.Server.Core.Models.Spt.Config;
 using SPTarkov.Server.Core.Models.Utils;
@@ -17,7 +14,7 @@ using SPTarkov.Server.Core.Utils;
 
 namespace RaidOverhaulMain.Controllers;
 
-[Injectable(TypePriority = OnLoadOrder.PostDBModLoader + 12)]
+[Injectable(InjectionType.Singleton)]
 public class RODbEdits(
     ISptLogger<RODbEdits> logger,
     DatabaseService databaseService,
@@ -46,7 +43,6 @@ public class RODbEdits(
         ItemChanges(roHelpers);
         StackChanges(roHelpers);
         TraderTweaks(roHelpers);
-        AddNewCrafts();
         if (_config.LootChangesEnabled)
         {
             LootChanges();
@@ -69,15 +65,12 @@ public class RODbEdits(
 
         if (_config.EnableExtendedRaids)
         {
-            foreach (var (_, location) in locations)
+            foreach (Location location in locations.Values)
             {
-                if (location.Base.Id == "base")
-                {
-                    continue;
-                }
-
-                location.Base.EscapeTimeLimit = _config.TimeLimit * 60;
-                location.Base.EscapeTimeLimitCoop = _config.TimeLimit * 60;
+                location.Base.ExitAccessTime = _config.TimeLimit;
+                location.Base.EscapeTimeLimit = _config.TimeLimit;
+                location.Base.EscapeTimeLimitCoop = _config.TimeLimit;
+                location.Base.EscapeTimeLimitPVE = _config.TimeLimit;
             }
         }
 
@@ -89,43 +82,50 @@ public class RODbEdits(
 
         if (_config.ChangeAirdropValuesEnabled)
         {
-            foreach (var (_, location) in locations)
+            foreach (Location location in locations.Values)
             {
+                var airdropParams = location.Base.AirdropParameters?.FirstOrDefault();
+
+                if (airdropParams == null)
+                {
+                    continue;
+                }
+
                 if (location.Base.Id == "bigmap")
                 {
-                    location.Base.AirdropParameters.FirstOrDefault().PlaneAirdropChance = _config.Customs;
+                    airdropParams.PlaneAirdropChance = _config.Customs;
                 }
                 if (location.Base.Id == "woods")
                 {
-                    location.Base.AirdropParameters.FirstOrDefault().PlaneAirdropChance = _config.Woods;
+                    airdropParams.PlaneAirdropChance = _config.Woods;
                 }
                 if (location.Base.Id == "lighthouse")
                 {
-                    location.Base.AirdropParameters.FirstOrDefault().PlaneAirdropChance = _config.Lighthouse;
+                    airdropParams.PlaneAirdropChance = _config.Lighthouse;
                 }
                 if (location.Base.Id == "shoreline")
                 {
-                    location.Base.AirdropParameters.FirstOrDefault().PlaneAirdropChance = _config.Shoreline;
+                    airdropParams.PlaneAirdropChance = _config.Shoreline;
                 }
                 if (location.Base.Id == "interchange")
                 {
-                    location.Base.AirdropParameters.FirstOrDefault().PlaneAirdropChance = _config.Interchange;
+                    airdropParams.PlaneAirdropChance = _config.Interchange;
                 }
                 if (location.Base.Id == "rezervbase")
                 {
-                    location.Base.AirdropParameters.FirstOrDefault().PlaneAirdropChance = _config.Reserve;
+                    airdropParams.PlaneAirdropChance = _config.Reserve;
                 }
                 if (location.Base.Id == "tarkovstreets")
                 {
-                    location.Base.AirdropParameters.FirstOrDefault().PlaneAirdropChance = _config.Streets;
+                    airdropParams.PlaneAirdropChance = _config.Streets;
                 }
                 if (location.Base.Id == "sandbox")
                 {
-                    location.Base.AirdropParameters.FirstOrDefault().PlaneAirdropChance = _config.GroundZero;
+                    airdropParams.PlaneAirdropChance = _config.GroundZero;
                 }
                 if (location.Base.Id == "sandbox_high")
                 {
-                    location.Base.AirdropParameters.FirstOrDefault().PlaneAirdropChance = _config.GroundZero;
+                    airdropParams.PlaneAirdropChance = _config.GroundZero;
                 }
             }
         }
@@ -549,316 +549,6 @@ public class RODbEdits(
         }
     }
 
-    private void AddNewCrafts()
-    {
-        var recipes = databaseService.GetHideout().Production.Recipes;
-        recipes?.Add(
-            new()
-            {
-                AreaType = HideoutAreas.Workbench,
-                Count = 1,
-                EndProduct = new("5732ee6a24597719ae0c0281"),
-                Id = new("67769e00d227edd7dca0ca2b"),
-                IsCodeProduction = false,
-                IsEncoded = false,
-                Locked = false,
-                NeedFuelForAllProductionTime = false,
-                ProductionLimitCount = 0,
-                ProductionTime = 10800,
-                Continuous = false,
-                Requirements =
-                [
-                    new Requirement()
-                    {
-                        AreaType = 10,
-                        RequiredLevel = 1,
-                        Type = "Area",
-                    },
-                    new Requirement()
-                    {
-                        TemplateId = new("61bf83814088ec1a363d7097"),
-                        Count = 1,
-                        Type = "Item",
-                    },
-                    new Requirement()
-                    {
-                        TemplateId = new("5e2af4d286f7746d4159f07a"),
-                        Count = 2,
-                        Type = "Item",
-                    },
-                    new Requirement()
-                    {
-                        TemplateId = new("5e2af4a786f7746d3f3c3400"),
-                        Count = 2,
-                        Type = "Item",
-                    },
-                    new Requirement()
-                    {
-                        TemplateId = new("5af04b6486f774195a3ebb49"),
-                        Count = 1,
-                        Type = "Tool",
-                    },
-                    new Requirement()
-                    {
-                        TemplateId = new("5d1b317c86f7742523398392"),
-                        Count = 1,
-                        Type = "Tool",
-                    },
-                ],
-            }
-        );
-        recipes?.Add(
-            new()
-            {
-                AreaType = HideoutAreas.Workbench,
-                Count = 1,
-                EndProduct = new("544a11ac4bdc2d470e8b456a"),
-                Id = new("67769f8147ae966cd6ba600e"),
-                IsCodeProduction = false,
-                IsEncoded = false,
-                Locked = false,
-                NeedFuelForAllProductionTime = false,
-                ProductionLimitCount = 0,
-                ProductionTime = 10800,
-                Continuous = false,
-                Requirements =
-                [
-                    new Requirement()
-                    {
-                        AreaType = 10,
-                        RequiredLevel = 1,
-                        Type = "Area",
-                    },
-                    new Requirement()
-                    {
-                        TemplateId = new("61bf83814088ec1a363d7097"),
-                        Count = 1,
-                        Type = "Item",
-                    },
-                    new Requirement()
-                    {
-                        TemplateId = new("5e2af4d286f7746d4159f07a"),
-                        Count = 3,
-                        Type = "Item",
-                    },
-                    new Requirement()
-                    {
-                        TemplateId = new("5e2af4a786f7746d3f3c3400"),
-                        Count = 2,
-                        Type = "Item",
-                    },
-                    new Requirement()
-                    {
-                        TemplateId = new("5e2af29386f7746d4159f077"),
-                        Count = 1,
-                        Type = "Item",
-                    },
-                    new Requirement()
-                    {
-                        TemplateId = new("5af04b6486f774195a3ebb49"),
-                        Count = 1,
-                        Type = "Tool",
-                    },
-                    new Requirement()
-                    {
-                        TemplateId = new("5d1b317c86f7742523398392"),
-                        Count = 1,
-                        Type = "Tool",
-                    },
-                ],
-            }
-        );
-        recipes?.Add(
-            new()
-            {
-                AreaType = HideoutAreas.Workbench,
-                Count = 1,
-                EndProduct = new("5857a8b324597729ab0a0e7d"),
-                Id = new("6776a03bc2fc1cece3390bb0"),
-                IsCodeProduction = false,
-                IsEncoded = false,
-                Locked = false,
-                NeedFuelForAllProductionTime = false,
-                ProductionLimitCount = 0,
-                ProductionTime = 10800,
-                Continuous = false,
-                Requirements =
-                [
-                    new Requirement()
-                    {
-                        AreaType = 10,
-                        RequiredLevel = 2,
-                        Type = "Area",
-                    },
-                    new Requirement()
-                    {
-                        TemplateId = new("5e2af4d286f7746d4159f07a"),
-                        Count = 3,
-                        Type = "Item",
-                    },
-                    new Requirement()
-                    {
-                        TemplateId = new("5e2af4a786f7746d3f3c3400"),
-                        Count = 3,
-                        Type = "Item",
-                    },
-                    new Requirement()
-                    {
-                        TemplateId = new("5e2af29386f7746d4159f077"),
-                        Count = 2,
-                        Type = "Item",
-                    },
-                    new Requirement()
-                    {
-                        TemplateId = new("590c31c586f774245e3141b2"),
-                        Count = 1,
-                        Type = "Item",
-                    },
-                    new Requirement()
-                    {
-                        TemplateId = new("5c94bbff86f7747ee735c08f"),
-                        Count = 1,
-                        Type = "Tool",
-                    },
-                    new Requirement()
-                    {
-                        TemplateId = new("5d1b317c86f7742523398392"),
-                        Count = 1,
-                        Type = "Tool",
-                    },
-                ],
-            }
-        );
-        recipes?.Add(
-            new()
-            {
-                AreaType = HideoutAreas.Workbench,
-                Count = 1,
-                EndProduct = new("5857a8bc2459772bad15db29"),
-                Id = new("6776a03e3224e543994561e3"),
-                IsCodeProduction = false,
-                IsEncoded = false,
-                Locked = false,
-                NeedFuelForAllProductionTime = false,
-                ProductionLimitCount = 0,
-                ProductionTime = 10800,
-                Continuous = false,
-                Requirements =
-                [
-                    new Requirement()
-                    {
-                        AreaType = 10,
-                        RequiredLevel = 2,
-                        Type = "Area",
-                    },
-                    new Requirement()
-                    {
-                        TemplateId = new("5e2af4d286f7746d4159f07a"),
-                        Count = 3,
-                        Type = "Item",
-                    },
-                    new Requirement()
-                    {
-                        TemplateId = new("5e2af4a786f7746d3f3c3400"),
-                        Count = 3,
-                        Type = "Item",
-                    },
-                    new Requirement()
-                    {
-                        TemplateId = new("5e2af29386f7746d4159f077"),
-                        Count = 2,
-                        Type = "Item",
-                    },
-                    new Requirement()
-                    {
-                        TemplateId = new("5c94bbff86f7747ee735c08f"),
-                        Count = 3,
-                        Type = "Item",
-                    },
-                    new Requirement()
-                    {
-                        TemplateId = new("5d0377ce86f774186372f689"),
-                        Count = 1,
-                        Type = "Item",
-                    },
-                    new Requirement()
-                    {
-                        TemplateId = new("5d1b317c86f7742523398392"),
-                        Count = 1,
-                        Type = "Tool",
-                    },
-                    new Requirement()
-                    {
-                        TemplateId = new("63a0b208f444d32d6f03ea1e"),
-                        Count = 1,
-                        Type = "Tool",
-                    },
-                ],
-            }
-        );
-        recipes?.Add(
-            new()
-            {
-                AreaType = HideoutAreas.Workbench,
-                Count = 1,
-                EndProduct = new("59db794186f77448bc595262"),
-                Id = new("6776a0c83c0c25194c18e787"),
-                IsCodeProduction = false,
-                IsEncoded = false,
-                Locked = false,
-                NeedFuelForAllProductionTime = false,
-                ProductionLimitCount = 0,
-                ProductionTime = 10800,
-                Continuous = false,
-                Requirements =
-                [
-                    new Requirement()
-                    {
-                        AreaType = 10,
-                        RequiredLevel = 3,
-                        Type = "Area",
-                    },
-                    new Requirement()
-                    {
-                        TemplateId = new("5c94bbff86f7747ee735c08f"),
-                        Count = 5,
-                        Type = "Item",
-                    },
-                    new Requirement()
-                    {
-                        TemplateId = new("5d0377ce86f774186372f689"),
-                        Count = 3,
-                        Type = "Item",
-                    },
-                    new Requirement()
-                    {
-                        TemplateId = new("5d0376a486f7747d8050965c"),
-                        Count = 3,
-                        Type = "Item",
-                    },
-                    new Requirement()
-                    {
-                        TemplateId = new("5d03775b86f774203e7e0c4b"),
-                        Count = 2,
-                        Type = "Item",
-                    },
-                    new Requirement()
-                    {
-                        TemplateId = new("5d1b317c86f7742523398392"),
-                        Count = 1,
-                        Type = "Tool",
-                    },
-                    new Requirement()
-                    {
-                        TemplateId = new("63a0b208f444d32d6f03ea1e"),
-                        Count = 1,
-                        Type = "Tool",
-                    },
-                ],
-            }
-        );
-    }
-
     private static void ModifyMarkedRoomLoot(string location, LooseLoot looseLoot)
     {
         if (looseLoot.Spawnpoints == null)
@@ -1151,6 +841,7 @@ public class RODbEdits(
             //Autumn
             case 10:
             case 11:
+            case 12:
                 raidsRun++;
                 _weatherConfig.OverrideSeason = Season.AUTUMN;
                 if (debugConfig.DebugMode)
@@ -1192,10 +883,9 @@ public class RODbEdits(
         }
         try
         {
-            var seasonProgressionData = new SeasonalProgression();
-            seasonProgressionData.SeasonsProgression = raidsRun;
+            seasonProgressionFile.SeasonsProgression = raidsRun;
 
-            helpers.WriteConfigFile(seasonProgressionData, assembly, Path.Combine("db", "devFiles"), "seasonsProgressionFile.json");
+            helpers.WriteConfigFile(seasonProgressionFile, assembly, Path.Combine("db", "devFiles"), "seasonsProgressionFile.json");
             if (debugConfig.DebugMode)
             {
                 ROLogger.Log(logger, $"Seasonal progress updated to {raidsRun}", LogTextColor.Cyan);

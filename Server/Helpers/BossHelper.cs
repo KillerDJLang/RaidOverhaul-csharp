@@ -1,6 +1,5 @@
 using RaidOverhaulMain.Models;
 using SPTarkov.DI.Annotations;
-using SPTarkov.Server.Core.DI;
 using SPTarkov.Server.Core.Models.Eft.Common;
 using SPTarkov.Server.Core.Models.Logging;
 using SPTarkov.Server.Core.Models.Utils;
@@ -9,7 +8,7 @@ using SPTarkov.Server.Core.Utils;
 
 namespace RaidOverhaulMain.Helpers;
 
-[Injectable(TypePriority = OnLoadOrder.PostSptModLoader + 1)]
+[Injectable(InjectionType.Singleton)]
 public class ROBossHelper(ISptLogger<ROBossHelper> logger, DatabaseService databaseService, RandomUtil randomUtil)
 {
     private static readonly Dictionary<string, string> _mapData = new()

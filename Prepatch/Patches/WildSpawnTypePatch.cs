@@ -27,14 +27,12 @@ namespace RaidOverhaulPrepatch.Patches
             var layers = new List<string>() { "Request", "KnightFight", "PmcBear", "PmcUsec", "ExURequest", "StationaryWS" };
             int baseBrainInt = 24;
 
-            // lead
-            var bot = new CustomWildSpawnType(199, "bosslegion", "Legion", baseBrainInt, true, true, false);
+            var legion = new CustomWildSpawnType(199, "bosslegion", "Legion", baseBrainInt, true, true, false);
+            legion.SetCountAsBossForStatistics(true);
+            legion.SetShouldUseFenceNoBossAttack(false, false);
+            legion.SetExcludedDifficulties(new List<int> { 0, 2, 3 });
 
-            bot.SetCountAsBossForStatistics(true);
-            bot.SetShouldUseFenceNoBossAttack(false, false);
-            bot.SetExcludedDifficulties(new List<int> { 0, 2, 3 });
-
-            SAINSettings settings = new SAINSettings(bot.WildSpawnTypeValue)
+            SAINSettings legionSettings = new SAINSettings(legion.WildSpawnTypeValue)
             {
                 Name = "Legion",
                 Description = "Leader of the Legion.",
@@ -44,18 +42,15 @@ namespace RaidOverhaulPrepatch.Patches
                 LayersToRemove = layers,
             };
 
-            bot.SetSAINSettings(settings);
+            legion.SetSAINSettings(legionSettings);
+            CustomWildSpawnTypeManager.RegisterWildSpawnType(legion, assembly);
 
-            CustomWildSpawnTypeManager.RegisterWildSpawnType(bot, assembly);
+            var legionnaire = new CustomWildSpawnType(200, "legionnaire", "Legion", baseBrainInt, true, true, false);
+            legionnaire.SetCountAsBossForStatistics(true);
+            legionnaire.SetShouldUseFenceNoBossAttack(false, false);
+            legionnaire.SetExcludedDifficulties(new List<int> { 0, 2, 3 });
 
-            // assault
-            bot = new CustomWildSpawnType(200, "legionnaire", "Legion", baseBrainInt, true, true, false);
-
-            bot.SetCountAsBossForStatistics(false);
-            bot.SetShouldUseFenceNoBossAttack(false, false);
-            bot.SetExcludedDifficulties(new List<int> { 0, 2, 3 });
-
-            settings = new SAINSettings(bot.WildSpawnTypeValue)
+            SAINSettings legionnaireSettings = new SAINSettings(legionnaire.WildSpawnTypeValue)
             {
                 Name = "Legionnaire",
                 Description = "A combat member of the Legion. Fights tooth and nail to protect their leader.",
@@ -65,9 +60,9 @@ namespace RaidOverhaulPrepatch.Patches
                 LayersToRemove = layers,
             };
 
-            bot.SetSAINSettings(settings);
+            legionnaire.SetSAINSettings(legionnaireSettings);
+            CustomWildSpawnTypeManager.RegisterWildSpawnType(legionnaire, assembly);
 
-            CustomWildSpawnTypeManager.RegisterWildSpawnType(bot, assembly);
             CustomWildSpawnTypeManager.AddSuitableGroup(new List<int> { 199, 200 });
         }
 

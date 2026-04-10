@@ -2,7 +2,6 @@
 using RaidOverhaulMain.Helpers;
 using RaidOverhaulMain.Models;
 using SPTarkov.DI.Annotations;
-using SPTarkov.Server.Core.DI;
 using SPTarkov.Server.Core.Models.Logging;
 using SPTarkov.Server.Core.Models.Spt.Config;
 using SPTarkov.Server.Core.Models.Utils;
@@ -12,7 +11,7 @@ using WTTServerCommonLib.Services;
 
 namespace RaidOverhaulMain.Controllers;
 
-[Injectable(TypePriority = OnLoadOrder.PostDBModLoader + 10)]
+[Injectable(InjectionType.Singleton)]
 public class ROCustomItems(
     ISptLogger<ROCustomItems> logger,
     DatabaseService databaseService,
@@ -44,10 +43,12 @@ public class ROCustomItems(
     {
         var locations = databaseService.GetLocations();
         const string realismKey = "SPT-Realism";
+
         await wttItemService.CreateCustomItems(assembly, "db/itemGen/currency");
         await wttItemService.CreateCustomItems(assembly, "db/itemGen/constItems");
         await wttItemService.CreateCustomItems(assembly, "db/itemGen/customKeys");
         await wttItemService.CreateCustomItems(assembly, "db/itemGen/cases");
+
         if (_config.EnableCustomItems)
         {
             if (helpers.CheckForMod(realismKey))
@@ -61,6 +62,7 @@ public class ROCustomItems(
             }
             await wttItemService.CreateCustomItems(assembly, "db/itemGen/weapons");
             await wttItemService.CreateCustomItems(assembly, "db/itemGen/gear");
+
             ApplyFleaBlacklistCustomWeapons();
             BuildSlots(helpers);
         }

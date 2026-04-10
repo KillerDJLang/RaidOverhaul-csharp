@@ -26,8 +26,6 @@ using UnityEngine;
 
 namespace RaidOverhaul
 {
-    [BepInDependency("me.sol.sain", BepInDependency.DependencyFlags.SoftDependency)]
-    [BepInDependency("xyz.drakia.bigbrain", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency("com.arys.unitytoolkit", BepInDependency.DependencyFlags.HardDependency)]
     [BepInPlugin(ClientInfo.ROGUID, ClientInfo.ROPluginName, ClientInfo.PluginVersion)]
     public class Plugin : BaseUnityPlugin
@@ -35,8 +33,7 @@ namespace RaidOverhaul
         public static string ModPath = Path.Combine(Environment.CurrentDirectory, "SPT", "user", "mods", "RaidOverhaul");
         public static readonly string PluginPath = Path.Combine(Environment.CurrentDirectory, "BepInEx", "plugins", "RaidOverhaul");
         public static readonly string ResourcePath = Path.Combine(PluginPath, "Resources");
-        internal static readonly List<string> _softDependancies = ["com.fika.core"];
-        internal static TextAsset _legionText;
+        internal static readonly List<string> _softDependancies = ["com.fika.core", "xyz.drakia.bigbrain", "me.sol.sain"];
 
         private static GameObject _hook;
         public static EventController _ecScript;
@@ -147,7 +144,6 @@ namespace RaidOverhaul
             new KeyPatch().Enable();
             new KeycardPatch().Enable();
             new OnDeadPatch().Enable();
-            new EnableEntryPointPatch().Enable();
             new RandomizeDefaultStatePatch().Enable();
             new EventExfilPatch().Enable();
             new BotNVGPatch().Enable();
@@ -227,12 +223,10 @@ namespace RaidOverhaul
                 );
             }
 
-            if (_session != null && ClientAppUtils.GetMainApp().GetClientBackEndSession() == null)
+            if (_session == null)
             {
-                return;
+                _session = ClientAppUtils.GetMainApp()?.GetClientBackEndSession();
             }
-
-            _session = ClientAppUtils.GetMainApp().GetClientBackEndSession();
         }
 
         private void RecreateGameObject()

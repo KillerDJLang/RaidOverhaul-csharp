@@ -580,10 +580,7 @@ namespace RaidOverhaul.Controllers
                 )
             )
             {
-                if (RemoveCurrency("SpecialReqForms", 1))
-                {
-                    OpenGearTransferUI();
-                }
+                OpenGearTransferUI();
             }
             GUI.enabled = true;
 
@@ -921,6 +918,12 @@ namespace RaidOverhaul.Controllers
 
                 if (itemsToTransfer.Count == 0)
                 {
+                    return;
+                }
+
+                if (!RemoveCurrency("SpecialReqForms", 1))
+                {
+                    Plugin._log.LogError("Failed to consume Special Requisition Form for gear transfer");
                     return;
                 }
 

@@ -37,27 +37,37 @@ public sealed record ModMetadata : AbstractModMetadata
     public override string License { get; init; } = "CC BY-NC-ND 4.0";
 }
 
-[Injectable(TypePriority = OnLoadOrder.PostDBModLoader + 10)]
+[Injectable(InjectionType = InjectionType.Singleton, TypePriority = OnLoadOrder.PostDBModLoader + 10)]
 public sealed class ROMain(
     WTTServerCommonLib.WTTServerCommonLib wttCommon,
     ISptLogger<ROMain> logger,
     ROStaticRouter roStaticRouter,
     ROCustomItems roCustomItems,
+    ROBossHelper roBossHelper,
     RODbEdits roDbEdits,
     ROTrader roTrader,
-    ROHelpers helpers
+    ROHelpers helpers,
+    MoreBotsServer.MoreBotsAPI moreBotsLib,
+    MoreBotsServer.Services.FactionService factionService,
+    MoreBotsServer.Services.MoreBotsCustomBotTypeService customBotTypeService,
+    WTTServerCommonLib.WTTServerCommonLib commonLib,
+    IReadOnlyList<SptMod> modList
 ) : IOnLoad
 {
     public async Task OnLoad()
     {
         var assembly = Assembly.GetExecutingAssembly();
         var devFilesPath = Path.Combine("db", "devFiles");
+        var hideoutCraftsPath = Path.Combine("db", "itemGen", "hideoutCrafts");
         var config = helpers.LoadConfig<ConfigFile>(assembly, "config", "config.json");
         var debugConfig = helpers.LoadConfig<DebugFile>(assembly, devFilesPath, "debugOptions.json");
         var eventsConfig = helpers.LoadConfig<EventsConfigFile>(assembly, "config", "eventWeightings.json");
         var seasonsConfig = helpers.LoadConfig<SeasonalProgression>(assembly, devFilesPath, "seasonsProgressionFile.json");
-        var ammoListFile = helpers.LoadConfig<AmmoStackList>(assembly, devFilesPath, "ammoStackList.json");
         var legionConfig = helpers.LoadConfig<LegionProgression>(assembly, "config", "legionProgressionFile.json");
+        var ammoListFile = helpers.LoadConfig<AmmoStackList>(assembly, devFilesPath, "ammoStackList.json");
+        var botLoadouts = Path.Combine("db", "bots", "botLoadouts");
+        var typeList = new List<string> { "bosslegion", "legionnaire" };
+        var typeDictionary = new Dictionary<int, string>() { { 199, "bosslegion" }, { 200, "legionnaire" } };
 
         if (debugConfig.DebugMode && debugConfig.DumpData)
         {
@@ -71,44 +81,13 @@ public sealed class ROMain(
         await roCustomItems.BuildCustomItems();
         roTrader.BuildTrader();
         roDbEdits.BuildDbEdits();
+        await wttCommon.CustomHideoutRecipeService.CreateHideoutRecipes(assembly, hideoutCraftsPath);
 
         if (config.EnableCustomBoss)
         {
             await wttCommon.CustomLocaleService.CreateCustomLocales(assembly, Path.Combine("db", "locales", "bossEnabled"));
-        }
 
-        if (!config.EnableCustomBoss)
-        {
-            await wttCommon.CustomLocaleService.CreateCustomLocales(assembly, Path.Combine("db", "locales", "bossDisabled"));
-        }
-
-        ROLogger.Log(logger, "Raid Overhaul Finished Loaded", LogTextColor.Magenta);
-
-        await Task.CompletedTask;
-    }
-
-    [Injectable(InjectionType = InjectionType.Singleton, TypePriority = OnLoadOrder.PostDBModLoader + 99001)]
-    public sealed class ROBotSetup(
-        ISptLogger<ROMain> logger,
-        MoreBotsServer.MoreBotsAPI moreBotsLib,
-        MoreBotsServer.Services.MoreBotsCustomBotTypeService customBotTypeService,
-        MoreBotsServer.Services.FactionService factionService,
-        WTTServerCommonLib.WTTServerCommonLib commonLib,
-        IReadOnlyList<SptMod> modList,
-        ROBossHelper roBossHelper,
-        ROHelpers helpers
-    ) : IOnLoad
-    {
-        public async Task OnLoad()
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            var devFilesPath = Path.Combine("db", "devFiles");
-            var config = helpers.LoadConfig<ConfigFile>(assembly, "config", "config.json");
-            var debugConfig = helpers.LoadConfig<DebugFile>(assembly, devFilesPath, "debugOptions.json");
-            var legionConfig = helpers.LoadConfig<LegionProgression>(assembly, "config", "legionProgressionFile.json");
-            var botLoadouts = Path.Combine("db", "bots", "botLoadouts");
-            var typeList = new List<string> { "bosslegion", "legionnaire" };
-            var typeDictionary = new Dictionary<int, string>() { { 199, "bosslegion" }, { 200, "legionnaire" } };
+            factionService.Factions.Add("legion", new Faction() { Name = "legion", BotTypes = { (WildSpawnType)199, (WildSpawnType)200 } });
 
             if (config.EnableCustomItems)
             {
@@ -150,25 +129,17 @@ public sealed class ROMain(
                 factionService.AddEnemyByFaction(typeList, "blackdiv");
             }
 
-            if (config.EnableCustomBoss)
-            {
-                roBossHelper.SetBossSpawns(config, legionConfig, debugConfig);
-            }
-
+            roBossHelper.SetBossSpawns(config, legionConfig, debugConfig);
             ROLogger.Log(logger, "Custom bots finished loading", LogTextColor.Magenta);
-
-            await Task.CompletedTask;
         }
-    }
 
-    [Injectable(InjectionType = InjectionType.Singleton, TypePriority = OnLoadOrder.PostDBModLoader + 11)]
-    public sealed class ROLegionFaction(MoreBotsServer.Services.FactionService factionService) : IOnLoad
-    {
-        public async Task OnLoad()
+        if (!config.EnableCustomBoss)
         {
-            factionService.Factions.Add("legion", new Faction() { Name = "legion", BotTypes = { (WildSpawnType)199, (WildSpawnType)200 } });
-
-            await Task.CompletedTask;
+            await wttCommon.CustomLocaleService.CreateCustomLocales(assembly, Path.Combine("db", "locales", "bossDisabled"));
         }
+
+        ROLogger.Log(logger, "Raid Overhaul Finished Loaded", LogTextColor.Magenta);
+
+        await Task.CompletedTask;
     }
 }

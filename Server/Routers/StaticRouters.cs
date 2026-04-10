@@ -27,15 +27,15 @@ public class ROStaticRouter : StaticRouter
     private static EventsConfigFile? _eventsConfig;
     private static SeasonalProgression? _seasonsConfig;
     private static LegionProgression? _legionConfig;
-    private static RODbEdits _dbController;
-    private static DatabaseService _databaseService;
-    private static ROHelpers _helpers;
-    private static ROBossHelper _bossHelper;
-    private static ModHelper _modHelper;
-    private static TraderHelper _traderHelper;
-    private static TransferRequestCallbacks _transferRequestCallbacks;
-    private static LogToServerRequestCallbacks _serverLogCallbacks;
-    private static ISptLogger<ROStaticRouter> _logger;
+    private static RODbEdits? _dbController;
+    private static DatabaseService? _databaseService;
+    private static ROHelpers? _helpers;
+    private static ROBossHelper? _bossHelper;
+    private static ModHelper? _modHelper;
+    private static TraderHelper? _traderHelper;
+    private static TransferRequestCallbacks? _transferRequestCallbacks;
+    private static LogToServerRequestCallbacks? _serverLogCallbacks;
+    private static ISptLogger<ROStaticRouter>? _logger;
 
     public ROStaticRouter(
         ISptLogger<ROStaticRouter> logger,
@@ -122,7 +122,7 @@ public class ROStaticRouter : StaticRouter
 
         if (_config.BackupProfile && !Directory.Exists(pluginPath))
         {
-            _helpers.ProfileBackup(sessionId, assembly);
+            _ = Task.Run(() => _helpers.ProfileBackup(sessionId, assembly));
         }
 
         return new ValueTask<string>(output ?? string.Empty);
@@ -267,71 +267,58 @@ public class ROStaticRouter : StaticRouter
                 if (victimRole.Contains("bosslegion"))
                 {
                     _traderHelper.AddStandingToTrader(sessionId, traderRepToModify, 0.15);
-                    return;
+                }
+                else if (victimRole.Contains("legionnaire"))
+                {
+                    _traderHelper.AddStandingToTrader(sessionId, traderRepToModify, 0.03);
                 }
                 else if (victimRole.Contains("bossboar"))
                 {
-                    _traderHelper.AddStandingToTrader(sessionId, traderRepToModify, 0.15);
-                    return;
+                    _traderHelper.AddStandingToTrader(sessionId, traderRepToModify, 0.10);
                 }
                 else if (victimRole.Contains("bossbully"))
                 {
-                    _traderHelper.AddStandingToTrader(sessionId, traderRepToModify, 0.15);
-                    return;
+                    _traderHelper.AddStandingToTrader(sessionId, traderRepToModify, 0.10);
                 }
                 else if (victimRole.Contains("bossgluhar"))
                 {
-                    _traderHelper.AddStandingToTrader(sessionId, traderRepToModify, 0.15);
-                    return;
+                    _traderHelper.AddStandingToTrader(sessionId, traderRepToModify, 0.10);
                 }
                 else if (victimRole.Contains("bosskilla"))
                 {
-                    _traderHelper.AddStandingToTrader(sessionId, traderRepToModify, 0.15);
-                    return;
+                    _traderHelper.AddStandingToTrader(sessionId, traderRepToModify, 0.10);
                 }
                 else if (victimRole.Contains("bossknight"))
                 {
-                    _traderHelper.AddStandingToTrader(sessionId, traderRepToModify, 0.15);
-                    return;
+                    _traderHelper.AddStandingToTrader(sessionId, traderRepToModify, 0.10);
                 }
                 else if (victimRole.Contains("bosskojaniy"))
                 {
-                    _traderHelper.AddStandingToTrader(sessionId, traderRepToModify, 0.15);
-                    return;
+                    _traderHelper.AddStandingToTrader(sessionId, traderRepToModify, 0.10);
                 }
                 else if (victimRole.Contains("bosskolontay"))
                 {
-                    _traderHelper.AddStandingToTrader(sessionId, traderRepToModify, 0.15);
-                    return;
+                    _traderHelper.AddStandingToTrader(sessionId, traderRepToModify, 0.10);
                 }
                 else if (victimRole.Contains("bosssanitar"))
                 {
-                    _traderHelper.AddStandingToTrader(sessionId, traderRepToModify, 0.15);
-                    return;
+                    _traderHelper.AddStandingToTrader(sessionId, traderRepToModify, 0.10);
                 }
                 else if (victimRole.Contains("bosstagilla"))
                 {
-                    _traderHelper.AddStandingToTrader(sessionId, traderRepToModify, 0.15);
-                    return;
+                    _traderHelper.AddStandingToTrader(sessionId, traderRepToModify, 0.10);
                 }
                 else if (victimRole.Contains("bosszryachiy"))
                 {
-                    _traderHelper.AddStandingToTrader(sessionId, traderRepToModify, 0.15);
-                    return;
+                    _traderHelper.AddStandingToTrader(sessionId, traderRepToModify, 0.10);
                 }
                 else if (victimRole.Contains("followerbigpipe"))
                 {
-                    _traderHelper.AddStandingToTrader(sessionId, traderRepToModify, 0.15);
-                    return;
+                    _traderHelper.AddStandingToTrader(sessionId, traderRepToModify, 0.10);
                 }
                 else if (victimRole.Contains("followerbirdeye"))
                 {
-                    _traderHelper.AddStandingToTrader(sessionId, traderRepToModify, 0.15);
-                    return;
-                }
-                else
-                {
-                    continue;
+                    _traderHelper.AddStandingToTrader(sessionId, traderRepToModify, 0.10);
                 }
             }
             catch (Exception ex)
@@ -358,7 +345,7 @@ public class ROStaticRouter : StaticRouter
                 if (victimRole.Contains("bosslegion"))
                 {
                     bossLegionChance = 10;
-                    return;
+                    break;
                 }
                 else
                 {
@@ -396,9 +383,9 @@ public class ROStaticRouter : StaticRouter
         }
 
         var assembly = Assembly.GetExecutingAssembly();
-        var legionProgressionData = new LegionProgression { LegionChance = bossLegionChance };
+        _legionConfig.LegionChance = bossLegionChance;
 
-        _helpers.WriteConfigFile(legionProgressionData, assembly, "config", "legionProgressionFile.json");
+        _helpers.WriteConfigFile(_legionConfig, assembly, "config", "legionProgressionFile.json");
 
         return;
     }

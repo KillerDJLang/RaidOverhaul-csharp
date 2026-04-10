@@ -2,7 +2,6 @@
 using RaidOverhaulMain.Helpers;
 using RaidOverhaulMain.Models;
 using SPTarkov.DI.Annotations;
-using SPTarkov.Server.Core.DI;
 using SPTarkov.Server.Core.Helpers;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
 using SPTarkov.Server.Core.Models.Logging;
@@ -14,7 +13,7 @@ using Path = System.IO.Path;
 
 namespace RaidOverhaulMain.Controllers;
 
-[Injectable(TypePriority = OnLoadOrder.PostDBModLoader + 11)]
+[Injectable(InjectionType.Singleton)]
 public class ROTrader(
     ISptLogger<ROTrader> logger,
     ConfigServer configServer,
@@ -27,7 +26,6 @@ public class ROTrader(
 )
 {
     private readonly TraderConfig _traderConfig = configServer.GetConfig<TraderConfig>();
-    private readonly RagfairConfig _ragfairConfig = configServer.GetConfig<RagfairConfig>();
     private static ConfigFile? _config;
     private static DebugFile? _debugConfig;
 
@@ -54,7 +52,6 @@ public class ROTrader(
             {
                 imageRouter.AddRoute(traderBase?.Avatar.Replace(".jpg", ""), traderImagePath);
                 traderHelper.SetTraderUpdateTime(_traderConfig, traderBase, 3600, 7200);
-                _ragfairConfig.Traders.TryAdd(helpers.FetchIdFromMap("ReqShop", ClassMaps.TraderMaps), true);
                 traderHelper.AddTraderWithEmptyAssortToDb(traderBase);
                 traderHelper.AddTraderToLocales(
                     traderBase,
@@ -72,7 +69,6 @@ public class ROTrader(
             {
                 imageRouter.AddRoute(traderBaseNoBoss?.Avatar.Replace(".jpg", ""), traderImagePath);
                 traderHelper.SetTraderUpdateTime(_traderConfig, traderBase, 3600, 7200);
-                _ragfairConfig.Traders.TryAdd(helpers.FetchIdFromMap("ReqShop", ClassMaps.TraderMaps), true);
                 traderHelper.AddTraderWithEmptyAssortToDb(traderBaseNoBoss);
                 traderHelper.AddTraderToLocales(
                     traderBaseNoBoss,
