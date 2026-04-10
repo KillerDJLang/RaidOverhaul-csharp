@@ -55,6 +55,7 @@ Currently implemented events are:
 - **Shopping Spree** — Raises your rep with every trader by 1 for a set period of time, then reverts back to normal
 - **Exfil Lockdown** — Locks down all exfils for 10 minutes, after which they become available again
 - **Artillery** — Calls in mortar strikes on your position 30 seconds after the event starts
+- **Invasion** _ Spawns in a random boss with their followers
 - **Exfil Menu** *(hotkey configurable in the BepInEx menu)* — Allows you to spend any of the new Requisition currencies to either call the train for exfil on supported maps, call for an exfil with a delay (cheaper option), exfil immediately (expensive option), or exfil a set amount of gear/loot that you choose in the UI, which you will receive in a message from the Req Shop post-raid
 
 ---
@@ -79,6 +80,14 @@ To remove Raid Overhaul and prevent any errors, you need to remove the mod files
 | **Prepatch** | `BepInEx/patchers` | `RO-Prepatch.dll` |
 | **Plugin** | `BepInEx/plugins` | Entire `RaidOverhaul` folder |
 | **Server** | `user/mods` | Entire `RaidOverhaul` folder |
+
+**NOTE** _ If you're using SAIN with this you'll also need to remove the related default bot config files from the SAIN folder to prevent bugs with SAIN.
+
+| Component | Location | What to Remove |
+|-----------|----------|----------------|
+| **Default Bot Configs** | `BepInEx/plugins/SAIN/Default Bot Config Values` | `Legion.json` && `Legionnaire.json` |
+
+You can also just delete the whole `Default Bot Config Values` folder and let SAIN regenerate it
 
 BOOM — you've uninstalled the mod and not borked everything.
 
