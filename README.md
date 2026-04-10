@@ -81,7 +81,7 @@ To remove Raid Overhaul and prevent any errors, you need to remove the mod files
 | **Plugin** | `BepInEx/plugins` | Entire `RaidOverhaul` folder |
 | **Server** | `user/mods` | Entire `RaidOverhaul` folder |
 
-**NOTE** _ If you're using SAIN with this you'll also need to remove the related default bot config files from the SAIN folder to prevent bugs with SAIN.
+**NOTE** — If you're using SAIN with this you'll also need to remove the related default bot config files from the SAIN folder to prevent bugs with SAIN.
 
 | Component | Location | What to Remove |
 |-----------|----------|----------------|
