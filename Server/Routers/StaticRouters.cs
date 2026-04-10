@@ -381,6 +381,10 @@ public class ROStaticRouter : StaticRouter
         {
             bossLegionChance += 1.5;
         }
+        if (bossLegionChance > 100)
+        {
+            bossLegionChance = 100;
+        }
 
         var assembly = Assembly.GetExecutingAssembly();
         _legionConfig.LegionChance = bossLegionChance;

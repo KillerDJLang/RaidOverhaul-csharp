@@ -1360,11 +1360,10 @@ namespace RaidOverhaul.Controllers
                 );
 
                 var exfilSession = Singleton<AbstractGame>.Instance as EndByExitTrigerScenario.GInterface146;
-                exfilSession.StopSession(
-                    GamePlayerOwner.MyPlayer.ProfileId,
-                    ExitStatus.Survived,
-                    Singleton<GameWorld>.Instance.ExfiltrationController.ExfiltrationPoints.FirstOrDefault().name
-                );
+                string profileId = GamePlayerOwner.MyPlayer.ProfileId;
+                string exitName = Singleton<GameWorld>.Instance.ExfiltrationController.ExfiltrationPoints.FirstOrDefault().name;
+
+                exfilSession.StopSession(profileId, ExitStatus.Survived, exitName);
 
                 _pmcExfilEventRunning = false;
             }
@@ -1373,11 +1372,10 @@ namespace RaidOverhaul.Controllers
         internal void ExfilNow()
         {
             var exfilSession = Singleton<AbstractGame>.Instance as EndByExitTrigerScenario.GInterface146;
-            exfilSession.StopSession(
-                GamePlayerOwner.MyPlayer.ProfileId,
-                ExitStatus.Survived,
-                Singleton<GameWorld>.Instance.ExfiltrationController.ExfiltrationPoints.FirstOrDefault().name
-            );
+            string profileId = GamePlayerOwner.MyPlayer.ProfileId;
+            string exitName = Singleton<GameWorld>.Instance.ExfiltrationController.ExfiltrationPoints.FirstOrDefault().name;
+
+            exfilSession.StopSession(profileId, ExitStatus.Survived, exitName);
         }
 
         internal void StartInvasion()

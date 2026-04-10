@@ -29,7 +29,7 @@ public sealed record ModMetadata : AbstractModMetadata
     public override Dictionary<string, SemanticVersioning.Range>? ModDependencies { get; init; } =
         new()
         {
-            { "com.morebotsapi.tacticaltoaster", new SemanticVersioning.Range(">=1.0.0") },
+            { "com.morebotsapi.tacticaltoaster", new SemanticVersioning.Range(">=1.1.0") },
             { "com.wtt.commonlib", new SemanticVersioning.Range(">=2.0.15") },
         };
     public override string? Url { get; init; }
@@ -39,7 +39,6 @@ public sealed record ModMetadata : AbstractModMetadata
 
 [Injectable(InjectionType = InjectionType.Singleton, TypePriority = OnLoadOrder.PostDBModLoader + 10)]
 public sealed class ROMain(
-    WTTServerCommonLib.WTTServerCommonLib wttCommon,
     ISptLogger<ROMain> logger,
     ROStaticRouter roStaticRouter,
     ROCustomItems roCustomItems,
@@ -81,11 +80,11 @@ public sealed class ROMain(
         await roCustomItems.BuildCustomItems();
         roTrader.BuildTrader();
         roDbEdits.BuildDbEdits();
-        await wttCommon.CustomHideoutRecipeService.CreateHideoutRecipes(assembly, hideoutCraftsPath);
+        await commonLib.CustomHideoutRecipeService.CreateHideoutRecipes(assembly, hideoutCraftsPath);
 
         if (config.EnableCustomBoss)
         {
-            await wttCommon.CustomLocaleService.CreateCustomLocales(assembly, Path.Combine("db", "locales", "bossEnabled"));
+            await commonLib.CustomLocaleService.CreateCustomLocales(assembly, Path.Combine("db", "locales", "bossEnabled"));
 
             factionService.Factions.Add("legion", new Faction() { Name = "legion", BotTypes = { (WildSpawnType)199, (WildSpawnType)200 } });
 
@@ -135,7 +134,7 @@ public sealed class ROMain(
 
         if (!config.EnableCustomBoss)
         {
-            await wttCommon.CustomLocaleService.CreateCustomLocales(assembly, Path.Combine("db", "locales", "bossDisabled"));
+            await commonLib.CustomLocaleService.CreateCustomLocales(assembly, Path.Combine("db", "locales", "bossDisabled"));
         }
 
         ROLogger.Log(logger, "Raid Overhaul Finished Loaded", LogTextColor.Magenta);

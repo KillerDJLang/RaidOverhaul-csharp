@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using BepInEx;
+using Comfort.Common;
+using EFT;
 using EFT.InventoryLogic;
 using RaidOverhaul.Helpers;
 using UnityEngine;
@@ -16,10 +19,225 @@ namespace RaidOverhaul.Controllers
         private GUIStyle _buttonStyle;
         private GUIStyle _labelStyle;
         private GUIStyle _headerStyle;
+        private GUIStyle _dropdownButtonStyle;
+        private GUIStyle _dropdownItemStyle;
         private bool _stylesInitialized;
         private bool _hasInitialized;
 
         private EventController _eventController;
+
+        private int _selectedBossIndex;
+        private bool _bossDropdownOpen;
+        private Vector2 _bossDropdownScroll;
+
+        // Matches the order of the BossInvasionConfig list so the indexes align when selecting from the dropdown menu
+        // This ensures that the correct boss config is applied when a boss is selected from the debug UI
+        // When adding new entries in the future, DON'T FORGET TO KEEP THIS IN SYNC BAKAAAAA
+        private static readonly string[] _bossDisplayNames =
+        {
+            "Kaban (bossBoar)",
+            "Reshala (bossBully)",
+            "Gluhar (bossGluhar)",
+            "Killa (bossKilla)",
+            "Knight & Goons (bossKnight)",
+            "Shturman (bossKojaniy)",
+            "Kolontay (bossKolontay)",
+            "Sanitar (bossSanitar)",
+            "Tagilla (bossTagilla)",
+            "Zryachiy (bossZryachiy)",
+            "Legion (bossLegion)",
+            "Legionnaire Squad",
+            "Rogue Squad (exUsec)",
+        };
+
+        private static readonly List<BossInvasionConfig> _bossSpawnConfigs = new List<BossInvasionConfig>
+        {
+            new BossInvasionConfig
+            {
+                BossName = "bossBoar",
+                BossEscorts = "followerBoar",
+                BossType = WildSpawnType.bossBoar,
+                BossEscortType = WildSpawnType.followerBoar,
+                BossEscortCount = 6,
+                AdditionalSupports = new[]
+                {
+                    new WildSpawnSupports
+                    {
+                        BossEscortType = WildSpawnType.followerBoar,
+                        BossEscortAmount = 4,
+                        BossEscortDifficult = new[] { "normal", "normal", "normal", "normal" },
+                    },
+                    new WildSpawnSupports
+                    {
+                        BossEscortType = WildSpawnType.followerBoarClose1,
+                        BossEscortAmount = 1,
+                        BossEscortDifficult = new[] { "normal" },
+                    },
+                    new WildSpawnSupports
+                    {
+                        BossEscortType = WildSpawnType.followerBoarClose2,
+                        BossEscortAmount = 1,
+                        BossEscortDifficult = new[] { "normal" },
+                    },
+                },
+            },
+            new BossInvasionConfig
+            {
+                BossName = "bossBully",
+                BossEscorts = "followerBully",
+                BossType = WildSpawnType.bossBully,
+                BossEscortType = WildSpawnType.followerBully,
+                BossEscortCount = 4,
+                AdditionalSupports = null,
+            },
+            new BossInvasionConfig
+            {
+                BossName = "bossGluhar",
+                BossEscorts = "followerGluharSecurity",
+                BossType = WildSpawnType.bossGluhar,
+                BossEscortType = WildSpawnType.followerGluharSecurity,
+                BossEscortCount = 2,
+                AdditionalSupports = new[]
+                {
+                    new WildSpawnSupports
+                    {
+                        BossEscortType = WildSpawnType.followerGluharAssault,
+                        BossEscortAmount = 2,
+                        BossEscortDifficult = new[] { "normal", "normal" },
+                    },
+                    new WildSpawnSupports
+                    {
+                        BossEscortType = WildSpawnType.followerGluharSecurity,
+                        BossEscortAmount = 2,
+                        BossEscortDifficult = new[] { "normal", "normal" },
+                    },
+                    new WildSpawnSupports
+                    {
+                        BossEscortType = WildSpawnType.followerGluharScout,
+                        BossEscortAmount = 2,
+                        BossEscortDifficult = new[] { "normal", "normal" },
+                    },
+                },
+            },
+            new BossInvasionConfig
+            {
+                BossName = "bossKilla",
+                BossEscorts = "followerTagilla",
+                BossType = WildSpawnType.bossKilla,
+                BossEscortType = WildSpawnType.followerTagilla,
+                BossEscortCount = 0,
+                AdditionalSupports = null,
+            },
+            new BossInvasionConfig
+            {
+                BossName = "bossKnight",
+                BossEscorts = "exUsec",
+                BossType = WildSpawnType.bossKnight,
+                BossEscortType = WildSpawnType.exUsec,
+                BossEscortCount = 2,
+                AdditionalSupports = new[]
+                {
+                    new WildSpawnSupports
+                    {
+                        BossEscortType = WildSpawnType.followerBigPipe,
+                        BossEscortAmount = 1,
+                        BossEscortDifficult = new[] { "normal" },
+                    },
+                    new WildSpawnSupports
+                    {
+                        BossEscortType = WildSpawnType.followerBirdEye,
+                        BossEscortAmount = 1,
+                        BossEscortDifficult = new[] { "normal" },
+                    },
+                },
+            },
+            new BossInvasionConfig
+            {
+                BossName = "bossKojaniy",
+                BossEscorts = "followerKojaniy",
+                BossType = WildSpawnType.bossKojaniy,
+                BossEscortType = WildSpawnType.followerKojaniy,
+                BossEscortCount = 3,
+                AdditionalSupports = null,
+            },
+            new BossInvasionConfig
+            {
+                BossName = "bossKolontay",
+                BossEscorts = "followerKolontaySecurity",
+                BossType = WildSpawnType.bossKolontay,
+                BossEscortType = WildSpawnType.followerKolontaySecurity,
+                BossEscortCount = 2,
+                AdditionalSupports = new[]
+                {
+                    new WildSpawnSupports
+                    {
+                        BossEscortType = WildSpawnType.followerKolontayAssault,
+                        BossEscortAmount = 2,
+                        BossEscortDifficult = new[] { "normal", "normal" },
+                    },
+                    new WildSpawnSupports
+                    {
+                        BossEscortType = WildSpawnType.followerKolontaySecurity,
+                        BossEscortAmount = 2,
+                        BossEscortDifficult = new[] { "normal", "normal" },
+                    },
+                },
+            },
+            new BossInvasionConfig
+            {
+                BossName = "bossSanitar",
+                BossEscorts = "followerSanitar",
+                BossType = WildSpawnType.bossSanitar,
+                BossEscortType = WildSpawnType.followerSanitar,
+                BossEscortCount = 3,
+                AdditionalSupports = null,
+            },
+            new BossInvasionConfig
+            {
+                BossName = "bossTagilla",
+                BossEscorts = "followerBully",
+                BossType = WildSpawnType.bossTagilla,
+                BossEscortType = WildSpawnType.followerBully,
+                BossEscortCount = 0,
+                AdditionalSupports = null,
+            },
+            new BossInvasionConfig
+            {
+                BossName = "bossZryachiy",
+                BossEscorts = "followerZryachiy",
+                BossType = WildSpawnType.bossZryachiy,
+                BossEscortType = WildSpawnType.followerZryachiy,
+                BossEscortCount = 2,
+                AdditionalSupports = null,
+            },
+            new BossInvasionConfig
+            {
+                BossName = "bosslegion",
+                BossEscorts = "legionnaire",
+                BossType = (WildSpawnType)199,
+                BossEscortType = (WildSpawnType)200,
+                BossEscortCount = 2,
+                AdditionalSupports = null,
+            },
+            new BossInvasionConfig
+            {
+                BossName = "legionnaire",
+                BossEscorts = "legionnaire",
+                BossType = (WildSpawnType)200,
+                BossEscortType = (WildSpawnType)200,
+                BossEscortCount = 3,
+                AdditionalSupports = null,
+            },
+            new BossInvasionConfig
+            {
+                BossName = "exUsec",
+                BossEscorts = "exUsec",
+                BossType = WildSpawnType.exUsec,
+                BossEscortType = WildSpawnType.exUsec,
+                BossEscortCount = 4,
+                AdditionalSupports = null,
+            },
+        };
 
         private const KeyCode TOGGLE_KEY = KeyCode.F8;
 
@@ -135,6 +353,26 @@ namespace RaidOverhaul.Controllers
                 fontSize = 16,
                 fontStyle = FontStyle.Bold,
                 alignment = TextAnchor.MiddleCenter,
+            };
+
+            _dropdownButtonStyle = new GUIStyle(GUI.skin.button)
+            {
+                normal = { background = MakeTex(2, 2, new Color(0.25f, 0.25f, 0.25f, 0.9f)), textColor = Color.white },
+                hover = { background = MakeTex(2, 2, new Color(0.35f, 0.35f, 0.35f, 0.9f)), textColor = Color.white },
+                active = { background = MakeTex(2, 2, new Color(0.2f, 0.2f, 0.2f, 0.9f)), textColor = Color.white },
+                fontSize = 13,
+                alignment = TextAnchor.MiddleLeft,
+                padding = new RectOffset(10, 10, 5, 5),
+            };
+
+            _dropdownItemStyle = new GUIStyle(GUI.skin.button)
+            {
+                normal = { background = MakeTex(2, 2, new Color(0.2f, 0.2f, 0.2f, 0.95f)), textColor = Color.white },
+                hover = { background = MakeTex(2, 2, new Color(0.3f, 0.3f, 0.8f)), textColor = Color.white },
+                active = { background = MakeTex(2, 2, new Color(0.15f, 0.15f, 0.15f, 0.95f)), textColor = Color.white },
+                fontSize = 13,
+                alignment = TextAnchor.MiddleLeft,
+                padding = new RectOffset(15, 10, 4, 4),
             };
 
             _stylesInitialized = true;
@@ -269,6 +507,40 @@ namespace RaidOverhaul.Controllers
                 }
             );
 
+            GUILayout.Space(10);
+
+            DrawSection(
+                "Spawn Bosses",
+                () =>
+                {
+                    GUILayout.Label("Select Boss:", _labelStyle);
+                    GUILayout.Space(3);
+
+                    if (GUILayout.Button(_bossDisplayNames[_selectedBossIndex] + "  ▼", _dropdownButtonStyle, GUILayout.Height(30)))
+                    {
+                        _bossDropdownOpen = !_bossDropdownOpen;
+                    }
+
+                    if (_bossDropdownOpen)
+                    {
+                        _bossDropdownScroll = GUILayout.BeginScrollView(_bossDropdownScroll, GUILayout.Height(150));
+                        for (int i = 0; i < _bossDisplayNames.Length; i++)
+                        {
+                            string label = _selectedBossIndex == i ? "► " + _bossDisplayNames[i] : "   " + _bossDisplayNames[i];
+                            if (GUILayout.Button(label, _dropdownItemStyle, GUILayout.Height(26)))
+                            {
+                                _selectedBossIndex = i;
+                                _bossDropdownOpen = false;
+                            }
+                        }
+                        GUILayout.EndScrollView();
+                    }
+
+                    GUILayout.Space(5);
+                    DrawButton("Spawn Selected Boss", () => SpawnBoss(_bossSpawnConfigs[_selectedBossIndex]));
+                }
+            );
+
             GUILayout.EndScrollView();
 
             GUILayout.Space(10);
@@ -323,6 +595,67 @@ namespace RaidOverhaul.Controllers
                 Plugin._log.LogInfo($"Template ID: {item.TemplateId}, locale name: {item.LocalizedName()}");
                 Utils.LogToServerConsole($"Template ID: {item.TemplateId}, locale name: {item.LocalizedName()}");
             }
+        }
+
+        private static void SpawnBoss(BossInvasionConfig bossConfig)
+        {
+            var spawner = Singleton<IBotGame>.Instance?.BotsController?.BotSpawner;
+            if (spawner == null)
+            {
+                return;
+            }
+
+            var bossZones = spawner.SpawnZones(false).Where(z => z.CanSpawnBoss).ToList();
+            if (bossZones.Count == 0)
+            {
+                return;
+            }
+
+            var zone = bossZones[new System.Random().Next(bossZones.Count)];
+
+            var wave = new BossLocationSpawn
+            {
+                BossName = bossConfig.BossName,
+                BossType = bossConfig.BossType,
+                BossChance = 100f,
+                BossPlayer = false,
+                BossDifficult = "normal",
+                BossDif = BotDifficulty.normal,
+                BossZone = zone.NameZone,
+                BornZone = zone.NameZone,
+                BossEscortType = bossConfig.BossEscorts,
+                EscortType = bossConfig.BossEscortType,
+                BossEscortAmount = bossConfig.BossEscortCount.ToString(),
+                EscortCount = bossConfig.BossEscortCount,
+                BossEscortDifficult = "normal",
+                EscortDif = BotDifficulty.normal,
+                Supports = bossConfig.AdditionalSupports,
+                ForceSpawn = true,
+                IgnoreMaxBots = true,
+                ShallSpawn = true,
+                Time = -1f,
+                TriggerType = SpawnTriggerType.none,
+                TriggerId = "",
+                TriggerName = "",
+            };
+
+            if (bossConfig.AdditionalSupports != null && bossConfig.AdditionalSupports.Length > 0)
+            {
+                wave.SubDatas = new List<BossLocationSpawnSubData>();
+                int totalEscorts = bossConfig.BossEscortCount;
+
+                foreach (var support in bossConfig.AdditionalSupports)
+                {
+                    var difficulty = (BotDifficulty)Enum.Parse(typeof(BotDifficulty), support.BossEscortDifficult[0]);
+                    var subData = new BossLocationSpawnSubData(support.BossEscortAmount, support.BossEscortType, difficulty);
+                    wave.SubDatas.Add(subData);
+                    totalEscorts += subData.BossEscortAmount;
+                }
+
+                wave.EscortCount = totalEscorts;
+            }
+
+            spawner.ActivateBotsByWave(wave);
         }
     }
 }
