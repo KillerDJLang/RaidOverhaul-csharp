@@ -41,7 +41,7 @@ public class ROCustomItems(
 
     private async Task LoadCustomItems(Assembly assembly, ROHelpers helpers)
     {
-        var locations = databaseService.GetLocations();
+        //var locations = databaseService.GetLocations();
         const string realismKey = "SPT-Realism";
 
         await wttItemService.CreateCustomItems(assembly, "db/itemGen/currency");
@@ -66,9 +66,11 @@ public class ROCustomItems(
             ApplyFleaBlacklistCustomWeapons();
             BuildSlots(helpers);
         }
-        var labsKeys = locations.Laboratory.Base.AccessKeys?.ToList();
-        labsKeys?.Add("66a2fc9886fbd5d38c5ca2a6");
-        locations.Laboratory.Base.AccessKeys = labsKeys;
+        /*
+            var labsKeys = locations.Laboratory.Base.AccessKeys?.ToList();
+            labsKeys?.Add("66a2fc9886fbd5d38c5ca2a6");
+            locations.Laboratory.Base.AccessKeys = labsKeys;
+        */
     }
 
     private void ApplyFleaBlacklist()

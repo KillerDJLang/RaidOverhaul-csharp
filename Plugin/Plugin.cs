@@ -105,7 +105,7 @@ namespace RaidOverhaul
             _wScript = _hook.GetOrAddComponent<SeasonalWeatherController>();
             _bcScript = _hook.GetOrAddComponent<BodyCleanup>();
             _smScript = _hook.GetOrAddComponent<InRaidUIController>();
-            if (ConfigController.DebugConfig.DebugMode)
+            if (ConfigController.DebugConfig.IsDev)
             {
                 _dbgScript = _hook.GetOrAddComponent<DebugUIController>();
             }
@@ -141,8 +141,8 @@ namespace RaidOverhaul
                 new ConcussionPatch().Enable();
             }
 
-            new KeyPatch().Enable();
-            new KeycardPatch().Enable();
+            //new KeyPatch().Enable();
+            //new KeycardPatch().Enable();
             new OnDeadPatch().Enable();
             new RandomizeDefaultStatePatch().Enable();
             new EventExfilPatch().Enable();
@@ -164,7 +164,7 @@ namespace RaidOverhaul
                     _wScript = _hook.GetOrAddComponent<SeasonalWeatherController>();
                     _bcScript = _hook.GetOrAddComponent<BodyCleanup>();
                     _smScript = _hook.GetOrAddComponent<InRaidUIController>();
-                    if (ConfigController.DebugConfig.DebugMode)
+                    if (ConfigController.DebugConfig.IsDev)
                     {
                         _dbgScript = _hook.GetOrAddComponent<DebugUIController>();
                     }
@@ -237,7 +237,7 @@ namespace RaidOverhaul
             _wScript = _hook.GetOrAddComponent<SeasonalWeatherController>();
             _bcScript = _hook.GetOrAddComponent<BodyCleanup>();
             _smScript = _hook.GetOrAddComponent<InRaidUIController>();
-            if (ConfigController.DebugConfig.DebugMode)
+            if (ConfigController.DebugConfig.IsDev)
             {
                 _dbgScript = _hook.GetOrAddComponent<DebugUIController>();
             }

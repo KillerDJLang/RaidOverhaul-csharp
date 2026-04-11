@@ -12,6 +12,6 @@
         public const string ROPrepatchName = "Raid Overhaul Prepatcher";
         public const string ROPrepatchDescription = "Prepatch for the Legion Boss from Raid Overhaul.";
         public const string ROCopyright = "Copyright © 2025 nameless";
-        public const string PluginVersion = "3.0.2";
+        public const string PluginVersion = "3.0.3";
     }
 }

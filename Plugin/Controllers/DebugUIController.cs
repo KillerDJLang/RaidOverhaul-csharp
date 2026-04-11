@@ -254,7 +254,7 @@ namespace RaidOverhaul.Controllers
 
         public void ManualUpdate()
         {
-            if (!ConfigController.DebugConfig.DebugMode)
+            if (!ConfigController.DebugConfig.IsDev)
             {
                 if (_menuVisible)
                 {

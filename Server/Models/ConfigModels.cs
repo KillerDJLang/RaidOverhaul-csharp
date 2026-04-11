@@ -220,10 +220,8 @@ public class LegionProgression
 
 public class DebugFile
 {
-    /*
-        [JsonPropertyName("isDev")]
-        public bool IsDev { get; set; }
-    */
+    [JsonPropertyName("isDev")]
+    public bool IsDev { get; set; }
 
     [JsonPropertyName("debugMode")]
     public bool DebugMode { get; set; }

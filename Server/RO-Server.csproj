@@ -28,6 +28,10 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Assets\db\achievements\Locales\" />
+  </ItemGroup>
+
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="copy &quot;$(TargetPath)&quot; &quot;$(ProjectDir)\..\Build\SPT\user\mods\RaidOverhaul\$(TargetFileName)&quot;" />
   </Target>

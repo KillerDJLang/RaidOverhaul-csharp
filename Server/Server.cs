@@ -13,7 +13,7 @@ using SPTarkov.Server.Core.Models.Utils;
 [assembly: AssemblyTitle("Raid Overhaul Server")]
 [assembly: AssemblyDescription("A large overhaul for raids including events, dead body clean up, and much more. Server component.")]
 [assembly: AssemblyCopyright("Copyright © 2025 nameless")]
-[assembly: AssemblyFileVersion("3.0.2")]
+[assembly: AssemblyFileVersion("3.0.3")]
 
 namespace RaidOverhaulMain;
 
@@ -23,7 +23,7 @@ public sealed record ModMetadata : AbstractModMetadata
     public override string Name { get; init; } = "Raid Overhaul Server";
     public override string Author { get; init; } = "nameless";
     public override List<string>? Contributors { get; init; }
-    public override SemanticVersioning.Version Version { get; init; } = new("3.0.2");
+    public override SemanticVersioning.Version Version { get; init; } = new("3.0.3");
     public override SemanticVersioning.Range SptVersion { get; init; } = new("~4.0.0");
     public override List<string>? Incompatibilities { get; init; }
     public override Dictionary<string, SemanticVersioning.Range>? ModDependencies { get; init; } =
@@ -84,6 +84,7 @@ public sealed class ROMain(
 
         if (config.EnableCustomBoss)
         {
+            await commonLib.CustomAchievementService.CreateCustomAchievements(assembly, Path.Join("db", "achievements"));
             await commonLib.CustomLocaleService.CreateCustomLocales(assembly, Path.Combine("db", "locales", "bossEnabled"));
 
             factionService.Factions.Add("legion", new Faction() { Name = "legion", BotTypes = { (WildSpawnType)199, (WildSpawnType)200 } });

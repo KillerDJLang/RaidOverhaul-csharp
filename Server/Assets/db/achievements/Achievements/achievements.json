@@ -1,0 +1,178 @@
+[
+  {
+    "id": "69d97da875719a9b533bdf7d",
+    "imageUrl": "/files/achievement/legionslayer.png",
+    "assetPath": "",
+    "rewards": [
+      {
+        "id": "69d97df1352fe57807f082e3",
+        "unknown": false,
+        "gameMode": [
+          "regular",
+          "pve"
+        ],
+        "availableInGameEditions": [],
+        "illustrationConfig": null,
+        "isHidden": false,
+        "target": "69d97e37d62af7a3e986a297",
+        "value": 1,
+        "isEncoded": false,
+        "findInRaid": true,
+        "items": [
+          {
+            "_id": "69d97e37d62af7a3e986a297",
+            "_tpl": "66292e79a4d9da25e683ab55",
+            "upd": {
+              "SpawnedInSession": true,
+              "StackObjectsCount": 1000
+            }
+          }
+        ],
+        "type": "Item"
+      },
+      {
+        "id": "694d5c972fd6f1d20631c5f2",
+        "unknown": false,
+        "gameMode": [
+          "regular",
+          "pve"
+        ],
+        "availableInGameEditions": [],
+        "illustrationConfig": null,
+        "isHidden": false,
+        "target": "69d97f16428e6acf38063f85",
+        "value": 1,
+        "isEncoded": false,
+        "findInRaid": true,
+        "items": [
+          {
+            "_id": "69d97f16428e6acf38063f85",
+            "_tpl": "6621b200cb248c192d90e324",
+            "upd": {
+              "SpawnedInSession": true,
+              "StackObjectsCount": 1
+            }
+          }
+        ],
+        "type": "Item"
+      }
+    ],
+    "conditions": {
+      "availableForFinish": [
+        {
+          "id": "69d97f4313fb328567261d13",
+          "index": 0,
+          "dynamicLocale": false,
+          "visibilityConditions": [],
+          "globalQuestCounterId": "",
+          "parentId": "",
+          "value": 1,
+          "type": "Elimination",
+          "oneSessionOnly": false,
+          "completeInSeconds": 0,
+          "doNotResetIfCounterCompleted": false,
+          "isResetOnConditionFailed": false,
+          "isNecessary": false,
+          "counter": {
+            "id": "69d97f4313fb328567261d14",
+            "conditions": [
+              {
+                "id": "69d97f4313fb328567261d15",
+                "dynamicLocale": false,
+                "target": "Savage",
+                "value": 1,
+                "compareMethod": ">=",
+                "conditionType": "Kills",
+                "weapon": [
+                ],
+                "bodyPart": [
+                ],
+                "daytime": {
+                  "from": 0,
+                  "to": 0
+                },
+                "distance": {
+                  "compareMethod": ">=",
+                  "value": 0
+                },
+                "resetOnSessionEnd": false,
+                "savageRole": [
+                  "bosslegion"
+                ],
+                "enemyEquipmentExclusive": [],
+                "enemyEquipmentInclusive": [],
+                "enemyHealthEffects": [],
+                "weaponCaliber": [],
+                "weaponModsExclusive": [],
+                "weaponModsInclusive": []
+              }
+            ]
+          },
+          "conditionType": "CounterCreator"
+        },
+        {
+          "id": "69d97f4313fb328567261d16",
+          "index": 1,
+          "dynamicLocale": false,
+          "visibilityConditions": [],
+          "globalQuestCounterId": "",
+          "parentId": "",
+          "value": 3,
+          "type": "Elimination",
+          "oneSessionOnly": false,
+          "completeInSeconds": 0,
+          "doNotResetIfCounterCompleted": false,
+          "isResetOnConditionFailed": false,
+          "isNecessary": false,
+          "counter": {
+            "id": "69d97f4313fb328567261d17",
+            "conditions": [
+              {
+                "id": "69d97f4313fb328567261d18",
+                "dynamicLocale": false,
+                "target": "Savage",
+                "value": 1,
+                "compareMethod": ">=",
+                "conditionType": "Kills",
+                "weapon": [
+                ],
+                "bodyPart": [
+                ],
+                "daytime": {
+                  "from": 0,
+                  "to": 0
+                },
+                "distance": {
+                  "compareMethod": ">=",
+                  "value": 0
+                },
+                "resetOnSessionEnd": false,
+                "savageRole": [
+                  "legionnaire"
+                ],
+                "enemyEquipmentExclusive": [],
+                "enemyEquipmentInclusive": [],
+                "enemyHealthEffects": [],
+                "weaponCaliber": [],
+                "weaponModsExclusive": [],
+                "weaponModsInclusive": []
+              }
+            ]
+          },
+          "conditionType": "CounterCreator"
+        }
+      ],
+      "fail": []
+    },
+    "instantComplete": false,
+    "showNotificationsInGame": true,
+    "showProgress": true,
+    "prefab": "",
+    "rarity": "Legendary",
+    "hidden": false,
+    "showConditions": true,
+    "progressBarEnabled": true,
+    "side": "Pmc",
+    "index": 9001
+  }
+]

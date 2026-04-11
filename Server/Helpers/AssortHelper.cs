@@ -129,7 +129,7 @@ public class ROAssortHelper(
 
             if (itemHelper.IsOfBaseclass(itemId, BaseClasses.EQUIPMENT) && !itemHelper.IsOfBaseclass(itemId, BaseClasses.ARMORED_EQUIPMENT))
             {
-                if (randomUtil.GetChance100(10))
+                if (randomUtil.GetChance100(13))
                 {
                     GenerateAssortItems(itemId, rootItemDb, baseTraderAssort, 0, 10);
 
@@ -314,15 +314,16 @@ public class ROAssortHelper(
         fluentAssortHelper.CreateSingleItemOffer("67d4373526a3cfb1ff5338bb", 1, 2, 15, reqSlips, traderId);
         fluentAssortHelper.CreateSingleItemOffer("67fefea22cc2bce48d31e21f", 1, 2, 5, reqSlips, traderId);
         fluentAssortHelper.CreateSingleItemOffer("67fefe885041d8c121e93bf8", 1, 2, 20, reqSlips, traderId);
-        if (randomUtil.GetChance100(10))
-        {
-            fluentAssortHelper.CreateSingleItemOffer("66a2fc926af26cc365283f23", 1, 1, 10, specialReqs, traderId);
-        }
-
-        if (randomUtil.GetChance100(10))
-        {
-            fluentAssortHelper.CreateSingleItemOffer("66a2fc9886fbd5d38c5ca2a6", 1, 1, 10, specialReqs, traderId);
-        }
+        /*
+            if (randomUtil.GetChance100(10))
+            {
+                fluentAssortHelper.CreateSingleItemOffer("66a2fc926af26cc365283f23", 1, 1, 10, specialReqs, traderId);
+            }
+            if (randomUtil.GetChance100(10))
+            {
+                fluentAssortHelper.CreateSingleItemOffer("66a2fc9886fbd5d38c5ca2a6", 1, 1, 10, specialReqs, traderId);
+            }
+        */
         fluentAssortHelper.CreateSingleItemOffer(specialReqs, helpers.GenRandomCount(100, 7000), 1, 50, reqSlips, traderId);
         fluentAssortHelper.CreateSingleItemOffer(
             reqCoins,

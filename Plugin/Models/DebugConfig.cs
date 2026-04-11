@@ -4,10 +4,8 @@ namespace RaidOverhaul.Models
 {
     internal struct DebugConfigs
     {
-        /*
-            [JsonProperty("isDev")]
-            public bool IsDev;
-        */
+        [JsonProperty("isDev")]
+        public bool IsDev;
 
         [JsonProperty("debugMode")]
         public bool DebugMode;

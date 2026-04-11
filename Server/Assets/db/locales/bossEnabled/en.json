@@ -344,5 +344,10 @@
 
   "66a2fc9886fbd5d38c5ca2a6 Name": "VIP Keycard",
   "66a2fc9886fbd5d38c5ca2a6 ShortName": "VIP",
-  "66a2fc9886fbd5d38c5ca2a6 Description": "A modified keycard said to give access to all of the terragroup areas scattered throughout Tarkov. You will want to keep this on you at all times if you're lucky enough to find one, but guard it closely."
+  "66a2fc9886fbd5d38c5ca2a6 Description": "A modified keycard said to give access to all of the terragroup areas scattered throughout Tarkov. You will want to keep this on you at all times if you're lucky enough to find one, but guard it closely.",
+
+  "69d97da875719a9b533bdf7d Name": "Legion Slayer",
+  "69d97da875719a9b533bdf7d Description": "Eliminate The Legion Threat.",
+  "69d97f4313fb328567261d13": "Eliminate Legion",
+  "69d97f4313fb328567261d16": "Eliminate 3 Legionnaires"
 }

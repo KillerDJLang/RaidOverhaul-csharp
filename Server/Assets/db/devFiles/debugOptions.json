@@ -1,4 +1,5 @@
 {
+  "isDev": false,
   "debugMode": false,
   "dumpData": false
 }

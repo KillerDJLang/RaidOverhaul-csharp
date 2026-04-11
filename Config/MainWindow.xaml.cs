@@ -24,7 +24,7 @@ public partial class MainWindow : Window
     private readonly MainViewModel _vm = new();
     private DispatcherTimer? _feedbackTimer;
 
-    private const string ModVersion = "v3.0.2";
+    private const string ModVersion = "v3.0.3";
     private const string SptVersion = "v~4.0.x";
 
     public MainWindow()
@@ -81,8 +81,7 @@ public partial class MainWindow : Window
     {
         var cfg = _vm.Config;
 
-        int weatherCount = new[] { cfg.AllSeasons, cfg.NoWinter, cfg.SeasonalProgression, cfg.WinterWonderland }
-            .Count(x => x);
+        int weatherCount = new[] { cfg.AllSeasons, cfg.NoWinter, cfg.SeasonalProgression, cfg.WinterWonderland }.Count(x => x);
         if (weatherCount > 1)
         {
             error = "⚠  Only one Weather & Season option can be active at a time.";
