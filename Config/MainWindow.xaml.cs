@@ -24,7 +24,7 @@ public partial class MainWindow : Window
     private readonly MainViewModel _vm = new();
     private DispatcherTimer? _feedbackTimer;
 
-    private const string ModVersion = "v3.0.3";
+    private const string ModVersion = "v3.1.0";
     private const string SptVersion = "v~4.0.x";
 
     public MainWindow()

@@ -1,4 +1,5 @@
 using System.Reflection;
+using RaidOverhaulMain.Models;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.Helpers;
 using SPTarkov.Server.Core.Models.Common;
@@ -243,5 +244,23 @@ public class ROHelpers(
         {
             ROLogger.Log(logger, $"Error writing maps => " + ex);
         }
+    }
+
+    private int WeatherOptionCount(ConfigFile config)
+    {
+        return (config.AllSeasons ? 1 : 0)
+            + (config.NoWinter ? 1 : 0)
+            + (config.SeasonalProgression ? 1 : 0)
+            + (config.WinterWonderland ? 1 : 0);
+    }
+
+    public bool IsOnlyWeatherOption(bool option, ConfigFile config)
+    {
+        return option && WeatherOptionCount(config) == 1;
+    }
+
+    public bool HasConflictingWeatherOptions(ConfigFile config)
+    {
+        return WeatherOptionCount(config) > 1;
     }
 }

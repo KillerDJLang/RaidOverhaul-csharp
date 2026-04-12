@@ -31,4 +31,17 @@
       <Generator>MSBuild:Compile</Generator>
     </None>
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(PublishSingleFile)' != 'true'">
+    <PropertyGroup>
+      <ModBuildDir>$(ProjectDir)..\Build\SPT\user\mods\RaidOverhaul</ModBuildDir>
+      <PublishOutputDir>$(ProjectDir)publish</PublishOutputDir>
+    </PropertyGroup>
+
+    <MakeDir Directories="$(ModBuildDir)" />
+
+    <Exec Command="dotnet publish &quot;$(ProjectDir)RO-Config.csproj&quot; -c Release -r win-x64 -p:PublishSingleFile=true -o &quot;$(PublishOutputDir)&quot;" />
+
+    <Copy SourceFiles="$(PublishOutputDir)\RO-Config.exe" DestinationFolder="$(ModBuildDir)" />
+  </Target>
 </Project>

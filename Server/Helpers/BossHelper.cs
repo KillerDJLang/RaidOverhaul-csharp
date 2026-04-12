@@ -28,7 +28,7 @@ public class ROBossHelper(ISptLogger<ROBossHelper> logger, DatabaseService datab
         ["woods"] = "ZoneWoodCutter,ZoneScavBase2,ZoneMiniHouse,ZoneBrokenVill,ZoneBigRocks",
     };
 
-    public void SetBossSpawns(ConfigFile config, LegionProgression legionConfig, DebugFile debugConfig)
+    public void SetBossSpawns(double legionChance, DebugFile debugConfig)
     {
         try
         {
@@ -45,7 +45,7 @@ public class ROBossHelper(ISptLogger<ROBossHelper> logger, DatabaseService datab
 
                 spawns.RemoveAll(x => x.BossName.Contains("bosslegion"));
 
-                AddLegionSpawnsToMaps(map, zones, spawns, config, legionConfig, debugConfig);
+                AddLegionSpawnsToMaps(map, zones, spawns, legionChance, debugConfig);
             }
         }
         catch (Exception ex)
@@ -55,28 +55,11 @@ public class ROBossHelper(ISptLogger<ROBossHelper> logger, DatabaseService datab
         }
     }
 
-    private void AddLegionSpawnsToMaps(
-        string map,
-        string zones,
-        List<BossLocationSpawn> spawns,
-        ConfigFile config,
-        LegionProgression legionConfig,
-        DebugFile debugConfig
-    )
+    private void AddLegionSpawnsToMaps(string map, string zones, List<BossLocationSpawn> spawns, double legionChance, DebugFile debugConfig)
     {
-        double spawnChance = 15;
-        if (config.UseLegionGlobalSpawnChance)
-        {
-            spawnChance = config.GlobalSpawnChance;
-        }
-        else
-        {
-            spawnChance = legionConfig.LegionChance;
-        }
-
         var bossInfo = new BossLocationSpawn
         {
-            BossChance = spawnChance,
+            BossChance = legionChance,
             BossDifficulty = "normal",
             BossEscortAmount = SetEscortCount(2, 4, randomUtil),
             BossEscortDifficulty = "normal",

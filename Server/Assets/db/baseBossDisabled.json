@@ -21,7 +21,9 @@
   },
   "isCanTransferItems": false,
   "items_buy": {
-    "category": [ "5448ecbe4bdc2d60728b4568" ],
+    "category": [
+      "5448ecbe4bdc2d60728b4568"
+    ],
     "id_list": []
   },
   "items_buy_prohibited": {
@@ -114,4 +116,3 @@
   },
   "unlockedByDefault": true
 }
-

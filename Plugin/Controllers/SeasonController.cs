@@ -34,18 +34,19 @@ namespace RaidOverhaul.Controllers
         public void DoStorm()
         {
             var seasonalProgression = ConfigController.ServerConfig.SeasonalProgression;
-
-            if (!seasonalProgression)
-            {
-                _weatherChangesRun = false;
-                return;
-            }
-
+            var seasonConfig = ConfigController.SeasonConfig;
             var isReady = Utils.IsInRaid();
 
-            if (!isReady)
+            if (!seasonalProgression || !isReady)
             {
-                _weatherChangesRun = false;
+                if (_weatherChangesRun)
+                {
+                    _weatherChangesRun = false;
+                }
+                if (_cachedWeatherController != null)
+                {
+                    _cachedWeatherController = null;
+                }
                 return;
             }
 
@@ -54,7 +55,7 @@ namespace RaidOverhaul.Controllers
                 return;
             }
 
-            if (!StormActive())
+            if (!StormActive(seasonConfig))
             {
                 return;
             }
@@ -82,17 +83,9 @@ namespace RaidOverhaul.Controllers
             weatherDebug.WindMagnitude = _windMagnitude;
         }
 
-        private static bool StormActive()
+        private static bool StormActive(SeasonalConfig seasonProgression)
         {
-            ConfigController.SeasonConfig = Utils.Get<SeasonalConfig>("/RaidOverhaul/GetWeatherConfig");
-
-            var seasonProgression = ConfigController.SeasonConfig.SeasonsProgression;
-            return seasonProgression >= 4 && seasonProgression <= 6;
-        }
-
-        private void OnDestroy()
-        {
-            _cachedWeatherController = null;
+            return seasonProgression.SeasonsProgression >= 4 && seasonProgression.SeasonsProgression <= 6;
         }
     }
 }

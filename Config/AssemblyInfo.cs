@@ -5,4 +5,4 @@ using System.Windows;
 [assembly: AssemblyTitle("Raid Overhaul Config GUI")]
 [assembly: AssemblyDescription("A configuration tool for Raid Overhaul.")]
 [assembly: AssemblyCopyright("Copyright © 2025 nameless")]
-[assembly: AssemblyFileVersion("3.0.3")]
+[assembly: AssemblyFileVersion("3.1.0")]

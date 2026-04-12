@@ -39,6 +39,13 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy &quot;$(TargetPath)&quot; &quot;$(ProjectDir)\..\Build\BepInEx\patchers\$(TargetFileName)&quot;" />
+    <PropertyGroup>
+      <PatcherBuildDir>$(ProjectDir)..\Build\BepInEx\patchers</PatcherBuildDir>
+    </PropertyGroup>
+
+    <RemoveDir Directories="$(PatcherBuildDir)" />
+    <MakeDir Directories="$(PatcherBuildDir)" />
+
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(PatcherBuildDir)" />
   </Target>
 </Project>

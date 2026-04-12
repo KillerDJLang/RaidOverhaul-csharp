@@ -1,5 +1,6 @@
 /.vs
 /.idea
+/.vscode
 /Build
 /References
 /FikaCompat/bin
@@ -16,3 +17,4 @@
 /Config/publish
 /Config/publish_commands.md
 /RaidOverhaul.sln.DotSettings.user
+/build.ps1

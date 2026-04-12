@@ -17,7 +17,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["6389c8c5dbfd5e4b95197e6b"],
+          "target": [
+            "6389c8c5dbfd5e4b95197e6b"
+          ],
           "value": 2,
           "visibilityConditions": []
         },
@@ -33,7 +35,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["5c94bbff86f7747ee735c08f"],
+          "target": [
+            "5c94bbff86f7747ee735c08f"
+          ],
           "value": 3,
           "visibilityConditions": []
         },
@@ -49,7 +53,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["59faff1d86f7746c51718c9c"],
+          "target": [
+            "59faff1d86f7746c51718c9c"
+          ],
           "value": 10,
           "visibilityConditions": []
         },
@@ -65,7 +71,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["619bddc6c9546643a67df6ee"],
+          "target": [
+            "619bddc6c9546643a67df6ee"
+          ],
           "value": 1,
           "visibilityConditions": []
         }
@@ -91,7 +99,9 @@
           "id": "672bf35f9cb2add80ee992df",
           "index": 1,
           "parentId": "",
-          "status": [4],
+          "status": [
+            4
+          ],
           "target": "5c51aac186f77432ea65c552",
           "visibilityConditions": []
         }
@@ -161,7 +171,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": true,
           "parentId": "",
-          "target": ["61bf83814088ec1a363d7097"],
+          "target": [
+            "61bf83814088ec1a363d7097"
+          ],
           "value": 1,
           "visibilityConditions": []
         },
@@ -177,7 +189,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": true,
           "parentId": "",
-          "target": ["590a3c0a86f774385a33c450"],
+          "target": [
+            "590a3c0a86f774385a33c450"
+          ],
           "value": 1,
           "visibilityConditions": []
         },
@@ -193,7 +207,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": true,
           "parentId": "",
-          "target": ["5732ee6a24597719ae0c0281"],
+          "target": [
+            "5732ee6a24597719ae0c0281"
+          ],
           "value": 1,
           "visibilityConditions": []
         },
@@ -209,7 +225,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["668b3c71042c73c6f9b00704"],
+          "target": [
+            "668b3c71042c73c6f9b00704"
+          ],
           "value": 1,
           "visibilityConditions": []
         }
@@ -292,7 +310,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["63a0b208f444d32d6f03ea1e"],
+          "target": [
+            "63a0b208f444d32d6f03ea1e"
+          ],
           "value": 1,
           "visibilityConditions": []
         },
@@ -308,7 +328,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["5d0376a486f7747d8050965c"],
+          "target": [
+            "5d0376a486f7747d8050965c"
+          ],
           "value": 2,
           "visibilityConditions": []
         },
@@ -324,7 +346,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["5d1b313086f77425227d1678"],
+          "target": [
+            "5d1b313086f77425227d1678"
+          ],
           "value": 2,
           "visibilityConditions": []
         },
@@ -340,7 +364,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["544a11ac4bdc2d470e8b456a"],
+          "target": [
+            "544a11ac4bdc2d470e8b456a"
+          ],
           "value": 1,
           "visibilityConditions": []
         },
@@ -356,7 +382,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["668b3c71042c73c6f9b00704"],
+          "target": [
+            "668b3c71042c73c6f9b00704"
+          ],
           "value": 3,
           "visibilityConditions": []
         }
@@ -439,7 +467,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["5d0379a886f77420407aa271"],
+          "target": [
+            "5d0379a886f77420407aa271"
+          ],
           "value": 2,
           "visibilityConditions": []
         },
@@ -455,7 +485,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["5d0376a486f7747d8050965c"],
+          "target": [
+            "5d0376a486f7747d8050965c"
+          ],
           "value": 3,
           "visibilityConditions": []
         },
@@ -471,7 +503,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["6389c70ca33d8c4cdf4932c6"],
+          "target": [
+            "6389c70ca33d8c4cdf4932c6"
+          ],
           "value": 3,
           "visibilityConditions": []
         },
@@ -487,7 +521,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["5bc9b720d4351e450201234b"],
+          "target": [
+            "5bc9b720d4351e450201234b"
+          ],
           "value": 1,
           "visibilityConditions": []
         },
@@ -503,7 +539,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["5857a8b324597729ab0a0e7d"],
+          "target": [
+            "5857a8b324597729ab0a0e7d"
+          ],
           "value": 1,
           "visibilityConditions": []
         },
@@ -519,7 +557,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["668b3c71042c73c6f9b00704"],
+          "target": [
+            "668b3c71042c73c6f9b00704"
+          ],
           "value": 5,
           "visibilityConditions": []
         }
@@ -602,7 +642,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["5d03775b86f774203e7e0c4b"],
+          "target": [
+            "5d03775b86f774203e7e0c4b"
+          ],
           "value": 1,
           "visibilityConditions": []
         },
@@ -618,7 +660,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["5bc9b720d4351e450201234b"],
+          "target": [
+            "5bc9b720d4351e450201234b"
+          ],
           "value": 3,
           "visibilityConditions": []
         },
@@ -634,7 +678,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["5d0377ce86f774186372f689"],
+          "target": [
+            "5d0377ce86f774186372f689"
+          ],
           "value": 2,
           "visibilityConditions": []
         },
@@ -650,7 +696,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["5c94bbff86f7747ee735c08f"],
+          "target": [
+            "5c94bbff86f7747ee735c08f"
+          ],
           "value": 1,
           "visibilityConditions": []
         },
@@ -666,7 +714,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["5857a8bc2459772bad15db29"],
+          "target": [
+            "5857a8bc2459772bad15db29"
+          ],
           "value": 1,
           "visibilityConditions": []
         },
@@ -682,7 +732,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["668b3c71042c73c6f9b00704"],
+          "target": [
+            "668b3c71042c73c6f9b00704"
+          ],
           "value": 7,
           "visibilityConditions": []
         }
@@ -765,7 +817,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["5d03775b86f774203e7e0c4b"],
+          "target": [
+            "5d03775b86f774203e7e0c4b"
+          ],
           "value": 2,
           "visibilityConditions": []
         },
@@ -781,7 +835,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["5d0376a486f7747d8050965c"],
+          "target": [
+            "5d0376a486f7747d8050965c"
+          ],
           "value": 2,
           "visibilityConditions": []
         },
@@ -797,7 +853,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["57347ca924597744596b4e71"],
+          "target": [
+            "57347ca924597744596b4e71"
+          ],
           "value": 1,
           "visibilityConditions": []
         },
@@ -813,7 +871,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["5c94bbff86f7747ee735c08f"],
+          "target": [
+            "5c94bbff86f7747ee735c08f"
+          ],
           "value": 2,
           "visibilityConditions": []
         },
@@ -829,7 +889,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["59db794186f77448bc595262"],
+          "target": [
+            "59db794186f77448bc595262"
+          ],
           "value": 1,
           "visibilityConditions": []
         },
@@ -845,7 +907,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["668b3c71042c73c6f9b00704"],
+          "target": [
+            "668b3c71042c73c6f9b00704"
+          ],
           "value": 10,
           "visibilityConditions": []
         }
@@ -928,7 +992,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["59e35de086f7741778269d84"],
+          "target": [
+            "59e35de086f7741778269d84"
+          ],
           "value": 1,
           "visibilityConditions": []
         },
@@ -944,7 +1010,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["5d1b2fa286f77425227d1674"],
+          "target": [
+            "5d1b2fa286f77425227d1674"
+          ],
           "value": 2,
           "visibilityConditions": []
         },
@@ -960,7 +1028,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["6389c8c5dbfd5e4b95197e6b"],
+          "target": [
+            "6389c8c5dbfd5e4b95197e6b"
+          ],
           "value": 1,
           "visibilityConditions": []
         },
@@ -976,7 +1046,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["57347ca924597744596b4e71"],
+          "target": [
+            "57347ca924597744596b4e71"
+          ],
           "value": 1,
           "visibilityConditions": []
         },
@@ -992,7 +1064,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["5d0376a486f7747d8050965c"],
+          "target": [
+            "5d0376a486f7747d8050965c"
+          ],
           "value": 4,
           "visibilityConditions": []
         },
@@ -1008,7 +1082,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["5c94bbff86f7747ee735c08f"],
+          "target": [
+            "5c94bbff86f7747ee735c08f"
+          ],
           "value": 3,
           "visibilityConditions": []
         },
@@ -1024,7 +1100,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["59faff1d86f7746c51718c9c"],
+          "target": [
+            "59faff1d86f7746c51718c9c"
+          ],
           "value": 10,
           "visibilityConditions": []
         },
@@ -1040,7 +1118,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["5c093ca986f7740a1867ab12"],
+          "target": [
+            "5c093ca986f7740a1867ab12"
+          ],
           "value": 1,
           "visibilityConditions": []
         },
@@ -1056,7 +1136,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["668b3c71042c73c6f9b00704"],
+          "target": [
+            "668b3c71042c73c6f9b00704"
+          ],
           "value": 15,
           "visibilityConditions": []
         }
@@ -1082,7 +1164,9 @@
           "id": "672bf4caa8ada984447b8fe9",
           "index": 1,
           "parentId": "",
-          "status": [4],
+          "status": [
+            4
+          ],
           "target": "5c51aac186f77432ea65c552",
           "visibilityConditions": []
         }
@@ -1135,4 +1219,3 @@
     "type": "PickUp"
   }
 }
-

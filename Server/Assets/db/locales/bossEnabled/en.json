@@ -1,15 +1,12 @@
 {
   "ScavRole/Legion": "Legion",
-
   "66f0eb2c12fb0ed12fbcfd46": "Eliminate the target",
   "672bf2b1896303adeb9a1b49": "Eliminate the Legion threat",
   "672bf2b91cddb3f9a03c512a": "Hand over Legions facemask as proof",
-
   "66f0eb2c12fb0ed12fbcfd46 name": "Lets Work Out a Deal",
   "66f0eb2c12fb0ed12fbcfd46 description": "I'll keep this short. Me and some....'acquaintances' have a problem. These thugs, call themselves 'Legion', have been picking off my guys when they go out scavenging. If you can fix this little problem, I'll introduce you to my connection. I'm sure they have something to make it worth your while.",
   "66f0eb2c12fb0ed12fbcfd46 successMessagetext": "Huh, you're back quicker than expected. I take it you took care of things? Good. Here's a little extra for being so quick about it. You'll need these.",
   "66f0eb896991c5ce3a1b02cc": "Hand over the required items for modification",
-
   "66f0eb896991c5ce3a1b02cc name": "The Crown Jewel",
   "66f0eb896991c5ce3a1b02cc description": "Welcome back, looks like you got something special from Fence eh? If you want, I can turn that into a real piece of art.",
   "66f0eb896991c5ce3a1b02cc successMessagetext": "Ha! Look at that! The Crown Jewel of your arsenal for sure. Pleasure doing business with you.",
@@ -18,7 +15,6 @@
   "672bf33642661fcc2726eb6a": "Hand over 10 Physical Bitcoins",
   "672bf3378ab0f5ab0359e7b5": "Hand over Armband (DEADSKUL)",
   "66f0ebd77d8d561a54c699d8": "Hand over the required items for modification",
-
   "66f0ebd77d8d561a54c699d8 name": "Threadbare: Waist Pouch",
   "66f0ebd77d8d561a54c699d8 description": "Whoa whoa whoa...what is that pouch you have? Go get me some materials and I'll fix it up for you. Can't have you working for me while hauling that garbage around.",
   "66f0ebd77d8d561a54c699d8 successMessagetext": "Well, this thing is still shitty, but slightly less so. Hope it's a little more useful now.",
@@ -27,7 +23,6 @@
   "672bf3792c468c680385df6d": "Hand over Waist pouch",
   "672bf37ab1c13fad1a7e0bda": "Hand over a Requisition Slip",
   "66f0ec06429200aee5f594eb": "Hand over the required items for modification",
-
   "66f0ec06429200aee5f594eb name": "Threadbare: Alpha",
   "66f0ec06429200aee5f594eb description": "Hey, looks like you got rid of that pouch and picked yourself a real container. It's bottom of the barrel but I can work with it, just need some more materials.",
   "66f0ec06429200aee5f594eb successMessagetext": "This is just a prototype but it should be a marked improvement. I'll be refining the process from here on out.",
@@ -37,7 +32,6 @@
   "672bf37d934dde0efef4b85d": "Hand over Secure container Alpha",
   "672bf37e98d244304103ba40": "Hand over 3 Requisition Slips",
   "66f0ec2f16dec610c8e9e422": "Hand over the required items for modification",
-
   "66f0ec2f16dec610c8e9e422 name": "Threadbare: Beta",
   "66f0ec2f16dec610c8e9e422 description": "Okay, can you stop bringing me bottom tier shit to work on? I'll do it but I'm a craftsman at heart. Just bring me something nicer next time.",
   "66f0ec2f16dec610c8e9e422 successMessagetext": "Hmm, it's good but I feel like it still needs improvement. Come back later, I'll see what I can think up.",
@@ -48,7 +42,6 @@
   "672bf3826520369604333288": "Hand over Secure container Beta",
   "672bf383965b25149b74e87d": "Hand over 5 Requisition Slips",
   "66f0ec550d7c99f5297f8170": "Hand over the required items for modification",
-
   "66f0ec550d7c99f5297f8170 name": "Threadbare: Gamma",
   "66f0ec550d7c99f5297f8170 description": "Well well well, took my words to heart didn't you? This isn't the best thing I've ever seen but it's worlds from what you had me work on before. This is something I can put my back into.",
   "66f0ec550d7c99f5297f8170 successMessagetext": "Ah! Had a bit of a breakthrough with this one! It'll be back to the drawing board for your next upgrade, but that's a problem for later.",
@@ -59,7 +52,6 @@
   "672bf38885a8f2c864419d5a": "Hand over Secure Container Gamma",
   "672bf389390edae0ee500682": "Hand over 7 Requisition Slips",
   "66f0ec7e3a00512ef4300b5e": "Hand over the required items for modification",
-
   "66f0ec7e3a00512ef4300b5e name": "Threadbare: Epsilon",
   "66f0ec7e3a00512ef4300b5e description": "Hmm? What's this? Some sort of prototype? I'll get started right away! I'll have to work on some plans for it first though...go get me some materials while I'm at it. It shouldn't take long but I've gotta be careful here. Doubt I'll see one of these again.",
   "66f0ec7e3a00512ef4300b5e successMessagetext": "Now We're talking! This will serve you a lot better than whatever shit you were using before! Just don't forget to leave a tip on the way out eh? For all my hard work.",
@@ -70,7 +62,6 @@
   "672bf38eb3f9951733471609": "Hand over Secure container Epsilon",
   "672bf38ffb6d4855e79757b6": "Hand over 10 Requisition Slips",
   "66f0ecad7d6d9736b17c2167": "Hand over the required items for modification",
-
   "66f0ecad7d6d9736b17c2167 name": "Threadbare: Kappa",
   "66f0ecad7d6d9736b17c2167 description": "Now this is what I'm talking about! One of a kind and pretty damn flawless to boot. But I think I can improve it, maybe up the capacity a bit? I'll think something up. Just get me what's written on the list here and I'll throw this together!",
   "66f0ecad7d6d9736b17c2167 successMessagetext": "I don't like to talk myself up too much, but this is a piece of fucking art. I doubt anyone will be able to top this any time soon.",
@@ -83,269 +74,203 @@
   "672bf394ec5704d6c34c0ba1": "Hand over 10 Physical Bitcoins",
   "672bf396101a95dcde20ae03": "Hand over Secure container Kappa",
   "672bf397f564c404b2f88c48": "Hand over 15 Requisition Slips",
-
   "668b3595530bc55de0c4a68b": "Items received and returned to base.",
   "668b358f13f1b75994df30cc": "Holy shit, you had a good haul there. We got everything back in one piece for you.",
   "668b358a57492dbb1668a243": "Come on, you won't even leave a tip for us? Beer? Pizza? Nothing? Stingy prick.",
   "668b3586fb34ebd107d97c20": "Everything is back to your base and we definitely didn't bring any souvenirs home with us.",
   "668b35803396de25181f64eb": "We've received your crate and are en route to base. Remember to call us up anytime you get in a pinch.",
-
   "662808ec26a8e83120bb25fe Name": "Judge Flechette Round",
   "662808ec26a8e83120bb25fe ShortName": "JFR",
   "662808ec26a8e83120bb25fe Description": "A tightly packed Flechette round for the Judge Handgun. How they managed to fit all of that into a small 9x19 casing is beyond me.",
-
   "662809f445b5ff428e21ac0a Name": "Judge AP Slug Round",
   "662809f445b5ff428e21ac0a ShortName": "JSR",
   "662809f445b5ff428e21ac0a Description": "A tightly packed Armor Piercing Slug round for the Judge Handgun. How they managed to fit all of that into a small .45 casing is beyond me.",
-
   "66280a30d3b6f288cb6b9653 Name": "Judge Buckshot Round",
   "66280a30d3b6f288cb6b9653 ShortName": "JBR",
   "66280a30d3b6f288cb6b9653 Description": "A tightly packed Buckshot round for the Judge Handgun. How they managed to fit all of that into a small .45 casing is beyond me.",
-
   "6628185208dd86f969db7e03 Name": "Jury TacX Round",
   "6628185208dd86f969db7e03 ShortName": "JuryX",
   "6628185208dd86f969db7e03 Description": "A modified TacX round for the Jury Marksman Rifle. This is the last thing many scavs and PMCs around Tarkov ever saw.",
-
   "662818a23a552da6aef8fada Name": "Jury AP Round",
   "662818a23a552da6aef8fada ShortName": "JuryAP",
   "662818a23a552da6aef8fada Description": "An Armor Piercing round for the Jury Marksman Rifle. This is the last thing many scavs and PMCs around Tarkov ever saw.",
-
   "66281ab7fca966e5021f81b5 Name": "Executioner AT Round",
   "66281ab7fca966e5021f81b5 ShortName": "ExecAT",
   "66281ab7fca966e5021f81b5 Description": "An Anti-tank round for the Executioner Sniper Rifle. If you hear the sound this round makes, it's already too late.",
-
   "66281ac038f9aebf6f914138 Name": "Executioner AP Round",
   "66281ac038f9aebf6f914138 ShortName": "ExecAP",
   "66281ac038f9aebf6f914138 Description": "An Armor Piercing round for the Executioner Sniper Rifle. If you hear the sound this round makes, it's already too late.",
-
   "6628f76df1a913e3afc16360 Name": "The Judge",
   "6628f76df1a913e3afc16360 ShortName": "Judge",
   "6628f76df1a913e3afc16360 Description": "The Judge is a handgun capable of loading 12 gauge shotgun shells. Many scavs quiver in fear when they hear the name.",
-
   "6628f7705124be8295a0bdd9 Name": "Judge custom Lone Wolf Slide",
   "6628f7705124be8295a0bdd9 ShortName": "Judge Lone Wolf",
   "6628f7705124be8295a0bdd9 Description": "A custom Lone Wolf receiver modified to fit on the Judge handgun. The sound of the slide brings nightmares to many.",
-
   "6628f77390fd0c39ebfa1125 Name": "Judge 17 Round Magazine",
   "6628f77390fd0c39ebfa1125 ShortName": "Judge 17 Mag",
   "6628f77390fd0c39ebfa1125 Description": "A 17-round magazine made for the Judge handgun, the sound of which causes scavs to quiver in fear.",
-
   "6628f7750e470be83e65dc76 Name": "Judge 33 Round Magazine",
   "6628f7750e470be83e65dc76 ShortName": "Judge 33 Mag",
   "6628f7750e470be83e65dc76 Description": "A 33-round magazine made for the Judge handgun, the sound of which causes scavs to quiver in fear.",
-
   "6628f7786fbce2d268af4913 Name": "Judge Drum Magazine",
   "6628f7786fbce2d268af4913 ShortName": "Judge Drum",
   "6628f7786fbce2d268af4913 Description": "A 50-round Drum magazine made for the Judge handgun, the sound of which causes scavs to quiver in fear.",
-
   "6628f2e31084cf4d62b2b40b Name": "Modified AUG A3 7.62x39 assault rifle",
   "6628f2e31084cf4d62b2b40b ShortName": "AUG 762",
   "6628f2e31084cf4d62b2b40b Description": "Steyr AUG A3 is a 5.56x45 bullpup assault rifle, developed by the Austrian company Steyr-Daimler-Puch. AUG is known for good ergonomics, decent accuracy, low recoil and sufficient reliability. The rifle also stands out for its futuristic design. The A3 version features a bolt-catch button. This rifle has been modified to be compatible with 7.62x39mm caliber ammunition while retaining it's standout characteristics.",
-
   "6628f31d2e4dbf64427b378d Name": "Steyr AUG 7.62x39 30-round magazine",
   "6628f31d2e4dbf64427b378d ShortName": "AUG",
   "6628f31d2e4dbf64427b378d Description": "A 30-round polymer Steyr AUG magazine, for 7.62x39 ammunition.",
-
   "6628f33d585102d8bc5d75db Name": "Steyr AUG 7.62x39 42-round magazine",
   "6628f33d585102d8bc5d75db ShortName": "AUG",
   "6628f33d585102d8bc5d75db Description": "A 42-round polymer Steyr AUG magazine, for 7.62x39 ammunition.",
-
   "6628f8813e3fe94f5f035010 Name": "The Jury",
   "6628f8813e3fe94f5f035010 ShortName": "Jury",
   "6628f8813e3fe94f5f035010 Description": "The Overseer of judgement. Or at least that's what it appears to be, considering the amount of scavs and PMC's brought down by it.",
-
   "6628f887f6ec08df7b7dc336 Name": "Jury Magazine",
   "6628f887f6ec08df7b7dc336 ShortName": "Jury Mag",
   "6628f887f6ec08df7b7dc336 Description": "A 20 round extended magazine for the Jury marksman rifle. Nobody knows who produced these or where they come from.",
-
   "6628f88aaa160dcd09a782e7 Name": "Jury Extended Magazine",
   "6628f88aaa160dcd09a782e7 ShortName": "Jury ExtMag",
   "6628f88aaa160dcd09a782e7 Description": "A 25 round extended magazine for the Jury marksman rifle. Nobody knows who produced these or where they come from.",
-
   "6628f88df6034dfe1933f636 Name": "Jury Drum Magazine",
   "6628f88df6034dfe1933f636 ShortName": "Jury Drum",
   "6628f88df6034dfe1933f636 Description": "A 50 round drum magazine for the Jury marksman rifle. Nobody knows who produced these or where they come from.",
-
   "6628f885b95f6ae9d977162f Name": "Jury Custom upper receiver",
   "6628f885b95f6ae9d977162f ShortName": "Jury Rec",
   "6628f885b95f6ae9d977162f Description": "An upper receiver for the Jury marksman rifle. Although its origin is a mystery, it is very effective at what it does, killing enemies.",
-
   "6628f96fd59ab54dedb55801 Name": "The Executioner",
   "6628f96fd59ab54dedb55801 ShortName": "Executioner",
   "6628f96fd59ab54dedb55801 Description": "The Executioner. This is the final stop for many scavs and PMCs. It truly does live up to its name.",
-
   "6628f973b21453a8afc0db68 Name": "Executioner Wyatt Magazine",
   "6628f973b21453a8afc0db68 ShortName": "Executioner Mag",
   "6628f973b21453a8afc0db68 Description": "A custom Wyatt outdoor magazine for the Executioner sniper rifle. With the stopping power loaded inside, you probably only need one of these.",
-
   "6628f977030da8d4c028f5c7 Name": "Executioner AICS Magazine",
   "6628f977030da8d4c028f5c7 ShortName": "Executioner AICS",
   "6628f977030da8d4c028f5c7 Description": "A custom AICS magazine for the Executioner sniper rifle. With the stopping power loaded inside, you probably only need one of these.",
-
   "6628f979c3da61a625d97d69 Name": "Executioner PMAG",
   "6628f979c3da61a625d97d69 ShortName": "Executioner PMAG",
   "6628f979c3da61a625d97d69 Description": "A custom PMAG for the Executioner sniper rifle. With the stopping power loaded inside, you probably only need one of these.",
-
   "6628f50c78434b5effe5ced1 Name": "Multi-Calibre M4A1 Assault Rifle",
   "6628f50c78434b5effe5ced1 ShortName": "MCM4",
   "6628f50c78434b5effe5ced1 Description": "A Multi-Calibre variant of the standard M4A1 assault rifle. Modified to be compatible with 5.45, 5.56, 5.7, .300, 7.62 and 9x39 ammunition with the accompanying receivers.",
-
   "6628f534d238d16e71d27601 Name": "MCM4 5.7mm Receiver",
   "6628f534d238d16e71d27601 ShortName": "MCM4 57",
   "6628f534d238d16e71d27601 Description": "The MUR-1S modular upper receiver for AR-based weapons, manufactured by Vltor. Fitted with mounts for attaching additional equipment. Chambered in 5.7mm.",
-
   "6628f529b9886fa300b47de7 Name": "MCM4 .300 Receiver",
   "6628f529b9886fa300b47de7 ShortName": "MCM4 300",
   "6628f529b9886fa300b47de7 Description": "The MUR-1S modular upper receiver for AR-based weapons, manufactured by Vltor. Fitted with mounts for attaching additional equipment. Chambered in .300 blackout.",
-
   "6628f52f246a7106c3c3dd22 Name": "MCM4 5.45x39mm Receiver",
   "6628f52f246a7106c3c3dd22 ShortName": "MCM4 545",
   "6628f52f246a7106c3c3dd22 Description": "The MUR-1S modular upper receiver for AR-based weapons, manufactured by Vltor. Fitted with mounts for attaching additional equipment. Chambered in 5.45x39mm.",
-
   "6628f531ae7642ade7384366 Name": "MCM4 7.62x39mm Receiver",
   "6628f531ae7642ade7384366 ShortName": "MCM4 762",
   "6628f531ae7642ade7384366 Description": "The MUR-1S modular upper receiver for AR-based weapons, manufactured by Vltor. Fitted with mounts for attaching additional equipment. Chambered in 7.62x39mm.",
-
   "6628f52b821b61722b245c10 Name": "MCM4 9x39mm Receiver",
   "6628f52b821b61722b245c10 ShortName": "MCM4 9x39",
   "6628f52b821b61722b245c10 Description": "The MUR-1S modular upper receiver for AR-based weapons, manufactured by Vltor. Fitted with mounts for attaching additional equipment. Chambered in 9x39mm.",
-
   "6628f5244c3764ecf474f23c Name": "5.7mm Magpul PMAG 32-round magazine",
   "6628f5244c3764ecf474f23c ShortName": "MCM4 57M",
   "6628f5244c3764ecf474f23c Description": "A 32-round polymer Magpul PMAG magazine, for 5.7mm ammunition.",
-
   "6628f511ea0ab10dd0c5e2d4 Name": ".300 blackout Magpul PMAG 32-round magazine",
   "6628f511ea0ab10dd0c5e2d4 ShortName": "MCM4 300M",
   "6628f511ea0ab10dd0c5e2d4 Description": "A 32-round polymer Magpul PMAG magazine, for .300 blackout ammunition.",
-
   "6628f51c8df290deed8983e9 Name": "5.45x39mm Magpul PMAG 32-round magazine",
   "6628f51c8df290deed8983e9 ShortName": "MCM4 545M",
   "6628f51c8df290deed8983e9 Description": "A 32-round polymer Magpul PMAG magazine, for 5.45x39mm ammunition.",
-
   "6628f51e54b4f59a7ade4ef9 Name": "7.62x39mm Magpul PMAG 32-round magazine",
   "6628f51e54b4f59a7ade4ef9 ShortName": "MCM4 762M",
   "6628f51e54b4f59a7ade4ef9 Description": "A 32-round polymer Magpul PMAG magazine, for 7.62x39mm ammunition.",
-
   "6628f5191c445ab1b8b8cdf5 Name": "9x39mm Magpul PMAG 32-round magazine",
   "6628f5191c445ab1b8b8cdf5 ShortName": "MCM4 939M",
   "6628f5191c445ab1b8b8cdf5 Description": "A 32-round polymer Magpul PMAG magazine, for 9x39mm ammunition.",
-
   "6628f3786c4f8a10a65adee4 Name": "Soyuz-TM STM-46 Gen.2 4.6x30 carbine",
   "6628f3786c4f8a10a65adee4 ShortName": "STM 4.6x30",
   "6628f3786c4f8a10a65adee4 Description": "A PCC carbine with excellent performance already 'out of the box', manufactured by Soyuz-TM Arms. Designed with the participation of world bronze medalist in Semi-Auto Rifle Vadim Mikhailov. Accuracy, speed, comfort of recoil. Compatible with custom 4.6x30mm magazines.",
-
   "6628f38262cab98c01ffada1 Name": "Glock 4.6x30 'Big Stick' 33-round magazine",
   "6628f38262cab98c01ffada1 ShortName": "STM-46M",
   "6628f38262cab98c01ffada1 Description": "A factory-produced 33-round 4.6x30 magazine for the custom Soyuz-TM STM-46 Gen.2 4.6x30mm carbine.",
-
   "6628f38835c496a91efdef37 Name": "Custom Glock 4.6x30 SGM Tactical 50-round drum magazine",
   "6628f38835c496a91efdef37 ShortName": "STM-46D",
   "6628f38835c496a91efdef37 Description": "A high-capacity 50-round magazine for the custom Soyuz-TM STM-46 Gen.2 4.6x30mm carbine. Made in Korea and imported by SGM Tactical. Can hold even more than 50 rounds, but the manufacturer does not recommend loading more.",
-
   "6628f37eb50e789115223da9 Name": "STM-46 4.6x30 upper receiver",
   "6628f37eb50e789115223da9 ShortName": "6628f3786c4f8a10a65adee4 Rec",
   "6628f37eb50e789115223da9 Description": "An upper receiver for the STM-46 Gen.2 4.6x30 carbine. Equipped with a mount for attaching additional tactical devices.",
-
   "6621b1e0bd80eeb4de0c9ed8 Name": "Legions Armor (Carrion)",
   "6621b1e0bd80eeb4de0c9ed8 ShortName": "Carrion",
   "6621b1e0bd80eeb4de0c9ed8 Description": "This custom plate carrier is worn by the mysterious Legion. Nicknamed `Carrion` due to the likelihood you will find this being worn in the midst of the bloodiest battles.",
-
   "6621b274485df00e750df4f2 Name": "Lone Dragon Plate Carrier",
   "6621b274485df00e750df4f2 ShortName": "Lone Dragon (R)",
   "6621b274485df00e750df4f2 Description": "The Lone Dragon plate carrier has been used by the most elite of operators in the US army. It has a modular design allowing you to bring everything you would conceivably need into the field with you. If you're going behind enemy lines, look no further.",
-
   "6621b1f22310f5ff09476360 Name": "CQC Rhino plate carrier (MTP)",
   "6621b1f22310f5ff09476360 ShortName": "Rhino Rig (R)",
   "6621b1f22310f5ff09476360 Description": "Rhino is based on the Osprey body armour system but without neck, shoulder and groin protection. Rhino has proved to be a very popular system as it has a simple but effective design.",
-
   "6621b28d9411498998d408c3 Name": "Oakley Kitchen Sink support backpack",
   "6621b28d9411498998d408c3 ShortName": "OKSB (R)",
   "6621b28d9411498998d408c3 Description": "This backpack truly lives up to it's name. Meant for support forces carrying a large amount of supplies to stranded troops, it was been repurposed for more nefarious deeds in Tarkov.",
-
   "6621b200cb248c192d90e324 Name": "Legion Mask (Wrath)",
   "6621b200cb248c192d90e324 ShortName": "Wrath",
   "6621b200cb248c192d90e324 Description": "A haunting mask worn by the Legion as they stalk across Tarkov. If you are close enough to see this mask, it's too late.",
-
   "6621b0dcbcfe66cdbbab48c7 Name": "Custom Deadskul Carrying Pouch",
   "6621b0dcbcfe66cdbbab48c7 ShortName": "Dead",
   "6621b0dcbcfe66cdbbab48c7 Description": "A modified Deadskul Armband with pouches sown into it. Now you can be sure to never go into the field without extra provisions. The Requisition Officers really knew what they were doing with this one. Only for real collectors.",
-
   "67d4373526a3cfb1ff5338bb Name": "Ammunition Pouch (Req)",
   "67d4373526a3cfb1ff5338bb ShortName": "AmmoPouch (R)",
   "67d4373526a3cfb1ff5338bb Description": "A carrying case used by the wolves of the Requisitions Office to bring their spare ammunition into the field. This case was carried on the person of each member once they step foot outside.",
-
   "67fefea22cc2bce48d31e21f Name": "Army Wallet (Req)",
   "67fefea22cc2bce48d31e21f ShortName": "ArmyWallet (R)",
   "67fefea22cc2bce48d31e21f Description": "A military issued wallet. Able to be fitted to a modular tactical vest so you never lose your money. As long as you make it home that is",
-
   "6722252e82ca09a7e62c4d84 Name": "Medical Supplies Carrying Case (Large)",
   "6722252e82ca09a7e62c4d84 ShortName": "MSCC (L)",
   "6722252e82ca09a7e62c4d84 Description": "A carrying case used by the wolves of the Requisitions Office to haul their supplies into the field. This case was carried by the medic to ensure a quick response to any serious injuries incurred on a hunt.",
-
   "6722254fd847a7aafccfbb54 Name": "Medical Supplies Carrying Case (Medium)",
   "6722254fd847a7aafccfbb54 ShortName": "MSCC (M)",
   "6722254fd847a7aafccfbb54 Description": "A carrying case used by the wolves of the Requisitions Office to haul their supplies into the field. This case was stored in their vehicles as a stopgap measure for when supplies elsewhere were depleted.",
-
   "67222453e6aee984bcfcf9d1 Name": "Medical Supplies Carrying Case (Small)",
   "67222453e6aee984bcfcf9d1 ShortName": "MSCC (S)",
   "67222453e6aee984bcfcf9d1 Description": "A carrying case used by the wolves of the Requisitions Office to haul their supplies into the field. This case was carried on the person of each member once they step foot outside.",
-
   "67fefe885041d8c121e93bf8 Name": "Old Keytool (Req)",
   "67fefe885041d8c121e93bf8 ShortName": "Keytool (R)",
   "67fefe885041d8c121e93bf8 Description": "An old keytool scrounged up by the Req Shop. Not as much space as newer tools but it should do the job for you temporarily.",
-
   "67c957ce411e6263333a1c38 Name": "Special Storage Crate (Requisitions)",
   "67c957ce411e6263333a1c38 ShortName": "SpecCase (R)",
   "67c957ce411e6263333a1c38 Description": "A special storage crate rarely used by the Requisitions Office to keep their rarest items safe and secure. The largest and most prized case in Tarkov as of now...",
-
   "666361eff60f4ea5a464eb70 Name": "Secure Container Onyx",
   "666361eff60f4ea5a464eb70 ShortName": "Onyx",
   "666361eff60f4ea5a464eb70 Description": "The best of the best. The rarest case found in the land of Tarkov, used by only the most skilled and seasoned PMC's.",
-
   "6621b12c9f46c3eb4a0c8f40 Name": "Custom Waist Pouch",
   "6621b12c9f46c3eb4a0c8f40 ShortName": "CWP",
   "6621b12c9f46c3eb4a0c8f40 Description": "A modified Waist Pouch with more storage sown into it. It is a durable and convenient waist pouch for a variety of things you would want to keep close.",
-
   "6621b143edb81061ceb5d7cc Name": "Custom Secure Container Alpha",
   "6621b143edb81061ceb5d7cc ShortName": "CSCA",
   "6621b143edb81061ceb5d7cc Description": "A modified Alpha Container with more storage compartments added. A small secure container used by PMCs formerly deployed in Tarkov.",
-
   "6621b177ce1b117550362db5 Name": "Custom Secure Container Beta",
   "6621b177ce1b117550362db5 ShortName": "CSCB",
   "6621b177ce1b117550362db5 Description": "A modified Beta Container with more storage compartments added. A medium-sized secure container used by PMCs formerly deployed in Tarkov.",
-
   "6621b1895c9cd0794d536d14 Name": "Custom Secure Container Gamma",
   "6621b1895c9cd0794d536d14 ShortName": "CSCG",
   "6621b1895c9cd0794d536d14 Description": "A modified Gamma Container with more storage compartments added. A unique secure container used only by veteran PMCs formerly deployed in Tarkov.",
-
   "6621b1986f4ebd47e39eacb5 Name": "Custom Secure Container Epsilon",
   "6621b1986f4ebd47e39eacb5 ShortName": "CSCE",
   "6621b1986f4ebd47e39eacb5 Description": "A modified Epsilon Container with more storage compartments added. One of TerraGroup's latest inventions in secure container technology - the Epsilon secured container.",
-
   "6621b1b3166c301c04facfc8 Name": "Custom Secure Container Kappa",
   "6621b1b3166c301c04facfc8 ShortName": "CSCK",
   "6621b1b3166c301c04facfc8 Description": "A modified Kappa Container with more storage compartments added. A secret TerraGroup invention - the Kappa secured container.",
-
   "66292e79a4d9da25e683ab55 Name": "Requisition Coin",
   "66292e79a4d9da25e683ab55 ShortName": "ReqCoins",
   "66292e79a4d9da25e683ab55 Description": "A coin used to trade with the Requisitions Office bearing the form of an eastern dragon. You'll want to keep a stack of these handy in case you run into trouble and need some quick provisions. A smaller denomination for trading apparently. They look fancy but are next to worthless as a currency in Tarkov. Who knows why the Requisition Office values them as much as they do.",
-
   "668b3c71042c73c6f9b00704 Name": "Requisition Slips",
   "668b3c71042c73c6f9b00704 ShortName": "ReqSlips",
   "668b3c71042c73c6f9b00704 Description": "A requisition slip used to trade with the Requisitions Office. You'll want to keep a stack of these handy in case you run into trouble and need some quick provisions. A larger denomination for trading apparently.",
-
   "67c95a09708ee99e7a575da5 Name": "Special Request Form",
   "67c95a09708ee99e7a575da5 ShortName": "SpecForm",
   "67c95a09708ee99e7a575da5 Description": "A special form used to trade for premium items with the Requisitions Office. No idea who made these, or what they contain, but they must be important for how much they seem to be worth.",
-
   "66a2fc926af26cc365283f23 Name": "Skeleton Key",
   "66a2fc926af26cc365283f23 ShortName": "Skeleton",
   "66a2fc926af26cc365283f23 Description": "A simple looking key with a lot of potential. I don't know who made this, but don't let it out of your grasp.",
-
   "66a2fc9886fbd5d38c5ca2a6 Name": "VIP Keycard",
   "66a2fc9886fbd5d38c5ca2a6 ShortName": "VIP",
   "66a2fc9886fbd5d38c5ca2a6 Description": "A modified keycard said to give access to all of the terragroup areas scattered throughout Tarkov. You will want to keep this on you at all times if you're lucky enough to find one, but guard it closely.",
-
   "69d97da875719a9b533bdf7d Name": "Legion Slayer",
   "69d97da875719a9b533bdf7d Description": "Eliminate The Legion Threat.",
   "69d97f4313fb328567261d13": "Eliminate Legion",

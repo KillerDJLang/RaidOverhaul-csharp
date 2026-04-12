@@ -14,7 +14,9 @@
                 "dynamicLocale": false,
                 "id": "672bf2cff9f55c95279ce23a",
                 "target": "Savage",
-                "savageRole": ["bosslegion"],
+                "savageRole": [
+                  "bosslegion"
+                ],
                 "value": 1
               }
             ],
@@ -43,7 +45,9 @@
           "minDurability": 0,
           "onlyFoundInRaid": false,
           "parentId": "",
-          "target": ["6621b200cb248c192d90e324"],
+          "target": [
+            "6621b200cb248c192d90e324"
+          ],
           "value": 1,
           "visibilityConditions": []
         }
@@ -129,4 +133,3 @@
     "type": "Elimination"
   }
 }
-

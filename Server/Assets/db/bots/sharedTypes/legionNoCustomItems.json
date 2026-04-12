@@ -509,7 +509,10 @@
         "DIST_TO_STOP_RUN_ENEMY": 15,
         "DOG_FIGHT_IN": 3,
         "DOG_FIGHT_OUT": 6,
-        "ENEMY_BOT_TYPES": ["pmcBEAR", "pmcUSEC"],
+        "ENEMY_BOT_TYPES": [
+          "pmcBEAR",
+          "pmcUSEC"
+        ],
         "ENEMY_LOOK_AT_ME_ANG": 15,
         "FIND_COVER_TO_GET_POSITION_WITH_SHOOT": 2,
         "FRIENDLY_BOT_TYPES": [],
@@ -550,7 +553,9 @@
         "TIME_TO_FIND_ENEMY": 22,
         "TIME_TO_FORGOR_ABOUT_ENEMY_SEC": 52,
         "TIME_TO_RUN_TO_COVER_CAUSE_SHOOT_SEC": 15,
-        "WARN_BOT_TYPES": ["assault"]
+        "WARN_BOT_TYPES": [
+          "assault"
+        ]
       },
       "Move": {
         "BASESTART_SLOW_DIST": 1.1,
@@ -1090,7 +1095,10 @@
         "DIST_TO_STOP_RUN_ENEMY": 15,
         "DOG_FIGHT_IN": 3,
         "DOG_FIGHT_OUT": 6,
-        "ENEMY_BOT_TYPES": ["pmcBEAR", "pmcUSEC"],
+        "ENEMY_BOT_TYPES": [
+          "pmcBEAR",
+          "pmcUSEC"
+        ],
         "ENEMY_LOOK_AT_ME_ANG": 15,
         "FIND_COVER_TO_GET_POSITION_WITH_SHOOT": 2,
         "FRIENDLY_BOT_TYPES": [],
@@ -1131,7 +1139,9 @@
         "TIME_TO_FIND_ENEMY": 22,
         "TIME_TO_FORGOR_ABOUT_ENEMY_SEC": 52,
         "TIME_TO_RUN_TO_COVER_CAUSE_SHOOT_SEC": 15,
-        "WARN_BOT_TYPES": ["assault"]
+        "WARN_BOT_TYPES": [
+          "assault"
+        ]
       },
       "Move": {
         "BASESTART_SLOW_DIST": 1.1,
@@ -1671,7 +1681,10 @@
         "DIST_TO_STOP_RUN_ENEMY": 15,
         "DOG_FIGHT_IN": 3,
         "DOG_FIGHT_OUT": 6,
-        "ENEMY_BOT_TYPES": ["pmcBEAR", "pmcUSEC"],
+        "ENEMY_BOT_TYPES": [
+          "pmcBEAR",
+          "pmcUSEC"
+        ],
         "ENEMY_LOOK_AT_ME_ANG": 15,
         "FIND_COVER_TO_GET_POSITION_WITH_SHOOT": 2,
         "FRIENDLY_BOT_TYPES": [],
@@ -1712,7 +1725,9 @@
         "TIME_TO_FIND_ENEMY": 22,
         "TIME_TO_FORGOR_ABOUT_ENEMY_SEC": 52,
         "TIME_TO_RUN_TO_COVER_CAUSE_SHOOT_SEC": 15,
-        "WARN_BOT_TYPES": ["assault"]
+        "WARN_BOT_TYPES": [
+          "assault"
+        ]
       },
       "Move": {
         "BASESTART_SLOW_DIST": 1.1,
@@ -2252,7 +2267,10 @@
         "DIST_TO_STOP_RUN_ENEMY": 15,
         "DOG_FIGHT_IN": 3,
         "DOG_FIGHT_OUT": 6,
-        "ENEMY_BOT_TYPES": ["pmcBEAR", "pmcUSEC"],
+        "ENEMY_BOT_TYPES": [
+          "pmcBEAR",
+          "pmcUSEC"
+        ],
         "ENEMY_LOOK_AT_ME_ANG": 15,
         "FIND_COVER_TO_GET_POSITION_WITH_SHOOT": 2,
         "FRIENDLY_BOT_TYPES": [],
@@ -2293,7 +2311,9 @@
         "TIME_TO_FIND_ENEMY": 22,
         "TIME_TO_FORGOR_ABOUT_ENEMY_SEC": 52,
         "TIME_TO_RUN_TO_COVER_CAUSE_SHOOT_SEC": 15,
-        "WARN_BOT_TYPES": ["assault"]
+        "WARN_BOT_TYPES": [
+          "assault"
+        ]
       },
       "Move": {
         "BASESTART_SLOW_DIST": 1.1,

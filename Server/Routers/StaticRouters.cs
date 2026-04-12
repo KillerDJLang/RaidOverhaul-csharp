@@ -26,7 +26,6 @@ public class ROStaticRouter : StaticRouter
     private static DebugFile? _debugConfig;
     private static EventsConfigFile? _eventsConfig;
     private static SeasonalProgression? _seasonsConfig;
-    private static LegionProgression? _legionConfig;
     private static RODbEdits? _dbController;
     private static DatabaseService? _databaseService;
     private static ROHelpers? _helpers;
@@ -66,15 +65,13 @@ public class ROStaticRouter : StaticRouter
         ConfigFile config,
         SeasonalProgression seasonsConfig,
         DebugFile debugConfig,
-        EventsConfigFile eventsConfig,
-        LegionProgression legionConfig
+        EventsConfigFile eventsConfig
     )
     {
         _config = config;
         _seasonsConfig = seasonsConfig;
         _debugConfig = debugConfig;
         _eventsConfig = eventsConfig;
-        _legionConfig = legionConfig;
     }
 
     private static List<RouteAction> GetCustomRoutes()
@@ -89,7 +86,7 @@ public class ROStaticRouter : StaticRouter
             new RouteAction<EmptyRequestData>("/RaidOverhaul/GetServerConfig", async (_, _, _, _) => await HandleRoute(_config)),
             new RouteAction<EmptyRequestData>("/RaidOverhaul/GetWeatherConfig", async (_, _, _, _) => await HandleRoute(_seasonsConfig)),
             new RouteAction<EmptyRequestData>("/RaidOverhaul/GetDebugConfig", async (_, _, _, _) => await HandleRoute(_debugConfig)),
-            new RouteAction<EmptyRequestData>("/RaidOverhaul/GetLegionConfig", async (_, _, _, _) => await HandleRoute(_legionConfig)),
+            //new RouteAction<EmptyRequestData>("/RaidOverhaul/GetLegionConfig", async (_, _, _, _) => await HandleRoute(_legionConfig)),
             new RouteAction<LogToServerRequestData>(
                 "/RaidOverhaul/LogToServer",
                 async (_, info, _, _) => await _serverLogCallbacks.LogToServer(info, _logger)
@@ -132,14 +129,14 @@ public class ROStaticRouter : StaticRouter
     {
         if (_config.WeatherChangesEnabled)
         {
-            if (_config.NoWinter && !_config.AllSeasons && !_config.SeasonalProgression && !_config.WinterWonderland)
+            if (_helpers.IsOnlyWeatherOption(_config.NoWinter, _config))
             {
-                _dbController.WeatherChangesNoWinter();
+                _dbController.WeatherChangesNoWinter(_helpers);
             }
 
-            if (_config.AllSeasons && _config.NoWinter && !_config.SeasonalProgression && !_config.WinterWonderland)
+            if (_helpers.IsOnlyWeatherOption(_config.AllSeasons, _config))
             {
-                _dbController.WeatherChangesAllSeasons();
+                _dbController.WeatherChangesAllSeasons(_helpers);
             }
         }
 
@@ -152,19 +149,12 @@ public class ROStaticRouter : StaticRouter
 
         if (_config.WeatherChangesEnabled)
         {
-            if (_config.SeasonalProgression && !_config.AllSeasons && !_config.NoWinter && !_config.WinterWonderland)
+            if (_helpers.IsOnlyWeatherOption(_config.SeasonalProgression, _config))
             {
                 _dbController.SeasonProgression(_seasonsConfig, _debugConfig, assembly, _helpers);
             }
 
-            if (
-                (_config.AllSeasons && _config.WinterWonderland)
-                || (_config.NoWinter && _config.WinterWonderland)
-                || (_config.SeasonalProgression && _config.WinterWonderland)
-                || (_config.NoWinter && _config.SeasonalProgression)
-                || (_config.NoWinter && _config.AllSeasons)
-                || (_config.SeasonalProgression && _config.AllSeasons)
-            )
+            if (_helpers.HasConflictingWeatherOptions(_config))
             {
                 ROLogger.Log(
                     _logger,
@@ -194,12 +184,12 @@ public class ROStaticRouter : StaticRouter
         {
             if (_config.UseLegionGlobalSpawnChance)
             {
-                _bossHelper.SetBossSpawns(_config, _legionConfig, _debugConfig);
+                _bossHelper.SetBossSpawns(_config.GlobalSpawnChance, _debugConfig);
             }
             else
             {
-                HandleLegionProgression(info);
-                _bossHelper.SetBossSpawns(_config, _legionConfig, _debugConfig);
+                var legionChance = HandleLegionProgression(info, sessionId);
+                _bossHelper.SetBossSpawns(legionChance, _debugConfig);
             }
         }
 
@@ -330,12 +320,34 @@ public class ROStaticRouter : StaticRouter
         return;
     }
 
-    private static void HandleLegionProgression(EndLocalRaidRequestData info)
+    private static double HandleLegionProgression(EndLocalRaidRequestData info, MongoId sessionId)
     {
+        var assembly = Assembly.GetExecutingAssembly();
+        var modPath = _modHelper.GetAbsolutePathToModFolder(assembly);
+        var legionProgressionDir = Path.Combine(modPath, "config", "LegionProgression");
+        var legionFilePath = Path.Combine(legionProgressionDir, $"{sessionId}.json");
+
+        if (!Directory.Exists(legionProgressionDir))
+        {
+            Directory.CreateDirectory(legionProgressionDir);
+        }
+
+        if (!File.Exists(legionFilePath))
+        {
+            var defaultProgression = new LegionProgression { LegionChance = 15 };
+            _helpers.WriteConfigFile(defaultProgression, assembly, Path.Combine("config", "LegionProgression"), $"{sessionId}.json");
+        }
+
+        var legionProgression = _helpers.LoadConfig<LegionProgression>(
+            assembly,
+            Path.Combine("config", "LegionProgression"),
+            $"{sessionId}.json"
+        );
+
         var reStatus = info.Results.Result;
         var pmcData = info.Results.Profile;
         var victim = pmcData.Stats.Eft.Victims;
-        var bossLegionChance = _legionConfig.LegionChance;
+        var bossLegionChance = legionProgression.LegionChance;
 
         foreach (var victimType in victim)
         {
@@ -347,14 +359,10 @@ public class ROStaticRouter : StaticRouter
                     bossLegionChance = 10;
                     break;
                 }
-                else
-                {
-                    continue;
-                }
             }
             catch (Exception ex)
             {
-                ROLogger.LogError(_logger, $"Error modifying Trader Rep on killing boss: {ex}");
+                ROLogger.LogError(_logger, $"Error processing Legion progression: {ex}");
             }
         }
         if (reStatus == ExitStatus.SURVIVED)
@@ -386,11 +394,9 @@ public class ROStaticRouter : StaticRouter
             bossLegionChance = 100;
         }
 
-        var assembly = Assembly.GetExecutingAssembly();
-        _legionConfig.LegionChance = bossLegionChance;
+        legionProgression.LegionChance = bossLegionChance;
+        _helpers.WriteConfigFile(legionProgression, assembly, Path.Combine("config", "LegionProgression"), $"{sessionId}.json");
 
-        _helpers.WriteConfigFile(_legionConfig, assembly, "config", "legionProgressionFile.json");
-
-        return;
+        return bossLegionChance;
     }
 }

@@ -112,6 +112,20 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy &quot;$(TargetPath)&quot; &quot;$(ProjectDir)\..\Build\BepInEx\plugins\RaidOverhaul\$(TargetFileName)&quot;" />
+    <PropertyGroup>
+      <PluginBuildDir>$(ProjectDir)..\Build\BepInEx\plugins\RaidOverhaul</PluginBuildDir>
+    </PropertyGroup>
+
+    <RemoveDir Directories="$(PluginBuildDir)" />
+    <MakeDir Directories="$(PluginBuildDir)" />
+
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(PluginBuildDir)" />
+
+    <ItemGroup>
+      <PluginAssets Include="$(ProjectDir)Assets\**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(PluginAssets)"
+          DestinationFiles="@(PluginAssets->'$(PluginBuildDir)\%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true" />
   </Target>
 </Project>

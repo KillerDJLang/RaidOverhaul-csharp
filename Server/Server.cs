@@ -13,7 +13,7 @@ using SPTarkov.Server.Core.Models.Utils;
 [assembly: AssemblyTitle("Raid Overhaul Server")]
 [assembly: AssemblyDescription("A large overhaul for raids including events, dead body clean up, and much more. Server component.")]
 [assembly: AssemblyCopyright("Copyright © 2025 nameless")]
-[assembly: AssemblyFileVersion("3.0.3")]
+[assembly: AssemblyFileVersion("3.1.0")]
 
 namespace RaidOverhaulMain;
 
@@ -23,14 +23,14 @@ public sealed record ModMetadata : AbstractModMetadata
     public override string Name { get; init; } = "Raid Overhaul Server";
     public override string Author { get; init; } = "nameless";
     public override List<string>? Contributors { get; init; }
-    public override SemanticVersioning.Version Version { get; init; } = new("3.0.3");
+    public override SemanticVersioning.Version Version { get; init; } = new("3.1.0");
     public override SemanticVersioning.Range SptVersion { get; init; } = new("~4.0.0");
     public override List<string>? Incompatibilities { get; init; }
     public override Dictionary<string, SemanticVersioning.Range>? ModDependencies { get; init; } =
         new()
         {
             { "com.morebotsapi.tacticaltoaster", new SemanticVersioning.Range(">=1.1.0") },
-            { "com.wtt.commonlib", new SemanticVersioning.Range(">=2.0.15") },
+            { "com.wtt.commonlib", new SemanticVersioning.Range(">=2.0.18") },
         };
     public override string? Url { get; init; }
     public override bool? IsBundleMod { get; init; } = true;
@@ -62,8 +62,6 @@ public sealed class ROMain(
         var debugConfig = helpers.LoadConfig<DebugFile>(assembly, devFilesPath, "debugOptions.json");
         var eventsConfig = helpers.LoadConfig<EventsConfigFile>(assembly, "config", "eventWeightings.json");
         var seasonsConfig = helpers.LoadConfig<SeasonalProgression>(assembly, devFilesPath, "seasonsProgressionFile.json");
-        var legionConfig = helpers.LoadConfig<LegionProgression>(assembly, "config", "legionProgressionFile.json");
-        var ammoListFile = helpers.LoadConfig<AmmoStackList>(assembly, devFilesPath, "ammoStackList.json");
         var botLoadouts = Path.Combine("db", "bots", "botLoadouts");
         var typeList = new List<string> { "bosslegion", "legionnaire" };
         var typeDictionary = new Dictionary<int, string>() { { 199, "bosslegion" }, { 200, "legionnaire" } };
@@ -73,9 +71,9 @@ public sealed class ROMain(
             helpers.DumpDataMaps(assembly);
         }
         roTrader.PassTraderConfigs(config, debugConfig);
-        roDbEdits.PassDbConfigs(config, ammoListFile);
+        roDbEdits.PassDbConfigs(config);
         roCustomItems.PassCustomItemConfigs(config);
-        roStaticRouter.PassRouterConfigs(config, seasonsConfig, debugConfig, eventsConfig, legionConfig);
+        roStaticRouter.PassRouterConfigs(config, seasonsConfig, debugConfig, eventsConfig);
 
         await roCustomItems.BuildCustomItems();
         roTrader.BuildTrader();
@@ -129,7 +127,7 @@ public sealed class ROMain(
                 factionService.AddEnemyByFaction(typeList, "blackdiv");
             }
 
-            roBossHelper.SetBossSpawns(config, legionConfig, debugConfig);
+            roBossHelper.SetBossSpawns((double)10, debugConfig);
             ROLogger.Log(logger, "Custom bots finished loading", LogTextColor.Magenta);
         }
 

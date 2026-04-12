@@ -1,68 +1,132 @@
 {
-    "manifest": [
-        {
-            "key": "ArmoredVests/legion_armor.bundle",
-            "dependencyKeys": ["shaders", "cubemaps", "assets/commonassets/physics/physicsmaterials.bundle"]
-        },
-        {
-            "key": "Backpacks/oakley_backpack.bundle",
-            "dependencyKeys": ["shaders", "cubemaps", "assets/commonassets/physics/physicsmaterials.bundle"]
-        },
-        {
-            "key": "Containers/ammo_pouch.bundle",
-            "dependencyKeys": ["shaders", "cubemaps", "assets/commonassets/physics/physicsmaterials.bundle"]
-        },
-        {
-            "key": "Containers/army_wallet.bundle",
-            "dependencyKeys": ["shaders", "cubemaps", "assets/commonassets/physics/physicsmaterials.bundle"]
-        },
-        {
-            "key": "Containers/large_medcase.bundle",
-            "dependencyKeys": ["shaders", "cubemaps", "assets/commonassets/physics/physicsmaterials.bundle"]
-        },
-        {
-            "key": "Containers/medium_medcase.bundle",
-            "dependencyKeys": ["shaders", "cubemaps", "assets/commonassets/physics/physicsmaterials.bundle"]
-        },
-        {
-            "key": "Containers/old_keytool.bundle",
-            "dependencyKeys": ["shaders", "cubemaps", "assets/commonassets/physics/physicsmaterials.bundle"]
-        },
-        {
-            "key": "Containers/onyx_container.bundle",
-            "dependencyKeys": ["shaders", "cubemaps", "assets/commonassets/physics/physicsmaterials.bundle"]
-        },
-        {
-            "key": "Containers/small_medcase.bundle",
-            "dependencyKeys": ["shaders", "cubemaps", "assets/commonassets/physics/physicsmaterials.bundle"]
-        },
-        {
-            "key": "Containers/special_storage_crate.bundle",
-            "dependencyKeys": ["shaders", "cubemaps", "assets/commonassets/physics/physicsmaterials.bundle"]
-        },
-        {
-            "key": "FaceCover/legion_facemask.bundle",
-            "dependencyKeys": ["shaders", "cubemaps", "assets/commonassets/physics/physicsmaterials.bundle"]
-        },
-        {
-            "key": "Items/requisition_coin.bundle",
-            "dependencyKeys": ["shaders", "cubemaps", "assets/commonassets/physics/physicsmaterials.bundle"]
-        },
-        {
-            "key": "Items/requisition_slip.bundle",
-            "dependencyKeys": ["shaders", "cubemaps", "assets/commonassets/physics/physicsmaterials.bundle"]
-        },
-        {
-            "key": "Items/special_request_form.bundle",
-            "dependencyKeys": ["shaders", "cubemaps", "assets/commonassets/physics/physicsmaterials.bundle"]
-        },
-        {
-            "key": "Rigs/ld_plate_carrier.bundle",
-            "dependencyKeys": ["shaders", "cubemaps", "assets/commonassets/physics/physicsmaterials.bundle"]
-        },
-        {
-            "key": "Rigs/rhino_rig.bundle",
-            "dependencyKeys": ["shaders", "cubemaps", "assets/commonassets/physics/physicsmaterials.bundle"]
-        }
-    ]
+  "manifest": [
+    {
+      "key": "ArmoredVests/legion_armor.bundle",
+      "dependencyKeys": [
+        "shaders",
+        "cubemaps",
+        "assets/commonassets/physics/physicsmaterials.bundle"
+      ]
+    },
+    {
+      "key": "Backpacks/oakley_backpack.bundle",
+      "dependencyKeys": [
+        "shaders",
+        "cubemaps",
+        "assets/commonassets/physics/physicsmaterials.bundle"
+      ]
+    },
+    {
+      "key": "Containers/ammo_pouch.bundle",
+      "dependencyKeys": [
+        "shaders",
+        "cubemaps",
+        "assets/commonassets/physics/physicsmaterials.bundle"
+      ]
+    },
+    {
+      "key": "Containers/army_wallet.bundle",
+      "dependencyKeys": [
+        "shaders",
+        "cubemaps",
+        "assets/commonassets/physics/physicsmaterials.bundle"
+      ]
+    },
+    {
+      "key": "Containers/large_medcase.bundle",
+      "dependencyKeys": [
+        "shaders",
+        "cubemaps",
+        "assets/commonassets/physics/physicsmaterials.bundle"
+      ]
+    },
+    {
+      "key": "Containers/medium_medcase.bundle",
+      "dependencyKeys": [
+        "shaders",
+        "cubemaps",
+        "assets/commonassets/physics/physicsmaterials.bundle"
+      ]
+    },
+    {
+      "key": "Containers/old_keytool.bundle",
+      "dependencyKeys": [
+        "shaders",
+        "cubemaps",
+        "assets/commonassets/physics/physicsmaterials.bundle"
+      ]
+    },
+    {
+      "key": "Containers/onyx_container.bundle",
+      "dependencyKeys": [
+        "shaders",
+        "cubemaps",
+        "assets/commonassets/physics/physicsmaterials.bundle"
+      ]
+    },
+    {
+      "key": "Containers/small_medcase.bundle",
+      "dependencyKeys": [
+        "shaders",
+        "cubemaps",
+        "assets/commonassets/physics/physicsmaterials.bundle"
+      ]
+    },
+    {
+      "key": "Containers/special_storage_crate.bundle",
+      "dependencyKeys": [
+        "shaders",
+        "cubemaps",
+        "assets/commonassets/physics/physicsmaterials.bundle"
+      ]
+    },
+    {
+      "key": "FaceCover/legion_facemask.bundle",
+      "dependencyKeys": [
+        "shaders",
+        "cubemaps",
+        "assets/commonassets/physics/physicsmaterials.bundle"
+      ]
+    },
+    {
+      "key": "Items/requisition_coin.bundle",
+      "dependencyKeys": [
+        "shaders",
+        "cubemaps",
+        "assets/commonassets/physics/physicsmaterials.bundle"
+      ]
+    },
+    {
+      "key": "Items/requisition_slip.bundle",
+      "dependencyKeys": [
+        "shaders",
+        "cubemaps",
+        "assets/commonassets/physics/physicsmaterials.bundle"
+      ]
+    },
+    {
+      "key": "Items/special_request_form.bundle",
+      "dependencyKeys": [
+        "shaders",
+        "cubemaps",
+        "assets/commonassets/physics/physicsmaterials.bundle"
+      ]
+    },
+    {
+      "key": "Rigs/ld_plate_carrier.bundle",
+      "dependencyKeys": [
+        "shaders",
+        "cubemaps",
+        "assets/commonassets/physics/physicsmaterials.bundle"
+      ]
+    },
+    {
+      "key": "Rigs/rhino_rig.bundle",
+      "dependencyKeys": [
+        "shaders",
+        "cubemaps",
+        "assets/commonassets/physics/physicsmaterials.bundle"
+      ]
+    }
+  ]
 }

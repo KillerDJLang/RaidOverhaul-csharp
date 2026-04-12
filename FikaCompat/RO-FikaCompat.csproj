@@ -103,6 +103,12 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy &quot;$(TargetPath)&quot; &quot;$(ProjectDir)\..\Build\BepInEx\plugins\RaidOverhaul\$(TargetFileName)&quot;" />
+    <PropertyGroup>
+      <PluginBuildDir>$(ProjectDir)..\Build\BepInEx\plugins\RaidOverhaul</PluginBuildDir>
+    </PropertyGroup>
+
+    <MakeDir Directories="$(PluginBuildDir)" />
+
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(PluginBuildDir)" />
   </Target>
 </Project>

@@ -28,12 +28,10 @@ public class RODbEdits(
     private readonly WeatherConfig _weatherConfig = configServer.GetConfig<WeatherConfig>();
     private readonly RagfairConfig _ragfairConfig = configServer.GetConfig<RagfairConfig>();
     private static ConfigFile? _config;
-    private static AmmoStackList? _ammoList;
 
-    public void PassDbConfigs(ConfigFile config, AmmoStackList ammoList)
+    public void PassDbConfigs(ConfigFile config)
     {
         _config = config;
-        _ammoList = ammoList;
     }
 
     public void BuildDbEdits()
@@ -53,7 +51,7 @@ public class RODbEdits(
         }
         if (_config.WeatherChangesEnabled && _config.WinterWonderland)
         {
-            WeatherChangesWinterWonderland();
+            WeatherChangesWinterWonderland(roHelpers);
         }
         ROLogger.Log(logger, "Database Edits finished loading", LogTextColor.Magenta);
     }
@@ -486,29 +484,27 @@ public class RODbEdits(
 
         if (_config.AdvancedStackTuningEnabled && !_config.BasicStackTuningEnabled)
         {
-            foreach (var id in _ammoList.ShotgunList)
+            foreach (var (StackType, StackList) in DevModels.AmmoStackList)
             {
-                items[id].Properties.StackMaxSize = _config.ShotgunStack;
-            }
+                int stackSize = StackType switch
+                {
+                    "RifleList" => _config.RifleStack,
+                    "ShotgunList" => _config.ShotgunStack,
+                    "SmgList" => _config.SmgStack,
+                    "SniperList" => _config.SniperStack,
+                    "UbglList" => _config.FlaresAndUbgl,
+                    _ => -1,
+                };
 
-            foreach (var id in _ammoList.UbglList)
-            {
-                items[id].Properties.StackMaxSize = _config.FlaresAndUbgl;
-            }
+                if (stackSize == -1)
+                {
+                    continue;
+                }
 
-            foreach (var id in _ammoList.SniperList)
-            {
-                items[id].Properties.StackMaxSize = _config.SniperStack;
-            }
-
-            foreach (var id in _ammoList.SmgList)
-            {
-                items[id].Properties.StackMaxSize = _config.SmgStack;
-            }
-
-            foreach (var id in _ammoList.RifleList)
-            {
-                items[id].Properties.StackMaxSize = _config.RifleStack;
+                foreach (var item in StackList)
+                {
+                    items[item].Properties.StackMaxSize = stackSize;
+                }
             }
         }
 
@@ -663,9 +659,9 @@ public class RODbEdits(
         }
     }
 
-    public void WeatherChangesAllSeasons()
+    public void WeatherChangesAllSeasons(ROHelpers helpers)
     {
-        if (_config.AllSeasons && !_config.WinterWonderland && !_config.NoWinter && !_config.SeasonalProgression)
+        if (helpers.IsOnlyWeatherOption(_config.AllSeasons, _config))
         {
             var weatherChance = randomUtil.GetInt(1, 100);
 
@@ -703,14 +699,7 @@ public class RODbEdits(
                 ROLogger.Log(logger, "Storm is active.", LogTextColor.Magenta);
             }
         }
-        else if (
-            (_config.AllSeasons && _config.WinterWonderland)
-            || (_config.NoWinter && _config.WinterWonderland)
-            || (_config.SeasonalProgression && _config.WinterWonderland)
-            || (_config.NoWinter && _config.SeasonalProgression)
-            || (_config.NoWinter && _config.AllSeasons)
-            || (_config.SeasonalProgression && _config.AllSeasons)
-        )
+        else if (helpers.HasConflictingWeatherOptions(_config))
         {
             ROLogger.Log(
                 logger,
@@ -720,9 +709,9 @@ public class RODbEdits(
         }
     }
 
-    public void WeatherChangesNoWinter()
+    public void WeatherChangesNoWinter(ROHelpers helpers)
     {
-        if (_config.NoWinter && !_config.WinterWonderland && !_config.AllSeasons && !_config.SeasonalProgression)
+        if (helpers.IsOnlyWeatherOption(_config.NoWinter, _config))
         {
             var weatherChance = randomUtil.GetInt(1, 100);
 
@@ -756,14 +745,7 @@ public class RODbEdits(
             }
         }
 
-        if (
-            (_config.AllSeasons && _config.WinterWonderland)
-            || (_config.NoWinter && _config.WinterWonderland)
-            || (_config.SeasonalProgression && _config.WinterWonderland)
-            || (_config.NoWinter && _config.SeasonalProgression)
-            || (_config.NoWinter && _config.AllSeasons)
-            || (_config.SeasonalProgression && _config.AllSeasons)
-        )
+        if (helpers.HasConflictingWeatherOptions(_config))
         {
             ROLogger.Log(
                 logger,
@@ -773,9 +755,9 @@ public class RODbEdits(
         }
     }
 
-    private void WeatherChangesWinterWonderland()
+    private void WeatherChangesWinterWonderland(ROHelpers helpers)
     {
-        if (_config.WinterWonderland && !_config.AllSeasons && !_config.NoWinter && !_config.SeasonalProgression)
+        if (helpers.IsOnlyWeatherOption(_config.WinterWonderland, _config))
         {
             _weatherConfig.OverrideSeason = Season.WINTER;
             ROLogger.Log(logger, "Snow is active. It's a whole fuckin' winter wonderland out there.", LogTextColor.Magenta);
@@ -783,14 +765,7 @@ public class RODbEdits(
             return;
         }
 
-        if (
-            (_config.AllSeasons && _config.WinterWonderland)
-            || (_config.NoWinter && _config.WinterWonderland)
-            || (_config.SeasonalProgression && _config.WinterWonderland)
-            || (_config.NoWinter && _config.SeasonalProgression)
-            || (_config.NoWinter && _config.AllSeasons)
-            || (_config.SeasonalProgression && _config.AllSeasons)
-        )
+        if (helpers.HasConflictingWeatherOptions(_config))
         {
             ROLogger.Log(
                 logger,

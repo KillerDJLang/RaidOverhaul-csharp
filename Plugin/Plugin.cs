@@ -95,8 +95,9 @@ namespace RaidOverhaul
 
             ConfigController.EventConfig = Utils.Get<EventsConfig>("/RaidOverhaul/GetEventConfig");
             ConfigController.ServerConfig = Utils.Get<ServerConfigs>("/RaidOverhaul/GetServerConfig");
-            ConfigController.LegionConfig = Utils.Get<LegionProgressionConfig>("/RaidOverhaul/GetLegionConfig");
             ConfigController.DebugConfig = Utils.Get<DebugConfigs>("/RaidOverhaul/GetDebugConfig");
+            ConfigController.SeasonConfig = Utils.Get<SeasonalConfig>("/RaidOverhaul/GetWeatherConfig");
+            //ConfigController.LegionConfig = Utils.Get<LegionProgressionConfig>("/RaidOverhaul/GetLegionConfig");
 
             _hook = new GameObject("Event Object");
 
@@ -119,7 +120,6 @@ namespace RaidOverhaul
 
             if (DJConfig.TimeChanges.Value)
             {
-                new GameWorldPatch().Enable();
                 new GlobalsPatch().Enable();
                 new EnableEntryPointPatch().Enable();
                 new UIPanelPatch().Enable();
@@ -143,6 +143,7 @@ namespace RaidOverhaul
 
             //new KeyPatch().Enable();
             //new KeycardPatch().Enable();
+            new GameWorldPatch().Enable();
             new OnDeadPatch().Enable();
             new RandomizeDefaultStatePatch().Enable();
             new EventExfilPatch().Enable();
@@ -183,6 +184,11 @@ namespace RaidOverhaul
             if (_dcScript != null && _dcScript.enabled)
             {
                 _dcScript.ManualUpdate();
+            }
+
+            if (_wScript != null && _wScript.enabled)
+            {
+                _wScript.DoStorm();
             }
 
             if (_bcScript != null && _bcScript.enabled)

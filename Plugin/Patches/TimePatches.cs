@@ -42,21 +42,6 @@ namespace RaidOverhaul.Patches
         }
     }
 
-    public class GameWorldPatch : ModulePatch
-    {
-        protected override MethodBase GetTargetMethod()
-        {
-            return typeof(GameWorld).GetMethod("OnGameStarted", BindingFlags.Instance | BindingFlags.Public);
-        }
-
-        [PatchPostfix]
-        private static void Postfix(GameWorld __instance)
-        {
-            var time = RaidTime.GetDateTime();
-            __instance.GameDateTime.Reset(time, time, 1);
-        }
-    }
-
     public class GlobalsPatch : ModulePatch
     {
         protected override MethodBase GetTargetMethod()

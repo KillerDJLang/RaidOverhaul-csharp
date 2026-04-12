@@ -14,7 +14,9 @@
                 "dynamicLocale": false,
                 "id": "672bf2cff9f55c95279ce23a",
                 "target": "Savage",
-                "savageRole": ["bosstagilla"],
+                "savageRole": [
+                  "bosstagilla"
+                ],
                 "value": 1
               }
             ],
@@ -40,7 +42,9 @@
                 "dynamicLocale": false,
                 "id": "672bf6a55d184c13d7461768",
                 "target": "Savage",
-                "savageRole": ["bosskilla"],
+                "savageRole": [
+                  "bosskilla"
+                ],
                 "value": 1
               }
             ],
@@ -133,4 +137,3 @@
     "type": "Elimination"
   }
 }
-

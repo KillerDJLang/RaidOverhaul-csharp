@@ -4,7 +4,6 @@ using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.Extensions;
 using SPTarkov.Server.Core.Helpers;
 using SPTarkov.Server.Core.Models.Common;
-using SPTarkov.Server.Core.Models.Eft.Common;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
 using SPTarkov.Server.Core.Models.Logging;
 using SPTarkov.Server.Core.Models.Spt.Config;
@@ -45,7 +44,6 @@ public class ROAssortHelper(
         var locales = localeService.GetLocaleDb();
         var items = databaseService.GetItems();
         var devFilesPath = Path.Combine("db", "devFiles");
-        var shopInfoFile = helpers.LoadConfig<ShopInfoFile>(assembly, devFilesPath, "shopInfo.json");
 
         foreach (var (itemId, rootItemDb) in items)
         {
@@ -54,7 +52,7 @@ public class ROAssortHelper(
                 continue;
             }
 
-            if (itemFilterService.IsItemBlacklisted(itemId) || shopInfoFile.ShopBlacklist.Contains(itemId))
+            if (itemFilterService.IsItemBlacklisted(itemId) || DevModels.ShopBlacklist.Contains(itemId))
             {
                 continue;
             }
@@ -184,7 +182,7 @@ public class ROAssortHelper(
                 }
             }
 
-            if (shopInfoFile.SpecialShopItems.Contains(itemId))
+            if (DevModels.ShopSpecialItems.Contains(itemId))
             {
                 if (randomUtil.GetChance100(9))
                 {
@@ -239,8 +237,7 @@ public class ROAssortHelper(
         var assembly = Assembly.GetExecutingAssembly();
         var devFilesPath = Path.Combine("db", "devFiles");
         var baseTraderAssort = databaseService.GetTrader(traderId)?.Assort;
-        var customPresetsFile = helpers.LoadConfig<Dictionary<MongoId, Preset>>(assembly, devFilesPath, "customPresets.json");
-        var customPresets = customPresetsFile.Values;
+        var customPresets = DevModels.CustomPresetMaps;
 
         var reqCoins = helpers.FetchIdFromMap("ReqCoins", ClassMaps.CustomItemMap);
         var reqSlips = helpers.FetchIdFromMap("ReqSlips", ClassMaps.CustomItemMap);
@@ -344,7 +341,7 @@ public class ROAssortHelper(
             traderId
         );
 
-        foreach (var customPreset in customPresets)
+        foreach (var (presetId, customPreset) in customPresets)
         {
             if (randomUtil.GetChance100(15))
             {
@@ -353,7 +350,7 @@ public class ROAssortHelper(
 
                 rootItem.ParentId = "hideout";
                 rootItem.SlotId = "hideout";
-                rootItem.Upd = new Upd { StackObjectsCount = 1, SptPresetId = customPreset.Id };
+                rootItem.Upd = new Upd { StackObjectsCount = 1, SptPresetId = presetId };
                 baseTraderAssort.Items.AddRange(itemAndChildren);
 
                 var price = handbookHelper.GetTemplatePriceForItems(itemAndChildren);
