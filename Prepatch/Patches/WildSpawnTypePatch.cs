@@ -25,7 +25,7 @@ namespace RaidOverhaulPrepatch.Patches
 
             var brains = new List<string>() { "PMC", "ExUsec" };
             var layers = new List<string>() { "Request", "KnightFight", "PmcBear", "PmcUsec", "ExURequest", "StationaryWS" };
-            int baseBrainInt = 24;
+            int baseBrainInt = 9;
 
             var legion = new CustomWildSpawnType(199, "bosslegion", "Legion", baseBrainInt, true, true, false);
             legion.SetCountAsBossForStatistics(true);
@@ -64,6 +64,42 @@ namespace RaidOverhaulPrepatch.Patches
             CustomWildSpawnTypeManager.RegisterWildSpawnType(legionnaire, assembly);
 
             CustomWildSpawnTypeManager.AddSuitableGroup(new List<int> { 199, 200 });
+
+            var wolfLead = new CustomWildSpawnType(201, "wolflead", "Wolves", baseBrainInt, true, true, false);
+            wolfLead.SetCountAsBossForStatistics(false);
+            wolfLead.SetShouldUseFenceNoBossAttack(false, false);
+            wolfLead.SetExcludedDifficulties(new List<int> { 0, 2, 3 });
+
+            SAINSettings wolfLeadSettings = new SAINSettings(wolfLead.WildSpawnTypeValue)
+            {
+                Name = "Wolf Squad Leader",
+                Description = "The senior protection operator. Leads the team in protecting the player.",
+                Section = "Wolves",
+                BaseBrain = "PMC",
+                BrainsToApply = brains,
+                LayersToRemove = layers,
+            };
+            wolfLead.SetSAINSettings(wolfLeadSettings);
+            CustomWildSpawnTypeManager.RegisterWildSpawnType(wolfLead, assembly);
+
+            var wolfSupport = new CustomWildSpawnType(202, "wolfsupport", "Wolves", baseBrainInt, true, true, false);
+            wolfSupport.SetCountAsBossForStatistics(false);
+            wolfSupport.SetShouldUseFenceNoBossAttack(false, false);
+            wolfSupport.SetExcludedDifficulties(new List<int> { 0, 2, 3 });
+
+            SAINSettings wolfSupportSettings = new SAINSettings(wolfSupport.WildSpawnTypeValue)
+            {
+                Name = "Wolf Squad Support",
+                Description = "A hired protection operator. Defends the player at all costs.",
+                Section = "Wolves",
+                BaseBrain = "PMC",
+                BrainsToApply = brains,
+                LayersToRemove = layers,
+            };
+            wolfSupport.SetSAINSettings(wolfSupportSettings);
+            CustomWildSpawnTypeManager.RegisterWildSpawnType(wolfSupport, assembly);
+
+            CustomWildSpawnTypeManager.AddSuitableGroup(new List<int> { 201, 202 });
         }
 
         private static bool ShouldPatchAssembly()

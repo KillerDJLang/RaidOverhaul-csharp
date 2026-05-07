@@ -1,5 +1,6 @@
 using System.Reflection;
 using EFT.Weather;
+using HarmonyLib;
 using SPT.Reflection.Patching;
 
 namespace RaidOverhaul.Patches
@@ -8,7 +9,7 @@ namespace RaidOverhaul.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(WeatherController).GetMethod("Awake", BindingFlags.Instance | BindingFlags.Public);
+            return AccessTools.Method(typeof(WeatherController), nameof(WeatherController.Awake));
         }
 
         [PatchPostfix]

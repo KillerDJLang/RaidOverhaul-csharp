@@ -11,6 +11,13 @@ namespace RaidOverhaulMain.Helpers;
 [Injectable(InjectionType.Singleton)]
 public class ROBossHelper(ISptLogger<ROBossHelper> logger, DatabaseService databaseService, RandomUtil randomUtil)
 {
+    private DebugFile _debugConfig = null!;
+
+    public void PassBossConfig(DebugFile debugConfig)
+    {
+        _debugConfig = debugConfig;
+    }
+
     private static readonly Dictionary<string, string> _mapData = new()
     {
         ["bigmap"] = "ZoneDormitory,ZoneGasStation,ZoneScavBase,ZoneBrige,ZoneCustoms,ZoneOldVill",
@@ -28,7 +35,7 @@ public class ROBossHelper(ISptLogger<ROBossHelper> logger, DatabaseService datab
         ["woods"] = "ZoneWoodCutter,ZoneScavBase2,ZoneMiniHouse,ZoneBrokenVill,ZoneBigRocks",
     };
 
-    public void SetBossSpawns(double legionChance, DebugFile debugConfig)
+    public void SetBossSpawns(double legionChance)
     {
         try
         {
@@ -43,9 +50,9 @@ public class ROBossHelper(ISptLogger<ROBossHelper> logger, DatabaseService datab
 
                 var spawns = locations.GetDictionary()[locations.GetMappedKey(map)].Base.BossLocationSpawn;
 
-                spawns.RemoveAll(x => x.BossName.Contains("bosslegion"));
+                spawns.RemoveAll(x => x.BossName!.Contains("bosslegion"));
 
-                AddLegionSpawnsToMaps(map, zones, spawns, legionChance, debugConfig);
+                AddLegionSpawnsToMaps(map, zones, spawns, legionChance);
             }
         }
         catch (Exception ex)
@@ -55,13 +62,13 @@ public class ROBossHelper(ISptLogger<ROBossHelper> logger, DatabaseService datab
         }
     }
 
-    private void AddLegionSpawnsToMaps(string map, string zones, List<BossLocationSpawn> spawns, double legionChance, DebugFile debugConfig)
+    private void AddLegionSpawnsToMaps(string map, string zones, List<BossLocationSpawn> spawns, double legionChance)
     {
         var bossInfo = new BossLocationSpawn
         {
             BossChance = legionChance,
             BossDifficulty = "normal",
-            BossEscortAmount = SetEscortCount(2, 4, randomUtil),
+            BossEscortAmount = SetEscortCount(2, 4),
             BossEscortDifficulty = "normal",
             BossEscortType = "legionnaire",
             BossName = "bosslegion",
@@ -71,7 +78,7 @@ public class ROBossHelper(ISptLogger<ROBossHelper> logger, DatabaseService datab
             IgnoreMaxBots = true,
             IsRandomTimeSpawn = false,
             SpawnMode = ["regular", "pve"],
-            Supports = null,
+            Supports = null!,
             Time = -1,
             TriggerId = "",
             TriggerName = "",
@@ -79,13 +86,13 @@ public class ROBossHelper(ISptLogger<ROBossHelper> logger, DatabaseService datab
 
         spawns.Add(bossInfo);
 
-        if (debugConfig.DebugMode)
+        if (_debugConfig.DebugMode)
         {
             ROLogger.LogInfo(logger, $"Added Legion spawns to {map}.");
         }
     }
 
-    private static string SetEscortCount(int min, int max, RandomUtil randomUtil)
+    private string SetEscortCount(int min, int max)
     {
         var escortCount = randomUtil.GetInt(min, max);
         var finalCount = escortCount - 1;

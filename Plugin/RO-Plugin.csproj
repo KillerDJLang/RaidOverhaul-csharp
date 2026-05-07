@@ -76,6 +76,9 @@
     <Reference Include="UnityEngine.AudioModule">
       <HintPath>..\..\..\EscapeFromTarkov_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.AIModule">
+      <HintPath>..\..\..\EscapeFromTarkov_Data\Managed\UnityEngine.AIModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>..\..\..\EscapeFromTarkov_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
@@ -124,8 +127,10 @@
     <ItemGroup>
       <PluginAssets Include="$(ProjectDir)Assets\**\*" />
     </ItemGroup>
-    <Copy SourceFiles="@(PluginAssets)"
-          DestinationFiles="@(PluginAssets->'$(PluginBuildDir)\%(RecursiveDir)%(Filename)%(Extension)')"
-          SkipUnchangedFiles="true" />
+    <Copy
+      SourceFiles="@(PluginAssets)"
+      DestinationFiles="@(PluginAssets->'$(PluginBuildDir)\%(RecursiveDir)%(Filename)%(Extension)')"
+      SkipUnchangedFiles="true"
+    />
   </Target>
 </Project>

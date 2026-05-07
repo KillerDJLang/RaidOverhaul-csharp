@@ -29,6 +29,12 @@ public class ROTraderDynamicRouter(
                 {
                     var traderId = helpers.FetchIdFromMap("ReqShop", ClassMaps.TraderMaps);
                     var trader = databaseService.GetTrader(traderId);
+
+                    if (trader == null)
+                    {
+                        return await traderCallbacks.GetAssort(url, (EmptyRequestData)info, sessionId);
+                    }
+
                     var currentResupply = trader.Base.NextResupply ?? 0;
 
                     if (_lastKnownResupply == 0)
@@ -42,7 +48,7 @@ public class ROTraderDynamicRouter(
                         _lastKnownResupply = currentResupply;
                     }
 
-                    return await traderCallbacks.GetAssort(url, info as EmptyRequestData, sessionId);
+                    return await traderCallbacks.GetAssort(url, (EmptyRequestData)info, sessionId);
                 }
             ),
         ]
@@ -55,6 +61,10 @@ public class ROTraderDynamicRouter(
         foreach (var item in assortItems)
         {
             if (item.ParentId != "hideout")
+            {
+                continue;
+            }
+            if (item.Upd == null)
             {
                 continue;
             }

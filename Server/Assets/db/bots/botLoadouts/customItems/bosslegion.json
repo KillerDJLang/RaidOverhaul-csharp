@@ -12,7 +12,7 @@
       "Holster": 75,
       "Pockets": 100,
       "Scabbard": 50,
-      "SecondPrimaryWeapon": 0,
+      "SecondPrimaryWeapon": 50,
       "SecuredContainer": 100,
       "TacticalVest": 100
     },
@@ -80,7 +80,9 @@
         "601948682627df266209af05": 2,
         "5bffe7930db834001b734a39": 3
       },
-      "SecondPrimaryWeapon": {},
+      "SecondPrimaryWeapon": {
+        "6628f76df1a913e3afc16360": 1
+      },
       "SecuredContainer": {
         "5c0a794586f77461c458f892": 1
       },
@@ -217,25 +219,60 @@
         "mod_sight_rear": [
           "5d3eb4aba4b93650d64e497d"
         ]
+      },
+      "6628f76df1a913e3afc16360": {
+        "mod_barrel": [
+          "5a6b5e468dc32e001207faf5"
+        ],
+        "mod_pistol_grip": [
+          "5a7b4960e899ef197b331a2d"
+        ],
+        "mod_reciever": [
+          "6628f7705124be8295a0bdd9"
+        ],
+        "mod_magazine": [
+          "6628f7786fbce2d268af4913"
+        ],
+        "mod_tactical": [
+          "5a7ad4af51dfba0013379717"
+        ],
+        "mod_stock": [
+          "5d1c702ad7ad1a632267f429"
+        ]
+      },
+      "5a6b5e468dc32e001207faf5": {
+        "mod_muzzle": [
+          "5a32a064c4a28200741e22de"
+        ]
+      },
+      "6628f7705124be8295a0bdd9": {
+        "mod_sight_rear": [
+          "5a7d9122159bd4001438dbf4"
+        ],
+        "mod_sight_front": [
+          "5a7d90eb159bd400165484f1"
+        ]
+      },
+      "66282e29277efc692e12b88e": {
+        "mod_scope": [
+          "616554fe50224f204c1da2aa"
+        ]
+      },
+      "66282e3ce2764dc2bcd81c6b": {
+        "mod_scope": [
+          "61657230d92c473c770213d7"
+        ]
       }
     },
     "Ammo": {
       "Caliber68x51": {
-        "6628185208dd86f969db7e03": 50,
-        "662818a23a552da6aef8fada": 50
+        "6628185208dd86f969db7e03": 1,
+        "662818a23a552da6aef8fada": 1
       },
-      "Caliber556x45NATO": {
-        "59e6920f86f77411d82aa167": 1,
-        "59e6927d86f77411da468256": 1,
-        "54527a984bdc2d4e668b4567": 1,
-        "54527ac44bdc2d36668b4567": 10,
-        "59e68f6f86f7746c9f75e846": 1,
-        "59e6906286f7746c9f75e847": 10,
-        "59e690b686f7746c9f75e848": 7,
-        "59e6918f86f7746c9f75e849": 1,
-        "60194943740c5d77f6705eea": 1,
-        "601949593ae8f707c4608daa": 7,
-        "5c0d5ae286f7741e46554302": 1
+      "Caliber1143x23ACP": {
+        "662808ec26a8e83120bb25fe": 1,
+        "662809f445b5ff428e21ac0a": 1,
+        "66280a30d3b6f288cb6b9653": 1
       }
     }
   }

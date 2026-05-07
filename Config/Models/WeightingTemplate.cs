@@ -23,6 +23,7 @@ public class WeightingTemplate
     public int LockdownEvent { get; set; } = 10;
     public int ArtilleryEvent { get; set; } = 10;
     public int InvasionEvent { get; set; } = 10;
+    public int HuntedEvent { get; set; } = 10;
     public int RandomEventRangeMinimum { get; set; } = 5;
     public int RandomEventRangeMaximum { get; set; } = 25;
 }

@@ -91,4 +91,28 @@ namespace RaidOverhaul.FikaModule.Packets
             writer.Put(LampId);
         }
     }
+
+    public struct RequestSupportBotsPacket : INetSerializable
+    {
+        public string CallerProfileId;
+        public float SpawnX;
+        public float SpawnY;
+        public float SpawnZ;
+
+        public void Deserialize(NetDataReader reader)
+        {
+            CallerProfileId = reader.GetString();
+            SpawnX = reader.GetFloat();
+            SpawnY = reader.GetFloat();
+            SpawnZ = reader.GetFloat();
+        }
+
+        public void Serialize(NetDataWriter writer)
+        {
+            writer.Put(CallerProfileId);
+            writer.Put(SpawnX);
+            writer.Put(SpawnY);
+            writer.Put(SpawnZ);
+        }
+    }
 }

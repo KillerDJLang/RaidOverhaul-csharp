@@ -2,6 +2,7 @@ using System.Reflection;
 using EFT;
 using EFT.Interactive;
 using EFT.InventoryLogic;
+using HarmonyLib;
 using RaidOverhaul.Helpers;
 using SPT.Reflection.Patching;
 
@@ -11,7 +12,7 @@ namespace RaidOverhaul.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(KeycardDoor).GetMethod("UnlockOperation", BindingFlags.Public | BindingFlags.Instance);
+            return AccessTools.Method(typeof(KeycardDoor), nameof(KeycardDoor.UnlockOperation));
         }
 
         [PatchPrefix]

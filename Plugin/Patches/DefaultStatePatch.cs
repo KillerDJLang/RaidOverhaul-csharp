@@ -1,5 +1,6 @@
 using System.Reflection;
 using EFT;
+using HarmonyLib;
 using RaidOverhaul.Controllers;
 using SPT.Reflection.Patching;
 
@@ -9,7 +10,7 @@ namespace RaidOverhaul.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(GameWorld).GetMethod(nameof(GameWorld.OnGameStarted));
+            return AccessTools.Method(typeof(GameWorld), nameof(GameWorld.OnGameStarted));
         }
 
         [PatchPrefix]

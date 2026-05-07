@@ -123,12 +123,12 @@ The config files are all located in the server side of the mod at `user/mods/Rai
 "UseLegionGlobalSpawnChance"  // This lets you set a custom percent chance that Legion will spawn in your raids as opposed to using a progressive spawn chance. If disabled, the spawn chance will slowly tick up until you eventually beat the boss and it resets to its base spawn percentage.
 "GlobalSpawnChance"           // The chance that Legion will spawn in raid if "Use Legion Global Spawn Chance" is enabled.
 "EnableCustomItems"           // Enables the custom items created for the mod in your game. These are available as a mix of in-raid loot and trader purchases. Legion's gear and the custom currency/containers are not affected by this option.
+"TimeChangesEnabled"          // Enables the time changes. Sets the in game time to your IRL time. For raid selection you get IRL time and an IRL time +12 hours option.
 ```
 
 #### Raid > Quality of Life
 
 ```json5
-"BackupProfile"        // Let this mod save a backup of your profile into a folder in the mod folder in the case of a game breaking issue or if you just want to revert to a previous point in your playthrough.
 "SaveQuestItems"       // Allow your character to save quest items on death. This counts for all items that go into the quest items box in your inventory.
 "NoRunThrough"         // Disables the run through status in your raids.
 "LootableMelee"        // Allows you to loot melee weapons off of dead players/scavs etc.

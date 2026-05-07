@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using RaidOverhaul.Configs;
 using RaidOverhaul.Controllers;
 
 namespace RaidOverhaul.Helpers
@@ -11,10 +10,10 @@ namespace RaidOverhaul.Helpers
         public static List<(Action, int)> WeightedEvents;
         public static List<(Action, int)> WeightedDoorMethods;
 
-        public static void InitWeightings()
+        internal static void InitWeightings(EventController eventController, DoorController doorController)
         {
-            InitDoorWeighting();
-            InitEventWeighting();
+            InitDoorWeighting(doorController);
+            InitEventWeighting(eventController);
         }
 
         public static void DoRandomEvent(List<(Action, int)> weighting)
@@ -34,95 +33,99 @@ namespace RaidOverhaul.Helpers
             }
         }
 
-        private static void InitDoorWeighting()
+        private static void InitDoorWeighting(DoorController doorController)
         {
-            var switchWeighting = DJConfig.DoorEventsToEnable.Value.HasFlag(DJConfig.DoorEvents.PowerOn)
+            var switchWeighting = ROPluginConfig.DoorEventsToEnable.Value.HasFlag(ROPluginConfig.DoorEvents.PowerOn)
                 ? ConfigController.EventConfig.SwitchWeights
                 : 0;
-            var doorWeighting = DJConfig.DoorEventsToEnable.Value.HasFlag(DJConfig.DoorEvents.DoorUnlock)
+            var doorWeighting = ROPluginConfig.DoorEventsToEnable.Value.HasFlag(ROPluginConfig.DoorEvents.DoorUnlock)
                 ? ConfigController.EventConfig.LockedDoorWeights
                 : 0;
-            var keycardWeighting = DJConfig.DoorEventsToEnable.Value.HasFlag(DJConfig.DoorEvents.KDoorUnlock)
+            var keycardWeighting = ROPluginConfig.DoorEventsToEnable.Value.HasFlag(ROPluginConfig.DoorEvents.KDoorUnlock)
                 ? ConfigController.EventConfig.KeycardWeights
                 : 0;
 
             WeightedDoorMethods = new List<(Action, int)>
             {
-                (Plugin._dcScript.PowerOn, switchWeighting),
-                (Plugin._dcScript.DoUnlock, doorWeighting),
-                (Plugin._dcScript.DoKUnlock, keycardWeighting),
+                (doorController.PowerOn, switchWeighting),
+                (doorController.DoUnlock, doorWeighting),
+                (doorController.DoKUnlock, keycardWeighting),
             };
         }
 
-        private static void InitEventWeighting()
+        private static void InitEventWeighting(EventController eventController)
         {
-            var damageWeighting = DJConfig.RandomEventsToEnable.Value.HasFlag(DJConfig.RaidEvents.Damage)
+            var damageWeighting = ROPluginConfig.RandomEventsToEnable.Value.HasFlag(ROPluginConfig.RaidEvents.Damage)
                 ? ConfigController.EventConfig.DamageEventWeights
                 : 0;
-            var airdropWeighting = DJConfig.RandomEventsToEnable.Value.HasFlag(DJConfig.RaidEvents.Airdrop)
+            var airdropWeighting = ROPluginConfig.RandomEventsToEnable.Value.HasFlag(ROPluginConfig.RaidEvents.Airdrop)
                 ? ConfigController.EventConfig.AirdropEventWeights
                 : 0;
-            var blackoutWeighting = DJConfig.RandomEventsToEnable.Value.HasFlag(DJConfig.RaidEvents.Blackout)
+            var blackoutWeighting = ROPluginConfig.RandomEventsToEnable.Value.HasFlag(ROPluginConfig.RaidEvents.Blackout)
                 ? ConfigController.EventConfig.BlackoutEventWeights
                 : 0;
-            var jokeWeighting = DJConfig.RandomEventsToEnable.Value.HasFlag(DJConfig.RaidEvents.NoJokesHere)
+            var jokeWeighting = ROPluginConfig.RandomEventsToEnable.Value.HasFlag(ROPluginConfig.RaidEvents.NoJokesHere)
                 ? ConfigController.EventConfig.JokeEventWeights
                 : 0;
-            var healWeighting = DJConfig.RandomEventsToEnable.Value.HasFlag(DJConfig.RaidEvents.Heal)
+            var healWeighting = ROPluginConfig.RandomEventsToEnable.Value.HasFlag(ROPluginConfig.RaidEvents.Heal)
                 ? ConfigController.EventConfig.HealEventWeights
                 : 0;
-            var armorWeighting = DJConfig.RandomEventsToEnable.Value.HasFlag(DJConfig.RaidEvents.ArmorRepair)
+            var armorWeighting = ROPluginConfig.RandomEventsToEnable.Value.HasFlag(ROPluginConfig.RaidEvents.ArmorRepair)
                 ? ConfigController.EventConfig.ArmorEventWeights
                 : 0;
-            var skillWeighting = DJConfig.RandomEventsToEnable.Value.HasFlag(DJConfig.RaidEvents.Skill)
+            var skillWeighting = ROPluginConfig.RandomEventsToEnable.Value.HasFlag(ROPluginConfig.RaidEvents.Skill)
                 ? ConfigController.EventConfig.SkillEventWeights
                 : 0;
-            var metWeighting = DJConfig.RandomEventsToEnable.Value.HasFlag(DJConfig.RaidEvents.Metabolism)
+            var metWeighting = ROPluginConfig.RandomEventsToEnable.Value.HasFlag(ROPluginConfig.RaidEvents.Metabolism)
                 ? ConfigController.EventConfig.MetabolismEventWeights
                 : 0;
-            var malfWeighting = DJConfig.RandomEventsToEnable.Value.HasFlag(DJConfig.RaidEvents.Malfunction)
+            var malfWeighting = ROPluginConfig.RandomEventsToEnable.Value.HasFlag(ROPluginConfig.RaidEvents.Malfunction)
                 ? ConfigController.EventConfig.MalfEventWeights
                 : 0;
-            var traderWeighting = DJConfig.RandomEventsToEnable.Value.HasFlag(DJConfig.RaidEvents.Trader)
+            var traderWeighting = ROPluginConfig.RandomEventsToEnable.Value.HasFlag(ROPluginConfig.RaidEvents.Trader)
                 ? ConfigController.EventConfig.TraderEventWeights
                 : 0;
-            var berserkWeighting = DJConfig.RandomEventsToEnable.Value.HasFlag(DJConfig.RaidEvents.Berserk)
+            var berserkWeighting = ROPluginConfig.RandomEventsToEnable.Value.HasFlag(ROPluginConfig.RaidEvents.Berserk)
                 ? ConfigController.EventConfig.BerserkEventWeights
                 : 0;
-            var weightWeightingLOL = DJConfig.RandomEventsToEnable.Value.HasFlag(DJConfig.RaidEvents.Weight)
+            var weightWeightingLOL = ROPluginConfig.RandomEventsToEnable.Value.HasFlag(ROPluginConfig.RaidEvents.Weight)
                 ? ConfigController.EventConfig.WeightEventWeights
                 : 0;
-            var maxLLWeighting = DJConfig.RandomEventsToEnable.Value.HasFlag(DJConfig.RaidEvents.ShoppingSpree)
+            var maxLLWeighting = ROPluginConfig.RandomEventsToEnable.Value.HasFlag(ROPluginConfig.RaidEvents.ShoppingSpree)
                 ? ConfigController.EventConfig.MaxLLEventWeights
                 : 0;
-            var exfilWeighting = DJConfig.RandomEventsToEnable.Value.HasFlag(DJConfig.RaidEvents.ExfilLockdown)
+            var exfilWeighting = ROPluginConfig.RandomEventsToEnable.Value.HasFlag(ROPluginConfig.RaidEvents.ExfilLockdown)
                 ? ConfigController.EventConfig.ExfilEventWeights
                 : 0;
-            var artyWeighting = DJConfig.RandomEventsToEnable.Value.HasFlag(DJConfig.RaidEvents.Artillery)
+            var artyWeighting = ROPluginConfig.RandomEventsToEnable.Value.HasFlag(ROPluginConfig.RaidEvents.Artillery)
                 ? ConfigController.EventConfig.ArtilleryEventWeights
                 : 0;
-            var invasionWeighting = DJConfig.RandomEventsToEnable.Value.HasFlag(DJConfig.RaidEvents.Invasion)
+            var invasionWeighting = ROPluginConfig.RandomEventsToEnable.Value.HasFlag(ROPluginConfig.RaidEvents.Invasion)
                 ? ConfigController.EventConfig.InvasionEventWeights
+                : 0;
+            var huntedWeighting = ROPluginConfig.RandomEventsToEnable.Value.HasFlag(ROPluginConfig.RaidEvents.Hunted)
+                ? ConfigController.EventConfig.HuntedEventWeights
                 : 0;
 
             WeightedEvents = new List<(Action, int)>
             {
-                (Plugin._ecScript.DoDamageEvent, damageWeighting),
-                (Plugin._ecScript.DoAirdropEvent, airdropWeighting),
-                (Plugin._ecScript.DoBlackoutEventWrapper, blackoutWeighting),
-                (Plugin._ecScript.DoFunnyWrapper, jokeWeighting),
-                (Plugin._ecScript.DoHealPlayer, healWeighting),
-                (Plugin._ecScript.DoArmorRepair, armorWeighting),
-                (Plugin._ecScript.DoSkillEvent, skillWeighting),
-                (Plugin._ecScript.DoMetabolismEvent, metWeighting),
-                (Plugin._ecScript.DoMalfEventWrapper, malfWeighting),
-                (Plugin._ecScript.DoLLEvent, traderWeighting),
-                (Plugin._ecScript.DoBerserkEventWrapper, berserkWeighting),
-                (Plugin._ecScript.DoWeightEventWrapper, weightWeightingLOL),
-                (Plugin._ecScript.DoMaxLLEvent, maxLLWeighting),
-                (Plugin._ecScript.DoLockDownEventWrapper, exfilWeighting),
-                (Plugin._ecScript.DoArtyEventWrapper, artyWeighting),
-                (Plugin._ecScript.StartInvasion, invasionWeighting),
+                (eventController.DoDamageEvent, damageWeighting),
+                (eventController.DoAirdropEvent, airdropWeighting),
+                (eventController.DoBlackoutEventWrapper, blackoutWeighting),
+                (eventController.DoFunnyWrapper, jokeWeighting),
+                (eventController.DoHealPlayer, healWeighting),
+                (eventController.DoArmorRepair, armorWeighting),
+                (eventController.DoSkillEvent, skillWeighting),
+                (eventController.DoMetabolismEvent, metWeighting),
+                (eventController.DoMalfEventWrapper, malfWeighting),
+                (eventController.DoLLEvent, traderWeighting),
+                (eventController.DoBerserkEventWrapper, berserkWeighting),
+                (eventController.DoWeightEventWrapper, weightWeightingLOL),
+                (eventController.DoMaxLLEvent, maxLLWeighting),
+                (eventController.DoLockDownEventWrapper, exfilWeighting),
+                (eventController.DoArtyEventWrapper, artyWeighting),
+                (eventController.StartInvasion, invasionWeighting),
+                (eventController.DoHuntedEventWrapper, huntedWeighting),
             };
         }
     }

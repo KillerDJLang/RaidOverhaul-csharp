@@ -4,6 +4,7 @@ using System.Reflection;
 using Comfort.Common;
 using EFT;
 using EFT.Interactive;
+using HarmonyLib;
 using RaidOverhaul.Helpers;
 using SPT.Reflection.Patching;
 
@@ -13,7 +14,7 @@ namespace RaidOverhaul.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(GetActionsClass).GetMethod(nameof(GetActionsClass.smethod_14));
+            return AccessTools.Method(typeof(GetActionsClass), nameof(GetActionsClass.smethod_14));
         }
 
         [PatchPostfix]

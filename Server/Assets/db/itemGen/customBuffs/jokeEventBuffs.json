@@ -1,0 +1,98 @@
+{
+  "JokeBuff": [
+    {
+      "AbsoluteValue": true,
+      "BuffType": "HealthRate",
+      "Chance": 1,
+      "Delay": 1,
+      "Duration": 60,
+      "SkillName": "",
+      "Value": 2
+    },
+    {
+      "AbsoluteValue": true,
+      "BuffType": "StaminaRate",
+      "Chance": 1,
+      "Delay": 1,
+      "Duration": 60,
+      "SkillName": "",
+      "Value": 2
+    },
+    {
+      "AbsoluteValue": true,
+      "BuffType": "MaxStamina",
+      "Chance": 1,
+      "Delay": 1,
+      "Duration": 60,
+      "SkillName": "",
+      "Value": 20
+    },
+    {
+      "AbsoluteValue": true,
+      "BuffType": "EnergyRate",
+      "Chance": 1,
+      "Delay": 1,
+      "Duration": 60,
+      "SkillName": "",
+      "Value": 1
+    },
+    {
+      "AbsoluteValue": true,
+      "BuffType": "HydrationRate",
+      "Chance": 1,
+      "Delay": 1,
+      "Duration": 60,
+      "SkillName": "",
+      "Value": 1
+    }
+  ],
+  "JokeDebuff": [
+    {
+      "AbsoluteValue": false,
+      "BuffType": "DamageModifier",
+      "Chance": 1,
+      "Delay": 1,
+      "Duration": 60,
+      "SkillName": "",
+      "Value": 0.2
+    },
+    {
+      "AbsoluteValue": true,
+      "BuffType": "EnergyRate",
+      "Chance": 1,
+      "Delay": 1,
+      "Duration": 60,
+      "SkillName": "",
+      "Value": -1
+    },
+    {
+      "AbsoluteValue": true,
+      "BuffType": "HydrationRate",
+      "Chance": 1,
+      "Delay": 1,
+      "Duration": 60,
+      "SkillName": "",
+      "Value": -1
+    },
+    {
+      "AbsoluteValue": true,
+      "BuffType": "MaxStamina",
+      "Chance": 1,
+      "Delay": 1,
+      "Duration": 60,
+      "SkillName": "",
+      "Value": -20
+    }
+  ],
+  "JokeToxic": [
+    {
+      "AbsoluteValue": false,
+      "BuffType": "UnknownToxin",
+      "Chance": 1,
+      "Delay": 1,
+      "Duration": 1,
+      "SkillName": "",
+      "Value": 1
+    }
+  ]
+}

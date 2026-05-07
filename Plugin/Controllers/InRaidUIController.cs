@@ -1,15 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using BepInEx;
 using Comfort.Common;
 using EFT;
 using EFT.InventoryLogic;
-using Newtonsoft.Json;
-using RaidOverhaul.Configs;
+using RaidOverhaul.Fika;
 using RaidOverhaul.Helpers;
+using RaidOverhaul.Managers;
 using SPT.Common.Http;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using static RaidOverhaul.Plugin;
 
 namespace RaidOverhaul.Controllers
@@ -17,26 +18,50 @@ namespace RaidOverhaul.Controllers
     public class InRaidUIController : MonoBehaviour
     {
         private bool _menuVisible;
-        private Rect _windowRect = new Rect(Screen.width / 2 - 200, Screen.height / 2 - 300, 400, 600);
-        private Vector2 _scrollPosition;
-        private GUIStyle _windowStyle;
-        private GUIStyle _buttonStyle;
-        private GUIStyle _labelStyle;
-        private GUIStyle _headerStyle;
-        private GUIStyle _disabledButtonStyle;
-        private bool _stylesInitialized;
-        private bool _hasInitialized;
+        private bool _tookInputOwnership;
+        private float _refreshTimer;
+
+        private int _cachedReqCoins;
+        private int _cachedReqSlips;
+        private int _cachedSpecialForms;
 
         private EventController _eventController;
-        private static readonly JsonConverter[] _defaultJsonConverters;
 
-        private bool _showGearTransferUI;
-        private Vector2 _gearScrollPosition;
         private List<Item> _transferableItems;
         private HashSet<string> _selectedItemIds;
 
+        private GameObject _menuPrefab;
+        private GameObject _itemRowPrefab;
+        private GameObject _menuInstance;
+        private GameObject _gearTransferPanel;
+        private GameObject _scrollView;
+        private GameObject _itemContent;
+        private List<GameObject> _itemRowInstances = new List<GameObject>();
+
+        private TMP_Text _reqCoinsValue;
+        private TMP_Text _reqSlipsValue;
+        private TMP_Text _specialSlipsValue;
+
+        private Button _emergencyExfilButton;
+        private Button _trainButton;
+        private Button _extractNowButton;
+        private Button _extractGearButton;
+        private Button _supportButton;
+        private Button _transferButton;
+
+        private TMP_Text _emergencyExfilError;
+        private TMP_Text _trainError;
+        private TMP_Text _extractNowError;
+        private TMP_Text _extractGearError;
+        private TMP_Text _supportError;
+        private TMP_Text _transferError;
+
+        private TMP_Text _capacityValueLabel;
+        private Image _barFill;
+        private AudioSource _audioSource;
+
         private const int TRANSFER_GRID_WIDTH = 5;
-        private const int TRANSFER_GRID_HEIGHT = 5;
+        private const int TRANSFER_GRID_HEIGHT = 10;
         private const int TRANSFER_MAX_CELLS = TRANSFER_GRID_WIDTH * TRANSFER_GRID_HEIGHT;
 
         private static readonly HashSet<string> _invalidTrainLocations = new HashSet<string>
@@ -44,54 +69,53 @@ namespace RaidOverhaul.Controllers
             "factory4_day",
             "factory4_night",
             "laboratory",
-            "Sandbox",
-            "Sandbox_high",
+            "sandbox",
+            "sandbox_high",
             "bigmap",
-            "Interchange",
-            "Labyrinth",
-            "Shoreline",
-            "TarkovStreets",
-            "Woods",
+            "interchange",
+            "labyrinth",
+            "shoreline",
+            "tarkovstreets",
+            "woods",
         };
 
-        public static Vector2 ScaledPivot
+        private void Awake()
         {
-            get { return GetScaling(); }
+            _menuPrefab = UICanvasPrefab;
+            _itemRowPrefab = UIItemRowPrefab;
+            _eventController = GetComponent<EventController>();
         }
 
-        private static Vector2 GetScaling()
+        private void Update()
         {
-            float scaling = Mathf.Min(Screen.width / 1920, Screen.height / 1080);
-            return new Vector2(scaling, scaling);
-        }
-
-        public void ManualUpdate()
-        {
-            if (!_hasInitialized)
-            {
-                _eventController = Plugin._ecScript;
-                _hasInitialized = true;
-            }
-
-            // Process close input BEFORE feature-flag and raid checks
-            // so the menu can always be dismissed.
             if (_menuVisible)
             {
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
 
-                // Force-close when the feature is turned off or we leave the raid
-                if (!DJConfig.SpecialReqFeatures.Value || !Utils.IsInRaid())
+                if (!ROPluginConfig.SpecialReqFeatures.Value || !Utils.IsInRaid())
                 {
                     CloseMenu();
                     return;
                 }
 
+                _refreshTimer += Time.deltaTime;
+                if (_refreshTimer >= 1f)
+                {
+                    _refreshTimer = 0f;
+                    RefreshCurrencyCache();
+                    UpdateCurrencyDisplay();
+                    UpdateButtonStates();
+                }
+
                 if (Input.GetKeyDown(KeyCode.Escape))
                 {
-                    if (_showGearTransferUI)
+                    if (_gearTransferPanel != null && _gearTransferPanel.activeSelf)
                     {
-                        _showGearTransferUI = false;
+                        _gearTransferPanel.SetActive(false);
+                        _scrollView.SetActive(true);
+                        _selectedItemIds?.Clear();
+                        ClearItemList();
                     }
                     else
                     {
@@ -101,12 +125,12 @@ namespace RaidOverhaul.Controllers
                 }
             }
 
-            if (!DJConfig.SpecialReqFeatures.Value || !Utils.IsInRaid())
+            if (!ROPluginConfig.SpecialReqFeatures.Value || !Utils.IsInRaid())
             {
                 return;
             }
 
-            var keybind = DJConfig.SpecialReqFeaturesBinding.Value;
+            var keybind = ROPluginConfig.SpecialReqFeaturesBinding.Value;
             bool keyPressed = Input.GetKeyDown(keybind.MainKey);
 
             if (keyPressed)
@@ -130,35 +154,15 @@ namespace RaidOverhaul.Controllers
             }
         }
 
-        private bool HasReqCurrency()
-        {
-            if (!Utils.IsInRaid() || _session?.Profile?.Inventory == null)
-            {
-                return false;
-            }
-
-            var allItems = _session.Profile.Inventory.AllRealPlayerItems;
-
-            if (allItems == null)
-            {
-                return false;
-            }
-
-            var reqCoins = Utils.Currency["ReqCoins"];
-            var reqSlips = Utils.Currency["ReqSlips"];
-            var specialForms = Utils.Currency["SpecialReqForms"];
-
-            return allItems.Any(item => item.TemplateId == reqCoins || item.TemplateId == reqSlips || item.TemplateId == specialForms);
-        }
-
         private int GetCurrencyCount(string currencyKey)
         {
-            if (!Utils.IsInRaid() || _session?.Profile?.Inventory == null)
+            var session = GetSession();
+            if (!Utils.IsInRaid() || session?.Profile?.Inventory == null)
             {
                 return 0;
             }
 
-            var allItems = _session.Profile.Inventory.AllRealPlayerItems;
+            var allItems = session.Profile.Inventory.AllRealPlayerItems;
 
             if (allItems == null)
             {
@@ -185,7 +189,7 @@ namespace RaidOverhaul.Controllers
                 return false;
             }
 
-            if (!_invalidTrainLocations.Contains(ROPlayer.Location))
+            if (!_invalidTrainLocations.Contains(ROPlayer.Location.ToLowerInvariant()))
             {
                 return true;
             }
@@ -197,12 +201,13 @@ namespace RaidOverhaul.Controllers
 
         private bool RemoveCurrency(string currencyKey, int amountToRemove)
         {
-            if (!Utils.IsInRaid() || _session?.Profile?.Inventory == null)
+            var session = GetSession();
+            if (!Utils.IsInRaid() || session?.Profile?.Inventory == null)
             {
                 return false;
             }
 
-            var allItems = _session.Profile.Inventory.AllRealPlayerItems;
+            var allItems = session.Profile.Inventory.AllRealPlayerItems;
 
             if (allItems == null)
             {
@@ -264,349 +269,59 @@ namespace RaidOverhaul.Controllers
             }
             else
             {
-                _menuVisible = true;
+                ShowMenu();
             }
+        }
+
+        private void PlayClick()
+        {
+            _audioSource?.PlayOneShot(SoundButtonClick);
+        }
+
+        private void ShowMenu()
+        {
+            if (_menuInstance == null)
+            {
+                _menuInstance = Instantiate(_menuPrefab);
+                DontDestroyOnLoad(_menuInstance);
+                _audioSource = _menuInstance.GetComponent<AudioSource>();
+                WireUpUI();
+            }
+            EventsEffectsController.Instance?.ShowCornerGlowEffect();
+            _menuInstance.SetActive(true);
+            _menuVisible = true;
+            _tookInputOwnership = !GamePlayerOwner.IgnoreInputInNPCDialog;
+            if (_tookInputOwnership)
+            {
+                GamePlayerOwner.SetIgnoreInputInNPCDialog(true);
+            }
+            _refreshTimer = 0f;
+            RefreshCurrencyCache();
+            UpdateCurrencyDisplay();
+            UpdateButtonStates();
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
 
         private void CloseMenu()
         {
             _menuVisible = false;
-            _showGearTransferUI = false;
+            if (_tookInputOwnership)
+            {
+                GamePlayerOwner.SetIgnoreInputInNPCDialog(false);
+            }
+            _tookInputOwnership = false;
             _selectedItemIds?.Clear();
-        }
-
-        private void InitializeStyles()
-        {
-            if (_stylesInitialized)
+            ClearItemList();
+            if (_gearTransferPanel != null)
             {
-                return;
+                _gearTransferPanel.SetActive(false);
+                _scrollView.SetActive(true);
             }
-
-            _windowStyle = new GUIStyle(GUI.skin.window)
+            if (_menuInstance != null)
             {
-                normal = { background = MakeTex(2, 2, new Color(0.1f, 0.1f, 0.1f, 0.95f)) },
-                padding = new RectOffset(10, 10, 20, 10),
-            };
-
-            _buttonStyle = new GUIStyle(GUI.skin.button)
-            {
-                normal = { background = MakeTex(2, 2, new Color(0.3f, 0.3f, 0.3f, 0.9f)), textColor = Color.white },
-                hover = { background = MakeTex(2, 2, new Color(0.4f, 0.4f, 0.9f)), textColor = Color.white },
-                active = { background = MakeTex(2, 2, new Color(0.2f, 0.2f, 0.2f, 0.9f)), textColor = Color.white },
-                fontSize = 14,
-                fontStyle = FontStyle.Bold,
-                alignment = TextAnchor.MiddleCenter,
-                padding = new RectOffset(10, 10, 5, 5),
-            };
-
-            _disabledButtonStyle = new GUIStyle(GUI.skin.button)
-            {
-                normal = { background = MakeTex(2, 2, new Color(0.2f, 0.2f, 0.2f, 0.5f)), textColor = new Color(0.5f, 0.5f, 0.5f) },
-                fontSize = 14,
-                fontStyle = FontStyle.Bold,
-                alignment = TextAnchor.MiddleCenter,
-                padding = new RectOffset(10, 10, 5, 5),
-            };
-
-            _labelStyle = new GUIStyle(GUI.skin.label)
-            {
-                normal = { textColor = Color.white },
-                fontSize = 13,
-                alignment = TextAnchor.MiddleLeft,
-                wordWrap = true,
-            };
-
-            _headerStyle = new GUIStyle(GUI.skin.label)
-            {
-                normal = { textColor = new Color(1f, 0.84f, 0f) },
-                fontSize = 16,
-                fontStyle = FontStyle.Bold,
-                alignment = TextAnchor.MiddleCenter,
-            };
-
-            _stylesInitialized = true;
-        }
-
-        private Texture2D MakeTex(int width, int height, Color col)
-        {
-            Color[] pix = new Color[width * height];
-            for (int i = 0; i < pix.Length; i++)
-            {
-                pix[i] = col;
+                _menuInstance.SetActive(false);
             }
-
-            Texture2D result = new Texture2D(width, height);
-            result.SetPixels(pix);
-            result.Apply();
-            return result;
-        }
-
-        private void OnGUI()
-        {
-            if (!_menuVisible)
-            {
-                return;
-            }
-
-            // Fallback input handling through IMGUI event system —
-            // catches key events that the game's input layer may have
-            // consumed before ManualUpdate() could process them.
-            if (Event.current.type == EventType.KeyDown)
-            {
-                if (Event.current.keyCode == KeyCode.Escape)
-                {
-                    if (_showGearTransferUI)
-                    {
-                        _showGearTransferUI = false;
-                    }
-                    else
-                    {
-                        CloseMenu();
-                    }
-                    Event.current.Use();
-                    return;
-                }
-
-                var keybind = DJConfig.SpecialReqFeaturesBinding.Value;
-                if (Event.current.keyCode == keybind.MainKey)
-                {
-                    bool modifiersHeld = true;
-                    if (keybind.Modifiers != null && keybind.Modifiers.Any())
-                    {
-                        foreach (var modifier in keybind.Modifiers)
-                        {
-                            if (!Input.GetKey(modifier))
-                            {
-                                modifiersHeld = false;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (modifiersHeld)
-                    {
-                        CloseMenu();
-                        Event.current.Use();
-                        return;
-                    }
-                }
-            }
-
-            InitializeStyles();
-
-            _windowRect = GUILayout.Window(
-                64195,
-                _windowRect,
-                DrawWindow,
-                "Exfil & Train Call Menu",
-                _windowStyle,
-                GUILayout.MinWidth(400),
-                GUILayout.MinHeight(600)
-            );
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-            GUIUtility.ScaleAroundPivot(ScaledPivot, Vector2.zero);
-            UnityInput.Current.ResetInputAxes();
-        }
-
-        private void DrawWindow(int windowID)
-        {
-            if (_showGearTransferUI)
-            {
-                DrawGearTransferWindow(windowID);
-                return;
-            }
-
-            GUILayout.BeginVertical();
-
-            GUILayout.Label("Special Actions", _headerStyle);
-            GUILayout.Space(10);
-
-            if (HasReqCurrency())
-            {
-                GUILayout.BeginVertical(GUI.skin.box);
-                GUILayout.Label("Requisition Currency", _headerStyle);
-                GUILayout.Space(5);
-
-                int reqCoins = GetCurrencyCount("ReqCoins");
-                int reqSlips = GetCurrencyCount("ReqSlips");
-                int reqForms = GetCurrencyCount("SpecialReqForms");
-
-                GUILayout.Label($"Requisition Coins: {reqCoins}", _labelStyle);
-                GUILayout.Label($"Requisition Slips: {reqSlips}", _labelStyle);
-                GUILayout.Label($"Special Requisition Forms: {reqForms}", _labelStyle);
-
-                GUILayout.EndVertical();
-                GUILayout.Space(10);
-            }
-
-            _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, GUILayout.ExpandHeight(true));
-
-            GUILayout.BeginVertical(GUI.skin.box);
-            GUILayout.Label("Emergency Extraction", _headerStyle);
-            GUILayout.Space(5);
-            GUILayout.Label("Call for an emergency extraction. Help will arrive in 2 minutes.", _labelStyle);
-            GUILayout.Label("Cost: 15 Requisition Slips", _labelStyle);
-            GUILayout.Space(5);
-
-            int currentSlips = GetCurrencyCount("ReqSlips");
-            bool canAffordExfil = currentSlips >= 15;
-
-            GUI.enabled = canAffordExfil;
-            if (
-                _eventController != null
-                && GUILayout.Button(
-                    $"Call Emergency Exfil ({currentSlips}/15)",
-                    canAffordExfil ? _buttonStyle : _disabledButtonStyle,
-                    GUILayout.Height(40)
-                )
-            )
-            {
-                if (RemoveCurrency("ReqSlips", 15))
-                {
-                    _eventController.DoPmcExfilEventWrapper();
-                    CloseMenu();
-                }
-            }
-            GUI.enabled = true;
-
-            if (!canAffordExfil)
-            {
-                GUILayout.Label("Insufficient Requisition Slips!", new GUIStyle(_labelStyle) { normal = { textColor = Color.red } });
-            }
-
-            GUILayout.EndVertical();
-
-            GUILayout.Space(10);
-
-            GUILayout.BeginVertical(GUI.skin.box);
-            GUILayout.Label("Train Extraction", _headerStyle);
-            GUILayout.Space(5);
-            GUILayout.Label("Call the train for extraction. The train will arrive shortly.", _labelStyle);
-            GUILayout.Label("Cost: 250 Requisition Coins", _labelStyle);
-            GUILayout.Space(5);
-
-            int currentCoins = GetCurrencyCount("ReqCoins");
-            bool isOnTrainMap = IsTrainAvailable();
-            bool canAffordTrain = currentCoins >= 250 && isOnTrainMap;
-
-            GUI.enabled = canAffordTrain;
-            if (
-                _eventController != null
-                && GUILayout.Button(
-                    $"Call Train ({currentCoins}/250)",
-                    canAffordTrain ? _buttonStyle : _disabledButtonStyle,
-                    GUILayout.Height(40)
-                )
-            )
-            {
-                if (RemoveCurrency("ReqCoins", 250))
-                {
-                    _eventController.RunTrainWrapper();
-                    CloseMenu();
-                }
-            }
-            GUI.enabled = true;
-
-            if (!isOnTrainMap)
-            {
-                GUILayout.Label(
-                    "Train only available on Reserve or Lighthouse!",
-                    new GUIStyle(_labelStyle) { normal = { textColor = Color.red } }
-                );
-            }
-            else if (currentCoins < 250)
-            {
-                GUILayout.Label("Insufficient Requisition Coins!", new GUIStyle(_labelStyle) { normal = { textColor = Color.red } });
-            }
-
-            GUILayout.EndVertical();
-
-            GUILayout.Space(10);
-
-            GUILayout.BeginVertical(GUI.skin.box);
-            GUILayout.Label("Instant Extraction", _headerStyle);
-            GUILayout.Space(5);
-            GUILayout.Label("Immediately extract from the raid. A premium service with a premium price!", _labelStyle);
-            GUILayout.Label("Cost: 25 Requisition Slips", _labelStyle);
-            GUILayout.Space(5);
-
-            bool canAffordInstantExfil = currentSlips >= 25;
-
-            GUI.enabled = canAffordInstantExfil;
-            if (
-                _eventController != null
-                && GUILayout.Button(
-                    $"Extract Now ({currentSlips}/25)",
-                    canAffordInstantExfil ? _buttonStyle : _disabledButtonStyle,
-                    GUILayout.Height(40)
-                )
-            )
-            {
-                if (RemoveCurrency("ReqSlips", 25))
-                {
-                    _eventController.ExfilNow();
-                    CloseMenu();
-                }
-            }
-            GUI.enabled = true;
-
-            if (!canAffordInstantExfil)
-            {
-                GUILayout.Label("Insufficient Requisition Slips!", new GUIStyle(_labelStyle) { normal = { textColor = Color.red } });
-            }
-
-            GUILayout.EndVertical();
-
-            GUILayout.Space(10);
-
-            GUILayout.BeginVertical(GUI.skin.box);
-            GUILayout.Label("Extract Gear", _headerStyle);
-            GUILayout.Space(5);
-            GUILayout.Label("Send items to main stash. Extract your valuable gear safely!", _labelStyle);
-            GUILayout.Label("Cost: 1 Special Requisition Form", _labelStyle);
-            GUILayout.Space(5);
-
-            int currentForms = GetCurrencyCount("SpecialReqForms");
-            bool canAffordGearExtract = currentForms >= 1;
-
-            GUI.enabled = canAffordGearExtract;
-            if (
-                _eventController != null
-                && GUILayout.Button(
-                    $"Extract Gear ({currentForms}/1)",
-                    canAffordGearExtract ? _buttonStyle : _disabledButtonStyle,
-                    GUILayout.Height(40)
-                )
-            )
-            {
-                OpenGearTransferUI();
-            }
-            GUI.enabled = true;
-
-            if (!canAffordGearExtract)
-            {
-                GUILayout.Label(
-                    "Insufficient Special Requisition Forms!",
-                    new GUIStyle(_labelStyle) { normal = { textColor = Color.red } }
-                );
-            }
-
-            GUILayout.EndVertical();
-
-            GUILayout.EndScrollView();
-
-            GUILayout.Space(10);
-
-            GUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
-            GUILayout.Label($"Press ESC or {DJConfig.SpecialReqFeaturesBinding.Value.MainKey} to close", _labelStyle);
-            GUILayout.FlexibleSpace();
-            GUILayout.EndHorizontal();
-
-            GUILayout.EndVertical();
-
-            GUI.DragWindow(new Rect(0, 0, 10000, 20));
         }
 
         public bool RemoveZeroStackItem(Player player, Item item)
@@ -617,7 +332,7 @@ namespace RaidOverhaul.Controllers
 
             if (result.Failed)
             {
-                Plugin._log.LogError($"Failed to remove item: {result.Error}");
+                _log.LogError($"Failed to remove item: {result.Error}");
                 return false;
             }
 
@@ -625,14 +340,6 @@ namespace RaidOverhaul.Controllers
             result.Value.RaiseEvents(inventoryController, CommandStatus.Succeed);
 
             return true;
-        }
-
-        private void OpenGearTransferUI()
-        {
-            _selectedItemIds = new HashSet<string>();
-            _transferableItems = GetTransferableItems();
-            _showGearTransferUI = true;
-            _gearScrollPosition = Vector2.zero;
         }
 
         private (int totalCells, int usedCells, int freeCells) CalculateTransferStashSpace()
@@ -663,7 +370,7 @@ namespace RaidOverhaul.Controllers
             }
             catch (Exception ex)
             {
-                Plugin._log.LogError($"Error calculating transfer stash space: {ex.Message}");
+                _log.LogError($"Error calculating transfer stash space: {ex.Message}");
                 return (TRANSFER_MAX_CELLS, 0, TRANSFER_MAX_CELLS);
             }
         }
@@ -689,6 +396,272 @@ namespace RaidOverhaul.Controllers
             }
 
             return totalSize;
+        }
+
+        private void WireUpUI()
+        {
+            var es = _menuInstance.GetComponentInChildren<UnityEngine.EventSystems.EventSystem>();
+            if (es != null && UnityEngine.EventSystems.EventSystem.current != null && UnityEngine.EventSystems.EventSystem.current != es)
+            {
+                es.gameObject.SetActive(false);
+            }
+
+            var bg = _menuInstance.transform.Find("Background");
+            var content = bg.Find("Scroll View/Viewport/Content");
+
+            _reqCoinsValue = bg.Find("CurrencyRow/ReqCoinsValue").GetComponent<TMP_Text>();
+            _reqSlipsValue = bg.Find("CurrencyRow/ReqSlipsValue").GetComponent<TMP_Text>();
+            _specialSlipsValue = bg.Find("CurrencyRow/SpecialSlipsValue").GetComponent<TMP_Text>();
+
+            _emergencyExfilButton = content.Find("EmergencyExfilSection/ExfilButton").GetComponent<Button>();
+            _emergencyExfilError = content.Find("EmergencyExfilSection/ErrorLabel").GetComponent<TMP_Text>();
+            _trainButton = content.Find("TrainSection/ExfilButton").GetComponent<Button>();
+            _trainError = content.Find("TrainSection/ErrorLabel").GetComponent<TMP_Text>();
+            _extractNowButton = content.Find("ExtractNowSection/ExfilButton").GetComponent<Button>();
+            _extractNowError = content.Find("ExtractNowSection/ErrorLabel").GetComponent<TMP_Text>();
+            _extractGearButton = content.Find("ExtractGearSection/ExfilButton").GetComponent<Button>();
+            _extractGearError = content.Find("ExtractGearSection/ErrorLabel").GetComponent<TMP_Text>();
+            _supportButton = content.Find("SupportTeamSection/ExfilButton").GetComponent<Button>();
+            _supportError = content.Find("SupportTeamSection/ErrorLabel").GetComponent<TMP_Text>();
+
+            _gearTransferPanel = bg.Find("GearTransferPanel").gameObject;
+            _scrollView = bg.Find("Scroll View").gameObject;
+            _transferButton = _gearTransferPanel.transform.Find("TransferButton").GetComponent<Button>();
+            _transferError = _gearTransferPanel.transform.Find("TransferErrorLabel").GetComponent<TMP_Text>();
+            _capacityValueLabel = _gearTransferPanel.transform.Find("CapacityRow/CapacityValueLabel").GetComponent<TMP_Text>();
+            _barFill = _gearTransferPanel.transform.Find("CapacityBar/BarFill").GetComponent<Image>();
+            _itemContent = _gearTransferPanel.transform.Find("ItemScrollView/Viewport/Content").gameObject;
+
+            _emergencyExfilButton.onClick.AddListener(() =>
+            {
+                PlayClick();
+                OnEmergencyExfilClicked();
+            });
+            _trainButton.onClick.AddListener(() =>
+            {
+                PlayClick();
+                OnTrainClicked();
+            });
+            _extractNowButton.onClick.AddListener(() =>
+            {
+                PlayClick();
+                OnExtractNowClicked();
+            });
+            _extractGearButton.onClick.AddListener(() =>
+            {
+                PlayClick();
+                OnExtractGearClicked();
+            });
+            _supportButton.onClick.AddListener(() =>
+            {
+                PlayClick();
+                OnSupportClicked();
+            });
+            _transferButton.onClick.AddListener(() =>
+            {
+                PlayClick();
+                OnTransferClicked();
+            });
+        }
+
+        private void RefreshCurrencyCache()
+        {
+            _cachedReqCoins = GetCurrencyCount("ReqCoins");
+            _cachedReqSlips = GetCurrencyCount("ReqSlips");
+            _cachedSpecialForms = GetCurrencyCount("SpecialReqForms");
+        }
+
+        private void UpdateCurrencyDisplay()
+        {
+            _reqCoinsValue.text = _cachedReqCoins.ToString();
+            _reqSlipsValue.text = _cachedReqSlips.ToString();
+            _specialSlipsValue.text = _cachedSpecialForms.ToString();
+        }
+
+        private void SetButtonState(Button btn, TMP_Text errorLabel, bool canUse, string errorMsg = "")
+        {
+            btn.interactable = canUse;
+            errorLabel.text = errorMsg;
+            errorLabel.gameObject.SetActive(!canUse);
+        }
+
+        private void UpdateButtonStates()
+        {
+            bool onTrainMap = IsTrainAvailable();
+            bool supportActive = SupportBotManager.Instance?.IsActive ?? false;
+
+            SetButtonState(
+                _emergencyExfilButton,
+                _emergencyExfilError,
+                _cachedReqSlips >= 10,
+                $"Need 10 Req Slips (have {_cachedReqSlips})"
+            );
+            SetButtonState(
+                _trainButton,
+                _trainError,
+                _cachedReqCoins >= 250 && onTrainMap,
+                !onTrainMap ? "Train not available on this map" : $"Need 250 Req Coins (have {_cachedReqCoins})"
+            );
+            SetButtonState(_extractNowButton, _extractNowError, _cachedReqSlips >= 25, $"Need 25 Req Slips (have {_cachedReqSlips})");
+            SetButtonState(_extractGearButton, _extractGearError, _cachedReqSlips >= 15, $"Need 15 Req Slips (have {_cachedReqSlips})");
+            SetButtonState(
+                _supportButton,
+                _supportError,
+                _cachedSpecialForms >= 1 && !supportActive,
+                supportActive ? "Support team already active" : $"Need 1 Special Req Form (have {_cachedSpecialForms})"
+            );
+        }
+
+        private void OnEmergencyExfilClicked()
+        {
+            if (!RemoveCurrency("ReqSlips", 10))
+            {
+                return;
+            }
+            _eventController.DoPmcExfilEventWrapper();
+            CloseMenu();
+        }
+
+        private void OnTrainClicked()
+        {
+            if (!RemoveCurrency("ReqCoins", 250))
+            {
+                return;
+            }
+            _eventController.RunTrainWrapper();
+            CloseMenu();
+        }
+
+        private void OnExtractNowClicked()
+        {
+            if (!RemoveCurrency("ReqSlips", 25))
+            {
+                return;
+            }
+            _eventController.ExfilNow();
+            CloseMenu();
+        }
+
+        private void OnExtractGearClicked()
+        {
+            _selectedItemIds = [];
+            _transferableItems = GetTransferableItems();
+            PopulateItemList();
+            _scrollView.SetActive(false);
+            _gearTransferPanel.SetActive(true);
+            UpdateCapacityDisplay();
+        }
+
+        private void OnSupportClicked()
+        {
+            var spawnPos = SupportBotManager.FindSpawnPosition(ROPlayer);
+            if (spawnPos == Vector3.zero)
+            {
+                _supportError.text = "No valid spawn point nearby — move to a more open area.";
+                _supportError.gameObject.SetActive(true);
+                _supportButton.interactable = false;
+                return;
+            }
+            if (!RemoveCurrency("SpecialReqForms", 1))
+            {
+                return;
+            }
+
+            if (FikaBridge.AmHost())
+            {
+                SupportBotManager.Instance?.Activate(ROPlayer, spawnPos);
+            }
+            else
+            {
+                FikaBridge.RequestSupportBotsPacket(ROPlayer.ProfileId, spawnPos.x, spawnPos.y, spawnPos.z);
+            }
+
+            CloseMenu();
+        }
+
+        private void OnTransferClicked()
+        {
+            TransferSelectedItems();
+        }
+
+        private void PopulateItemList()
+        {
+            ClearItemList();
+            if (_transferableItems == null)
+            {
+                return;
+            }
+            foreach (var item in _transferableItems)
+            {
+                if (item == null)
+                {
+                    continue;
+                }
+                var row = Instantiate(_itemRowPrefab, _itemContent.transform);
+                var toggle = row.transform.Find("ItemToggle").GetComponent<Toggle>();
+                var nameLabel = row.transform.Find("ItemNameLabel").GetComponent<TMP_Text>();
+                var stackLabel = row.transform.Find("ItemStackLabel").GetComponent<TMP_Text>();
+
+                nameLabel.text = item.Name?.Localized() ?? item.LocalizedName() ?? "Unknown Item";
+                stackLabel.text = $"x{(item.StackObjectsCount > 0 ? item.StackObjectsCount : 1)}";
+
+                toggle.isOn = false;
+                string capturedId = item.Id;
+                toggle.onValueChanged.AddListener(isOn =>
+                {
+                    if (isOn)
+                    {
+                        _selectedItemIds.Add(capturedId);
+                    }
+                    else
+                    {
+                        _selectedItemIds.Remove(capturedId);
+                    }
+                    UpdateCapacityDisplay();
+                });
+                _itemRowInstances.Add(row);
+            }
+        }
+
+        private void ClearItemList()
+        {
+            foreach (var row in _itemRowInstances)
+            {
+                if (row != null)
+                {
+                    Destroy(row);
+                }
+            }
+            _itemRowInstances.Clear();
+        }
+
+        private void UpdateCapacityDisplay()
+        {
+            var (totalCells, usedCells, _) = CalculateTransferStashSpace();
+            _capacityValueLabel.text = $"{usedCells} / {totalCells}";
+            float fill = totalCells > 0 ? (float)usedCells / totalCells : 0f;
+            _barFill.fillAmount = fill;
+            _barFill.color =
+                fill > 0.8f ? new Color(0.8f, 0.1f, 0.1f)
+                : fill > 0.5f ? new Color(0.8f, 0.8f, 0.1f)
+                : new Color(0.18f, 0.48f, 0.18f);
+
+            bool canTransfer = usedCells <= totalCells && _selectedItemIds.Count > 0;
+            SetButtonState(
+                _transferButton,
+                _transferError,
+                canTransfer,
+                usedCells > totalCells ? $"Too large — remove {usedCells - totalCells} cells worth of items" : "No items selected"
+            );
+        }
+
+        private void OnDestroy()
+        {
+            ClearItemList();
+            if (_menuInstance != null)
+            {
+                Destroy(_menuInstance);
+            }
         }
 
         private List<Item> GetTransferableItems()
@@ -749,148 +722,6 @@ namespace RaidOverhaul.Controllers
             }
         }
 
-        private void DrawGearTransferWindow(int windowID)
-        {
-            GUILayout.BeginVertical();
-
-            GUILayout.Label("Select Items to Extract", _headerStyle);
-            GUILayout.Space(10);
-
-            var (totalCells, usedCells, freeCells) = CalculateTransferStashSpace();
-            int selectedItemsSize = CalculateSelectedItemsSize();
-
-            GUILayout.BeginVertical(GUI.skin.box);
-            GUILayout.Label($"Transfer Capacity: {usedCells}/{totalCells} cells ({freeCells} free)", _labelStyle);
-
-            float usagePercent = totalCells > 0 ? (float)usedCells / totalCells : 0f;
-            Color barColor = usagePercent > 0.8f ? Color.red : (usagePercent > 0.5f ? Color.yellow : Color.green);
-
-            Rect progressRect = GUILayoutUtility.GetRect(GUIContent.none, GUI.skin.box, GUILayout.Height(20));
-            GUI.Box(progressRect, "");
-
-            Rect fillRect = new Rect(
-                progressRect.x + 2,
-                progressRect.y + 2,
-                (progressRect.width - 4) * usagePercent,
-                progressRect.height - 4
-            );
-            GUI.DrawTexture(fillRect, MakeTex(2, 2, barColor));
-
-            GUILayout.Space(5);
-
-            if (selectedItemsSize > 0)
-            {
-                bool willFit = selectedItemsSize <= TRANSFER_MAX_CELLS;
-                Color sizeColor = willFit ? Color.green : Color.red;
-                string fitMessage = willFit ? "? Will fit" : "? Too large!";
-
-                GUILayout.Label(
-                    $"Selected items size: {selectedItemsSize} cells - {fitMessage}",
-                    new GUIStyle(_labelStyle) { normal = { textColor = sizeColor } }
-                );
-
-                if (!willFit)
-                {
-                    int overflow = selectedItemsSize - TRANSFER_MAX_CELLS;
-                    GUILayout.Label(
-                        $"Need to remove {overflow} cells worth of items",
-                        new GUIStyle(_labelStyle) { normal = { textColor = Color.red }, fontSize = 11 }
-                    );
-                }
-            }
-
-            GUILayout.Label(
-                $"Items will be sent to your stash (max {TRANSFER_GRID_WIDTH}x{TRANSFER_GRID_HEIGHT} grid)",
-                new GUIStyle(_labelStyle) { fontSize = 11 }
-            );
-
-            GUILayout.EndVertical();
-            GUILayout.Space(5);
-
-            GUILayout.Label($"Selected: {_selectedItemIds.Count} items", _labelStyle);
-            GUILayout.Space(10);
-
-            _gearScrollPosition = GUILayout.BeginScrollView(_gearScrollPosition, GUILayout.ExpandHeight(true));
-
-            if (_transferableItems == null || _transferableItems.Count == 0)
-            {
-                GUILayout.Label("No items available to transfer", _labelStyle);
-            }
-            else
-            {
-                foreach (var item in _transferableItems)
-                {
-                    if (item == null)
-                    {
-                        continue;
-                    }
-
-                    GUILayout.BeginHorizontal(GUI.skin.box);
-
-                    bool isSelected = _selectedItemIds.Contains(item.Id);
-                    bool newSelected = GUILayout.Toggle(isSelected, "", GUILayout.Width(20));
-
-                    if (newSelected != isSelected)
-                    {
-                        if (newSelected)
-                        {
-                            _selectedItemIds.Add(item.Id);
-                        }
-                        else
-                        {
-                            _selectedItemIds.Remove(item.Id);
-                        }
-                    }
-
-                    string itemName = item.Name?.Localized() ?? item.LocalizedName() ?? "Unknown Item";
-                    int stackSize = item.StackObjectsCount > 0 ? item.StackObjectsCount : 1;
-
-                    GUILayout.Label($"{itemName} x{stackSize}", _labelStyle, GUILayout.ExpandWidth(true));
-
-                    GUILayout.EndHorizontal();
-                    GUILayout.Space(2);
-                }
-            }
-
-            GUILayout.EndScrollView();
-
-            GUILayout.Space(10);
-
-            GUILayout.BeginHorizontal();
-
-            var (totalCells2, usedCells2, freeCells2) = CalculateTransferStashSpace();
-            bool canTransfer = usedCells2 <= TRANSFER_MAX_CELLS && _selectedItemIds.Count > 0;
-
-            GUI.enabled = canTransfer;
-            if (
-                GUILayout.Button(
-                    "Transfer Selected",
-                    canTransfer ? _buttonStyle : _disabledButtonStyle,
-                    GUILayout.Height(40),
-                    GUILayout.ExpandWidth(true)
-                )
-            )
-            {
-                TransferSelectedItems();
-            }
-            GUI.enabled = true;
-
-            if (GUILayout.Button("Cancel", _buttonStyle, GUILayout.Height(40), GUILayout.Width(100)))
-            {
-                _showGearTransferUI = false;
-                _selectedItemIds.Clear();
-            }
-
-            GUILayout.EndHorizontal();
-
-            GUILayout.Space(10);
-            GUILayout.Label("Press ESC to go back", _labelStyle);
-
-            GUILayout.EndVertical();
-
-            GUI.DragWindow(new Rect(0, 0, 10000, 20));
-        }
-
         private void TransferSelectedItems()
         {
             if (_selectedItemIds == null || _selectedItemIds.Count == 0)
@@ -921,15 +752,7 @@ namespace RaidOverhaul.Controllers
                     return;
                 }
 
-                if (!RemoveCurrency("SpecialReqForms", 1))
-                {
-                    Plugin._log.LogError("Failed to consume Special Requisition Form for gear transfer");
-                    return;
-                }
-
                 var flattenedItems = Singleton<ItemFactoryClass>.Instance.TreeToFlatItems(itemsToTransfer);
-
-                int totalItemCount = flattenedItems.Count();
 
                 RequestHandler.PutJson(
                     "/RaidOverhaul/TransferItemRequests",
@@ -938,7 +761,7 @@ namespace RaidOverhaul.Controllers
                         items = flattenedItems,
                         traderId = Utils.Traders.TryGetValue("ReqShop", out var tId) ? tId : null,
                         message = GetResponseMessage(),
-                    }.ToJson(_defaultJsonConverters)
+                    }.ToJson(null)
                 );
 
                 foreach (var item in itemsToTransfer)
@@ -946,14 +769,19 @@ namespace RaidOverhaul.Controllers
                     RemoveZeroStackItem(ROPlayer, item);
                 }
 
-                Plugin._log.LogInfo($"Successfully transferred {itemsToTransfer.Count} items ({selectedItemsSize} cells) to stash");
+                if (!RemoveCurrency("ReqSlips", 15))
+                {
+                    _log.LogError("Failed to consume Requisition Slips for gear transfer after successful transfer");
+                }
+
+                _log.LogInfo($"Successfully transferred {itemsToTransfer.Count} items ({selectedItemsSize} cells) to stash");
+                _audioSource?.PlayOneShot(SoundBeepGreen);
             }
             catch (Exception ex)
             {
-                Plugin._log.LogError($"Error transferring items: {ex.Message}");
+                _log.LogError($"Error transferring items: {ex.Message}");
             }
 
-            _showGearTransferUI = false;
             _selectedItemIds.Clear();
             CloseMenu();
         }

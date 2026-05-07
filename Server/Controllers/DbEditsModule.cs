@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using RaidOverhaulMain.Helpers;
+﻿using RaidOverhaulMain.Helpers;
 using RaidOverhaulMain.Models;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.Models.Common;
@@ -27,20 +26,22 @@ public class RODbEdits(
     private readonly LocationConfig _locationConfig = configServer.GetConfig<LocationConfig>();
     private readonly WeatherConfig _weatherConfig = configServer.GetConfig<WeatherConfig>();
     private readonly RagfairConfig _ragfairConfig = configServer.GetConfig<RagfairConfig>();
-    private static ConfigFile? _config;
+    private ConfigFile _config = null!;
+    private DebugFile _debugConfig = null!;
 
-    public void PassDbConfigs(ConfigFile config)
+    public void PassDbConfigs(ConfigFile config, DebugFile debugConfig)
     {
         _config = config;
+        _debugConfig = debugConfig;
     }
 
     public void BuildDbEdits()
     {
         RaidChanges();
         WeightChanges();
-        ItemChanges(roHelpers);
-        StackChanges(roHelpers);
-        TraderTweaks(roHelpers);
+        ItemChanges();
+        StackChanges();
+        TraderTweaks();
         if (_config.LootChangesEnabled)
         {
             LootChanges();
@@ -51,7 +52,11 @@ public class RODbEdits(
         }
         if (_config.WeatherChangesEnabled && _config.WinterWonderland)
         {
-            WeatherChangesWinterWonderland(roHelpers);
+            WeatherChangesWinterWonderland();
+        }
+        if (_config.TimeChangesEnabled)
+        {
+            _weatherConfig.Acceleration = 1;
         }
         ROLogger.Log(logger, "Database Edits finished loading", LogTextColor.Magenta);
     }
@@ -175,14 +180,14 @@ public class RODbEdits(
         {
             location.LooseLoot?.AddTransformer(lazyLoadedLooseLootData =>
             {
-                ModifyMarkedRoomLoot(id, lazyLoadedLooseLootData);
+                ModifyMarkedRoomLoot(id, lazyLoadedLooseLootData!);
 
                 return lazyLoadedLooseLootData;
             });
         }
     }
 
-    private void TraderTweaks(ROHelpers helpers)
+    private void TraderTweaks()
     {
         var tables = databaseService.GetTables();
         var quests = tables.Templates.Quests;
@@ -190,15 +195,15 @@ public class RODbEdits(
 
         if (_config.InsuranceChangesEnabled)
         {
-            traders["54cb50c76803fa8b248b4571"].Base.Insurance.MinReturnHour = _config.PraporMinReturn;
-            traders["54cb50c76803fa8b248b4571"].Base.Insurance.MaxReturnHour = _config.PraporMaxReturn;
-            traders["54cb57776803fa99248b456e"].Base.Insurance.MinReturnHour = _config.TherapistMinReturn;
-            traders["54cb57776803fa99248b456e"].Base.Insurance.MaxReturnHour = _config.TherapistMaxReturn;
+            traders["54cb50c76803fa8b248b4571"].Base.Insurance!.MinReturnHour = _config.PraporMinReturn;
+            traders["54cb50c76803fa8b248b4571"].Base.Insurance!.MaxReturnHour = _config.PraporMaxReturn;
+            traders["54cb57776803fa99248b456e"].Base.Insurance!.MinReturnHour = _config.TherapistMinReturn;
+            traders["54cb57776803fa99248b456e"].Base.Insurance!.MaxReturnHour = _config.TherapistMaxReturn;
         }
 
         if (_config.Ll1Items && _config.EnableRequisitionOffice)
         {
-            var reqShop = helpers.FetchIdFromMap("ReqShop", ClassMaps.TraderMaps);
+            var reqShop = roHelpers.FetchIdFromMap("ReqShop", ClassMaps.TraderMaps);
 
             foreach (var (item, _) in traders[reqShop].Assort.LoyalLevelItems)
             {
@@ -262,35 +267,28 @@ public class RODbEdits(
         botHealth.Max = newValue;
     }
 
-    private void ItemChanges(ROHelpers helpers)
+    private void ItemChanges()
     {
         var tables = databaseService.GetTables();
-        var presets = databaseService.GetGlobals();
         var bots = databaseService.GetBots();
         var items = tables.Templates.Items;
-        var pockets = tables.Templates.Items[helpers.FetchIdFromMap("POCKETS_SPECIAL", ClassMaps.AllItemList)];
-        var uhPockets = tables.Templates.Items[helpers.FetchIdFromMap("POCKETS_UNHEARD", ClassMaps.AllItemList)];
+        var pockets = tables.Templates.Items[roHelpers.FetchIdFromMap("POCKETS_SPECIAL", ClassMaps.AllItemList)];
+        var uhPockets = tables.Templates.Items[roHelpers.FetchIdFromMap("POCKETS_UNHEARD", ClassMaps.AllItemList)];
 
         foreach (var (id, _) in items)
         {
             var baseItem = items[id];
 
-            if (_config.LootableMelee)
+            if (_config.LootableMelee && baseItem.Parent == BaseClasses.KNIFE && baseItem.Properties != null)
             {
-                if (baseItem.Parent == BaseClasses.KNIFE)
-                {
-                    baseItem.Properties.Unlootable = false;
-                    baseItem.Properties.UnlootableFromSide = [];
-                }
+                baseItem.Properties.Unlootable = false;
+                baseItem.Properties.UnlootableFromSide = [];
             }
 
-            if (_config.LootableArmbands)
+            if (_config.LootableArmbands && baseItem.Parent == BaseClasses.ARM_BAND && baseItem.Properties != null)
             {
-                if (baseItem.Parent == BaseClasses.ARM_BAND)
-                {
-                    baseItem.Properties.Unlootable = false;
-                    baseItem.Properties.UnlootableFromSide = [];
-                }
+                baseItem.Properties.Unlootable = false;
+                baseItem.Properties.UnlootableFromSide = [];
             }
 
             if (baseItem.Properties?.BlocksEarpiece == true)
@@ -303,9 +301,57 @@ public class RODbEdits(
                 baseItem.Properties.BlocksFaceCover = false;
             }
 
-            if (baseItem.Id == helpers.FetchIdFromMap("ARMOREDEQUIPMENT_TK_HEAVY_TROOPER", ClassMaps.AllItemList))
+            if (
+                baseItem.Id == roHelpers.FetchIdFromMap("ARMOREDEQUIPMENT_TK_HEAVY_TROOPER", ClassMaps.AllItemList)
+                && baseItem.Properties != null
+            )
             {
                 baseItem.Properties.ArmorClass = 4;
+            }
+
+            if (_config.LowerExamineTime)
+            {
+                if (items[id].Properties == null)
+                {
+                    continue;
+                }
+
+                items[id].Properties!.ExamineTime = 0.1;
+            }
+
+            if (_config.ChangeBackpackSizes && baseItem.Parent == BaseClasses.BACKPACK && baseItem.Properties != null)
+            {
+                if (baseItem.Id == roHelpers.FetchIdFromMap("BACKPACK_COMM_3", ClassMaps.AllItemList))
+                {
+                    roHelpers.ModifyContainerSize(baseItem.Id, 6, 11);
+                }
+                else if (baseItem.Id == roHelpers.FetchIdFromMap("BACKPACK_PARTISAN", ClassMaps.AllItemList))
+                {
+                    roHelpers.ModifyContainerSize(baseItem.Id, 6, 9);
+                }
+                else
+                {
+                    var grids = baseItem.Properties.Grids?.ToList();
+                    var gridProps = grids?.Count == 1 ? grids[0]?.Properties : null;
+
+                    if (gridProps != null && gridProps.CellsH != null && gridProps.CellsV != null)
+                    {
+                        int newH = gridProps.CellsH.Value;
+                        int newV = gridProps.CellsV.Value * 2;
+
+                        if (newH != 4 && newH != 5)
+                        {
+                            newH *= 2;
+                        }
+
+                        if (newH > 6)
+                        {
+                            newH = 6;
+                        }
+
+                        roHelpers.ModifyContainerSize(baseItem.Id, newH, newV);
+                    }
+                }
             }
         }
 
@@ -316,52 +362,60 @@ public class RODbEdits(
 
             if (normalGrids != null)
             {
-                normalGrids[0].Properties.CellsH = _config.Pocket1Horizontal;
-                normalGrids[0].Properties.CellsV = _config.Pocket1Vertical;
-                normalGrids[1].Properties.CellsH = _config.Pocket2Horizontal;
-                normalGrids[1].Properties.CellsV = _config.Pocket2Vertical;
-                normalGrids[2].Properties.CellsH = _config.Pocket3Horizontal;
-                normalGrids[2].Properties.CellsV = _config.Pocket3Vertical;
-                normalGrids[3].Properties.CellsH = _config.Pocket4Horizontal;
-                normalGrids[3].Properties.CellsV = _config.Pocket4Vertical;
+                normalGrids[0].Properties!.CellsH = _config.Pocket1Horizontal;
+                normalGrids[0].Properties!.CellsV = _config.Pocket1Vertical;
+                normalGrids[1].Properties!.CellsH = _config.Pocket2Horizontal;
+                normalGrids[1].Properties!.CellsV = _config.Pocket2Vertical;
+                normalGrids[2].Properties!.CellsH = _config.Pocket3Horizontal;
+                normalGrids[2].Properties!.CellsV = _config.Pocket3Vertical;
+                normalGrids[3].Properties!.CellsH = _config.Pocket4Horizontal;
+                normalGrids[3].Properties!.CellsV = _config.Pocket4Vertical;
 
-                pockets.Properties.Grids = normalGrids;
+                pockets.Properties!.Grids = normalGrids;
             }
 
             if (uhGrids != null)
             {
-                uhGrids[0].Properties.CellsH = _config.Pocket1Horizontal;
-                uhGrids[0].Properties.CellsV = _config.Pocket1Vertical;
-                uhGrids[1].Properties.CellsH = _config.Pocket2Horizontal;
-                uhGrids[1].Properties.CellsV = _config.Pocket2Vertical;
-                uhGrids[2].Properties.CellsH = _config.Pocket3Horizontal;
-                uhGrids[2].Properties.CellsV = _config.Pocket3Vertical;
-                uhGrids[3].Properties.CellsH = _config.Pocket4Horizontal;
-                uhGrids[3].Properties.CellsV = _config.Pocket4Vertical;
+                uhGrids[0].Properties!.CellsH = _config.Pocket1Horizontal;
+                uhGrids[0].Properties!.CellsV = _config.Pocket1Vertical;
+                uhGrids[1].Properties!.CellsH = _config.Pocket2Horizontal;
+                uhGrids[1].Properties!.CellsV = _config.Pocket2Vertical;
+                uhGrids[2].Properties!.CellsH = _config.Pocket3Horizontal;
+                uhGrids[2].Properties!.CellsV = _config.Pocket3Vertical;
+                uhGrids[3].Properties!.CellsH = _config.Pocket4Horizontal;
+                uhGrids[3].Properties!.CellsV = _config.Pocket4Vertical;
 
-                uhPockets.Properties.Grids = uhGrids;
+                uhPockets.Properties!.Grids = uhGrids;
             }
         }
 
         if (_config.SpecialSlotChanges)
         {
-            foreach (var slot in pockets.Properties.Slots)
+            foreach (var slot in pockets!.Properties!.Slots!)
             {
-                slot.Properties.Filters.FirstOrDefault().Filter = new HashSet<MongoId>() { "54009119af1c881c07000029" };
+                var slotFilter = slot.Properties?.Filters?.FirstOrDefault();
+                if (slotFilter != null)
+                {
+                    slotFilter.Filter = ["54009119af1c881c07000029"];
+                }
             }
 
-            foreach (var slot in uhPockets.Properties.Slots)
+            foreach (var slot in uhPockets!.Properties!.Slots!)
             {
-                slot.Properties.Filters.FirstOrDefault().Filter = new HashSet<MongoId>() { "54009119af1c881c07000029" };
+                var slotFilter = slot.Properties?.Filters?.FirstOrDefault();
+                if (slotFilter != null)
+                {
+                    slotFilter.Filter = ["54009119af1c881c07000029"];
+                }
             }
         }
 
         if (_config.HolsterAnything)
         {
             var inventory = items["55d7217a4bdc2d86028b456d"].Properties?.Slots;
-            var slotToPush = helpers.FetchIdFromMap("Holster", ClassMaps.SlotIds);
+            var slotToPush = roHelpers.FetchIdFromMap("Holster", ClassMaps.SlotIds);
 
-            if (inventory is null)
+            if (inventory == null)
             {
                 return;
             }
@@ -370,14 +424,14 @@ public class RODbEdits(
             {
                 var filters = slot.Properties?.Filters?.ToList();
 
-                if (filters is null)
+                if (filters == null)
                 {
                     continue;
                 }
 
                 var slotId = slot.Id;
 
-                if (slotId is null)
+                if (slotId == null)
                 {
                     continue;
                 }
@@ -388,29 +442,17 @@ public class RODbEdits(
                 }
 
                 filters.FirstOrDefault()?.Filter?.Add("5422acb9af1c889c16000029");
-                slot.Properties.Filters = filters;
-            }
-        }
-
-        if (_config.LowerExamineTime)
-        {
-            foreach (var (id, _) in items)
-            {
-                items[id].Properties.ExamineTime = 0.1;
+                slot.Properties!.Filters = filters;
             }
         }
 
         foreach (var (_, botType) in bots.Types)
         {
             botType?.BotInventory.Items.Pockets.TryAdd("668b3c71042c73c6f9b00704", 1);
-        }
-
-        foreach (var (_, botType) in bots.Types)
-        {
             botType?.BotInventory.Items.Pockets.TryAdd("66292e79a4d9da25e683ab55", 1);
         }
 
-        helpers.AddToCases(
+        roHelpers.AddToCases(
             [
                 "5732ee6a24597719ae0c0281",
                 "544a11ac4bdc2d470e8b456a",
@@ -430,54 +472,17 @@ public class RODbEdits(
             "64d4b23dc1b37504b41ac2b6"
         );
 
-        helpers.AddToCases(
+        roHelpers.AddToCases(
             ["5783c43d2459774bbe137486", "60b0f6c058e0b0481a09ad11", "590c60fc86f77412b13fddcf", "5d235bb686f77443f4331278"],
             "59f32c3b86f77472a31742f0"
         );
-        helpers.AddToCases(
+        roHelpers.AddToCases(
             ["5783c43d2459774bbe137486", "60b0f6c058e0b0481a09ad11", "590c60fc86f77412b13fddcf", "5d235bb686f77443f4331278"],
             "59f32bb586f774757e1e8442"
         );
-
-        if (_config.ChangeBackpackSizes)
-        {
-            helpers.ModifyContainerSize("5df8a4d786f77412672a1e3b", 6, 12);
-            helpers.ModifyContainerSize("628bc7fb408e2b2e9c0801b1", 6, 11);
-            helpers.ModifyContainerSize("5c0e774286f77468413cc5b2", 6, 10);
-            helpers.ModifyContainerSize("5e4abc6786f77406812bd572", 6, 9);
-            helpers.ModifyContainerSize("5e997f0b86f7741ac73993e2", 6, 6);
-            helpers.ModifyContainerSize("5ab8ebf186f7742d8b372e80", 6, 9);
-            helpers.ModifyContainerSize("61b9e1aaef9a1b5d6a79899a", 6, 9);
-            helpers.ModifyContainerSize("59e763f286f7742ee57895da", 6, 9);
-            helpers.ModifyContainerSize("639346cc1c8f182ad90c8972", 6, 8);
-            helpers.ModifyContainerSize("628e1ffc83ec92260c0f437f", 6, 6);
-            helpers.ModifyContainerSize("62a1b7fbc30cfa1d366af586", 6, 6);
-            helpers.ModifyContainerSize("5b44c6ae86f7742d1627baea", 6, 6);
-            helpers.ModifyContainerSize("545cdae64bdc2d39198b4568", 6, 6);
-            helpers.ModifyContainerSize("5f5e467b0bc58666c37e7821", 6, 6);
-            helpers.ModifyContainerSize("618bb76513f5097c8d5aa2d5", 6, 5);
-            helpers.ModifyContainerSize("619cf0335771dd3c390269ae", 6, 5);
-            helpers.ModifyContainerSize("60a272cc93ef783291411d8e", 6, 5);
-            helpers.ModifyContainerSize("618cfae774bb2d036a049e7c", 6, 5);
-            helpers.ModifyContainerSize("6034d103ca006d2dca39b3f0", 4, 8);
-            helpers.ModifyContainerSize("6038d614d10cbf667352dd44", 4, 8);
-            helpers.ModifyContainerSize("60a2828e8689911a226117f9", 6, 5);
-            helpers.ModifyContainerSize("5e9dcf5986f7746c417435b3", 5, 5);
-            helpers.ModifyContainerSize("56e335e4d2720b6c058b456d", 5, 5);
-            helpers.ModifyContainerSize("5ca20d5986f774331e7c9602", 5, 5);
-            helpers.ModifyContainerSize("544a5cde4bdc2d39388b456b", 4, 5);
-            helpers.ModifyContainerSize("56e33634d2720bd8058b456b", 5, 3);
-            helpers.ModifyContainerSize("5f5e45cc5021ce62144be7aa", 3, 5);
-            helpers.ModifyContainerSize("56e33680d2720be2748b4576", 4, 3);
-            helpers.ModifyContainerSize("5ab8ee7786f7742d8f33f0b9", 3, 4);
-            helpers.ModifyContainerSize("5ab8f04f86f774585f4237d8", 3, 3);
-            helpers.ModifyContainerSize("66a9f98f3bd5a41b162030f4", 6, 9);
-            helpers.ModifyContainerSize("66b5f247af44ca0014063c02", 5, 5);
-            helpers.ModifyContainerSize("66b5f22b78bbc0200425f904", 6, 6);
-        }
     }
 
-    private void StackChanges(ROHelpers helpers)
+    private void StackChanges()
     {
         var tables = databaseService.GetTables();
         var items = tables.Templates.Items;
@@ -503,7 +508,7 @@ public class RODbEdits(
 
                 foreach (var item in StackList)
                 {
-                    items[item].Properties.StackMaxSize = stackSize;
+                    items[item].Properties!.StackMaxSize = stackSize;
                 }
             }
         }
@@ -512,12 +517,14 @@ public class RODbEdits(
         {
             foreach (var (id, _) in items)
             {
+                var ammoProps = items[id].Properties;
                 if (
-                    items[id].Parent == helpers.FetchIdFromMap("AMMO", ClassMaps.ItemBaseClasses)
-                    && items[id].Properties?.StackMaxSize != null
+                    items[id].Parent == roHelpers.FetchIdFromMap("AMMO", ClassMaps.ItemBaseClasses)
+                    && ammoProps != null
+                    && ammoProps.StackMaxSize != null
                 )
                 {
-                    items[id].Properties.StackMaxSize *= _config.StackMultiplier;
+                    ammoProps.StackMaxSize *= _config.StackMultiplier;
                 }
             }
         }
@@ -534,18 +541,20 @@ public class RODbEdits(
         {
             foreach (var (id, _) in items)
             {
+                var moneyProps = items[id].Properties;
                 if (
-                    items[id].Parent == helpers.FetchIdFromMap("MONEY", ClassMaps.ItemBaseClasses)
-                    && items[id].Properties?.StackMaxSize != null
+                    items[id].Parent == roHelpers.FetchIdFromMap("MONEY", ClassMaps.ItemBaseClasses)
+                    && moneyProps != null
+                    && moneyProps.StackMaxSize != null
                 )
                 {
-                    items[id].Properties.StackMaxSize *= _config.MoneyMultiplier;
+                    moneyProps.StackMaxSize *= _config.MoneyMultiplier;
                 }
             }
         }
     }
 
-    private static void ModifyMarkedRoomLoot(string location, LooseLoot looseLoot)
+    private void ModifyMarkedRoomLoot(string location, LooseLoot looseLoot)
     {
         if (looseLoot.Spawnpoints == null)
         {
@@ -659,9 +668,9 @@ public class RODbEdits(
         }
     }
 
-    public void WeatherChangesAllSeasons(ROHelpers helpers)
+    public void WeatherChangesAllSeasons()
     {
-        if (helpers.IsOnlyWeatherOption(_config.AllSeasons, _config))
+        if (roHelpers.IsOnlyWeatherOption(_config.AllSeasons, _config))
         {
             var weatherChance = randomUtil.GetInt(1, 100);
 
@@ -699,7 +708,7 @@ public class RODbEdits(
                 ROLogger.Log(logger, "Storm is active.", LogTextColor.Magenta);
             }
         }
-        else if (helpers.HasConflictingWeatherOptions(_config))
+        else if (roHelpers.HasConflictingWeatherOptions(_config))
         {
             ROLogger.Log(
                 logger,
@@ -709,9 +718,9 @@ public class RODbEdits(
         }
     }
 
-    public void WeatherChangesNoWinter(ROHelpers helpers)
+    public void WeatherChangesNoWinter()
     {
-        if (helpers.IsOnlyWeatherOption(_config.NoWinter, _config))
+        if (roHelpers.IsOnlyWeatherOption(_config.NoWinter, _config))
         {
             var weatherChance = randomUtil.GetInt(1, 100);
 
@@ -745,7 +754,7 @@ public class RODbEdits(
             }
         }
 
-        if (helpers.HasConflictingWeatherOptions(_config))
+        if (roHelpers.HasConflictingWeatherOptions(_config))
         {
             ROLogger.Log(
                 logger,
@@ -755,9 +764,9 @@ public class RODbEdits(
         }
     }
 
-    private void WeatherChangesWinterWonderland(ROHelpers helpers)
+    private void WeatherChangesWinterWonderland()
     {
-        if (helpers.IsOnlyWeatherOption(_config.WinterWonderland, _config))
+        if (roHelpers.IsOnlyWeatherOption(_config.WinterWonderland, _config))
         {
             _weatherConfig.OverrideSeason = Season.WINTER;
             ROLogger.Log(logger, "Snow is active. It's a whole fuckin' winter wonderland out there.", LogTextColor.Magenta);
@@ -765,7 +774,7 @@ public class RODbEdits(
             return;
         }
 
-        if (helpers.HasConflictingWeatherOptions(_config))
+        if (roHelpers.HasConflictingWeatherOptions(_config))
         {
             ROLogger.Log(
                 logger,
@@ -775,9 +784,9 @@ public class RODbEdits(
         }
     }
 
-    public void SeasonProgression(SeasonalProgression seasonProgressionFile, DebugFile debugConfig, Assembly assembly, ROHelpers helpers)
+    public SeasonalProgression SeasonProgression(SeasonalProgression progression)
     {
-        var raidsRun = seasonProgressionFile.SeasonsProgression;
+        var raidsRun = progression.SeasonsProgression;
 
         switch (raidsRun)
         {
@@ -787,7 +796,7 @@ public class RODbEdits(
             case 3:
                 raidsRun++;
                 _weatherConfig.OverrideSeason = Season.SPRING;
-                if (debugConfig.DebugMode)
+                if (_debugConfig.DebugMode)
                 {
                     ROLogger.Log(logger, "Spring is active.", LogTextColor.Magenta);
                 }
@@ -797,7 +806,7 @@ public class RODbEdits(
             case 5:
             case 6:
                 raidsRun++;
-                if (debugConfig.DebugMode)
+                if (_debugConfig.DebugMode)
                 {
                     ROLogger.Log(logger, "Storm is active.", LogTextColor.Magenta);
                 }
@@ -808,7 +817,7 @@ public class RODbEdits(
             case 9:
                 raidsRun++;
                 _weatherConfig.OverrideSeason = Season.SUMMER;
-                if (debugConfig.DebugMode)
+                if (_debugConfig.DebugMode)
                 {
                     ROLogger.Log(logger, "Summer is active.", LogTextColor.Magenta);
                 }
@@ -819,7 +828,7 @@ public class RODbEdits(
             case 12:
                 raidsRun++;
                 _weatherConfig.OverrideSeason = Season.AUTUMN;
-                if (debugConfig.DebugMode)
+                if (_debugConfig.DebugMode)
                 {
                     ROLogger.Log(logger, "Autumn is active.", LogTextColor.Magenta);
                 }
@@ -829,7 +838,7 @@ public class RODbEdits(
             case 14:
                 raidsRun++;
                 _weatherConfig.OverrideSeason = Season.AUTUMN_LATE;
-                if (debugConfig.DebugMode)
+                if (_debugConfig.DebugMode)
                 {
                     ROLogger.Log(logger, "Autumn is active.", LogTextColor.Magenta);
                 }
@@ -841,7 +850,7 @@ public class RODbEdits(
             case 18:
                 raidsRun++;
                 _weatherConfig.OverrideSeason = Season.WINTER;
-                if (debugConfig.DebugMode)
+                if (_debugConfig.DebugMode)
                 {
                     ROLogger.Log(logger, "Winter is coming.", LogTextColor.Magenta);
                 }
@@ -850,25 +859,18 @@ public class RODbEdits(
             default:
                 _weatherConfig.OverrideSeason = Season.SPRING_EARLY;
                 raidsRun = 1;
-                if (debugConfig.DebugMode)
+                if (_debugConfig.DebugMode)
                 {
                     ROLogger.Log(logger, "Defaulting to spring.", LogTextColor.Magenta);
                 }
                 break;
         }
-        try
+        if (_debugConfig.DebugMode)
         {
-            seasonProgressionFile.SeasonsProgression = raidsRun;
+            ROLogger.Log(logger, $"Seasonal progress updated to {raidsRun}", LogTextColor.Cyan);
+        }
 
-            helpers.WriteConfigFile(seasonProgressionFile, assembly, Path.Combine("db", "devFiles"), "seasonsProgressionFile.json");
-            if (debugConfig.DebugMode)
-            {
-                ROLogger.Log(logger, $"Seasonal progress updated to {raidsRun}", LogTextColor.Cyan);
-            }
-        }
-        catch (Exception ex)
-        {
-            ROLogger.LogError(logger, "Error writing season progression file: " + ex);
-        }
+        progression.SeasonsProgression = raidsRun;
+        return progression;
     }
 }

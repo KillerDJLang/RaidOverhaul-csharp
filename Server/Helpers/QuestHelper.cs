@@ -20,9 +20,11 @@ public class ROQuestHelper(
     ROJsonHelper jsonHelper
 )
 {
-    public void CreateCustomQuests(Assembly assembly, string questPath)
+    private readonly Assembly _assembly = Assembly.GetExecutingAssembly();
+
+    public void CreateCustomQuests(string questPath)
     {
-        var modPath = modHelper.GetAbsolutePathToModFolder(assembly);
+        var modPath = modHelper.GetAbsolutePathToModFolder(_assembly);
         var questDirectory = Path.Combine(modPath, questPath);
         var tables = databaseService.GetTables();
         var questFiles = jsonHelper.LoadCombinedQuestJsons(Path.Combine(questDirectory, "quests"));

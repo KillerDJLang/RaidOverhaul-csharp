@@ -22,7 +22,8 @@ public class ROCustomItems(
 )
 {
     private readonly RagfairConfig _ragfairConfig = configServer.GetConfig<RagfairConfig>();
-    private static ConfigFile? _config;
+    private readonly Assembly _assembly = Assembly.GetExecutingAssembly();
+    private static ConfigFile _config = null!;
 
     public void PassCustomItemConfigs(ConfigFile config)
     {
@@ -31,40 +32,39 @@ public class ROCustomItems(
 
     public async Task BuildCustomItems()
     {
-        var assembly = Assembly.GetExecutingAssembly();
-        await LoadCustomItems(assembly, roHelpers);
-        wttRigLayoutService.CreateRigLayouts(assembly, "db/itemGen/customLayouts");
+        await LoadCustomItems();
+        wttRigLayoutService.CreateRigLayouts(_assembly, "db/itemGen/customLayouts");
         ApplyFleaBlacklist();
         ApplyCasePushes();
         ROLogger.Log(logger, "Custom Items finished loading", LogTextColor.Magenta);
     }
 
-    private async Task LoadCustomItems(Assembly assembly, ROHelpers helpers)
+    private async Task LoadCustomItems()
     {
         //var locations = databaseService.GetLocations();
         const string realismKey = "SPT-Realism";
 
-        await wttItemService.CreateCustomItems(assembly, "db/itemGen/currency");
-        await wttItemService.CreateCustomItems(assembly, "db/itemGen/constItems");
-        await wttItemService.CreateCustomItems(assembly, "db/itemGen/customKeys");
-        await wttItemService.CreateCustomItems(assembly, "db/itemGen/cases");
+        await wttItemService.CreateCustomItems(_assembly, "db/itemGen/currency");
+        await wttItemService.CreateCustomItems(_assembly, "db/itemGen/constItems");
+        await wttItemService.CreateCustomItems(_assembly, "db/itemGen/customKeys");
+        await wttItemService.CreateCustomItems(_assembly, "db/itemGen/cases");
 
         if (_config.EnableCustomItems)
         {
-            if (helpers.CheckForMod(realismKey))
+            if (roHelpers.CheckForMod(realismKey))
             {
-                await wttItemService.CreateCustomItems(assembly, "db/itemGen/ammoRealism");
+                await wttItemService.CreateCustomItems(_assembly, "db/itemGen/ammoRealism");
                 ROLogger.Log(logger, "Realism detected, modifying custom ammunition.", LogTextColor.Magenta);
             }
-            else if (!helpers.CheckForMod(realismKey))
+            else if (!roHelpers.CheckForMod(realismKey))
             {
-                await wttItemService.CreateCustomItems(assembly, "db/itemGen/ammo");
+                await wttItemService.CreateCustomItems(_assembly, "db/itemGen/ammo");
             }
-            await wttItemService.CreateCustomItems(assembly, "db/itemGen/weapons");
-            await wttItemService.CreateCustomItems(assembly, "db/itemGen/gear");
+            await wttItemService.CreateCustomItems(_assembly, "db/itemGen/weapons");
+            await wttItemService.CreateCustomItems(_assembly, "db/itemGen/gear");
 
             ApplyFleaBlacklistCustomWeapons();
-            BuildSlots(helpers);
+            BuildSlots();
         }
         /*
             var labsKeys = locations.Laboratory.Base.AccessKeys?.ToList();
@@ -172,60 +172,62 @@ public class ROCustomItems(
         }
     }
 
-    private void BuildSlots(ROHelpers helpers)
+    private void BuildSlots()
     {
         var tables = databaseService.GetTables();
         var items = tables.Templates.Items;
-        var aug = helpers.FetchIdFromMap("Aug762", ClassMaps.CustomItemMap);
-        var stm46 = helpers.FetchIdFromMap("Stm46", ClassMaps.CustomItemMap);
-        var mcm4 = helpers.FetchIdFromMap("Mcm4", ClassMaps.CustomItemMap);
-        var judge = helpers.FetchIdFromMap("Judge", ClassMaps.CustomItemMap);
-        var jury = helpers.FetchIdFromMap("Jury", ClassMaps.CustomItemMap);
-        var executioner = helpers.FetchIdFromMap("Exec", ClassMaps.CustomItemMap);
-        var aug30 = helpers.FetchIdFromMap("Aug30Rd", ClassMaps.CustomItemMap);
-        var aug42 = helpers.FetchIdFromMap("Aug42Rd", ClassMaps.CustomItemMap);
-        var stm33 = helpers.FetchIdFromMap("Stm33Rd", ClassMaps.CustomItemMap);
-        var stm50 = helpers.FetchIdFromMap("Stm50Rd", ClassMaps.CustomItemMap);
-        var stmRec = helpers.FetchIdFromMap("StmRec", ClassMaps.CustomItemMap);
-        var mag300 = helpers.FetchIdFromMap("Mag300", ClassMaps.CustomItemMap);
-        var mag545 = helpers.FetchIdFromMap("Mag545", ClassMaps.CustomItemMap);
-        var mag57 = helpers.FetchIdFromMap("Mag57", ClassMaps.CustomItemMap);
-        var mag762 = helpers.FetchIdFromMap("Mag762", ClassMaps.CustomItemMap);
-        var mag939 = helpers.FetchIdFromMap("Mag939", ClassMaps.CustomItemMap);
-        var rec300 = helpers.FetchIdFromMap("Rec300", ClassMaps.CustomItemMap);
-        var rec545 = helpers.FetchIdFromMap("Rec545", ClassMaps.CustomItemMap);
-        var rec57 = helpers.FetchIdFromMap("Rec57", ClassMaps.CustomItemMap);
-        var rec762 = helpers.FetchIdFromMap("Rec762", ClassMaps.CustomItemMap);
-        var rec939 = helpers.FetchIdFromMap("Rec939", ClassMaps.CustomItemMap);
-        var judge17 = helpers.FetchIdFromMap("Judge17Rd", ClassMaps.CustomItemMap);
-        var judge33 = helpers.FetchIdFromMap("Judge33Rd", ClassMaps.CustomItemMap);
-        var judge50 = helpers.FetchIdFromMap("Judge50Rd", ClassMaps.CustomItemMap);
-        var judgeSlide = helpers.FetchIdFromMap("JudgeSlide", ClassMaps.CustomItemMap);
-        var jury20 = helpers.FetchIdFromMap("Jury20Rd", ClassMaps.CustomItemMap);
-        var jury25 = helpers.FetchIdFromMap("Jury25Rd", ClassMaps.CustomItemMap);
-        var jury50 = helpers.FetchIdFromMap("Jury50Rd", ClassMaps.CustomItemMap);
-        var juryRec = helpers.FetchIdFromMap("JuryRec", ClassMaps.CustomItemMap);
-        var execAics = helpers.FetchIdFromMap("ExecAics", ClassMaps.CustomItemMap);
-        var execPmag = helpers.FetchIdFromMap("ExecPmag", ClassMaps.CustomItemMap);
-        var execWyatt = helpers.FetchIdFromMap("ExecWyatt", ClassMaps.CustomItemMap);
+        var aug = roHelpers.FetchIdFromMap("Aug762", ClassMaps.CustomItemMap);
+        var stm46 = roHelpers.FetchIdFromMap("Stm46", ClassMaps.CustomItemMap);
+        var mcm4 = roHelpers.FetchIdFromMap("Mcm4", ClassMaps.CustomItemMap);
+        var judge = roHelpers.FetchIdFromMap("Judge", ClassMaps.CustomItemMap);
+        var jury = roHelpers.FetchIdFromMap("Jury", ClassMaps.CustomItemMap);
+        var executioner = roHelpers.FetchIdFromMap("Exec", ClassMaps.CustomItemMap);
+        var aug30 = roHelpers.FetchIdFromMap("Aug30Rd", ClassMaps.CustomItemMap);
+        var aug42 = roHelpers.FetchIdFromMap("Aug42Rd", ClassMaps.CustomItemMap);
+        var stm33 = roHelpers.FetchIdFromMap("Stm33Rd", ClassMaps.CustomItemMap);
+        var stm50 = roHelpers.FetchIdFromMap("Stm50Rd", ClassMaps.CustomItemMap);
+        var stmRec = roHelpers.FetchIdFromMap("StmRec", ClassMaps.CustomItemMap);
+        var mag300 = roHelpers.FetchIdFromMap("Mag300", ClassMaps.CustomItemMap);
+        var mag545 = roHelpers.FetchIdFromMap("Mag545", ClassMaps.CustomItemMap);
+        var mag57 = roHelpers.FetchIdFromMap("Mag57", ClassMaps.CustomItemMap);
+        var mag762 = roHelpers.FetchIdFromMap("Mag762", ClassMaps.CustomItemMap);
+        var mag939 = roHelpers.FetchIdFromMap("Mag939", ClassMaps.CustomItemMap);
+        var rec300 = roHelpers.FetchIdFromMap("Rec300", ClassMaps.CustomItemMap);
+        var rec545 = roHelpers.FetchIdFromMap("Rec545", ClassMaps.CustomItemMap);
+        var rec57 = roHelpers.FetchIdFromMap("Rec57", ClassMaps.CustomItemMap);
+        var rec762 = roHelpers.FetchIdFromMap("Rec762", ClassMaps.CustomItemMap);
+        var rec939 = roHelpers.FetchIdFromMap("Rec939", ClassMaps.CustomItemMap);
+        var judge17 = roHelpers.FetchIdFromMap("Judge17Rd", ClassMaps.CustomItemMap);
+        var judge33 = roHelpers.FetchIdFromMap("Judge33Rd", ClassMaps.CustomItemMap);
+        var judge50 = roHelpers.FetchIdFromMap("Judge50Rd", ClassMaps.CustomItemMap);
+        var judgeSlide = roHelpers.FetchIdFromMap("JudgeSlide", ClassMaps.CustomItemMap);
+        var jury20 = roHelpers.FetchIdFromMap("Jury20Rd", ClassMaps.CustomItemMap);
+        var jury25 = roHelpers.FetchIdFromMap("Jury25Rd", ClassMaps.CustomItemMap);
+        var jury50 = roHelpers.FetchIdFromMap("Jury50Rd", ClassMaps.CustomItemMap);
+        var juryRec = roHelpers.FetchIdFromMap("JuryRec", ClassMaps.CustomItemMap);
+        var execAics = roHelpers.FetchIdFromMap("ExecAics", ClassMaps.CustomItemMap);
+        var execPmag = roHelpers.FetchIdFromMap("ExecPmag", ClassMaps.CustomItemMap);
+        var execWyatt = roHelpers.FetchIdFromMap("ExecWyatt", ClassMaps.CustomItemMap);
 
-        items[aug].Properties.Slots.ElementAt(0).Properties.Filters.ElementAt(0).Filter = [aug30, aug42];
-        items[stm46].Properties.Slots.ElementAt(1).Properties.Filters.ElementAt(0).Filter = [stm33, stm50];
-        items[stm46].Properties.Slots.ElementAt(2).Properties.Filters.ElementAt(0).Filter = [stmRec];
-        items[mcm4].Properties.Slots.ElementAt(1).Properties.Filters.ElementAt(0).Filter.Add(mag300);
-        items[mcm4].Properties.Slots.ElementAt(1).Properties.Filters.ElementAt(0).Filter.Add(mag545);
-        items[mcm4].Properties.Slots.ElementAt(1).Properties.Filters.ElementAt(0).Filter.Add(mag57);
-        items[mcm4].Properties.Slots.ElementAt(1).Properties.Filters.ElementAt(0).Filter.Add(mag762);
-        items[mcm4].Properties.Slots.ElementAt(1).Properties.Filters.ElementAt(0).Filter.Add(mag939);
-        items[mcm4].Properties.Slots.ElementAt(2).Properties.Filters.ElementAt(0).Filter.Add(rec300);
-        items[mcm4].Properties.Slots.ElementAt(2).Properties.Filters.ElementAt(0).Filter.Add(rec545);
-        items[mcm4].Properties.Slots.ElementAt(2).Properties.Filters.ElementAt(0).Filter.Add(rec57);
-        items[mcm4].Properties.Slots.ElementAt(2).Properties.Filters.ElementAt(0).Filter.Add(rec762);
-        items[mcm4].Properties.Slots.ElementAt(2).Properties.Filters.ElementAt(0).Filter.Add(rec939);
-        items[judge].Properties.Slots.ElementAt(3).Properties.Filters.ElementAt(0).Filter = [judge17, judge33, judge50];
-        items[judge].Properties.Slots.ElementAt(2).Properties.Filters.ElementAt(0).Filter = [judgeSlide];
-        items[jury].Properties.Slots.ElementAt(1).Properties.Filters.ElementAt(0).Filter = [jury20, jury25, jury50];
-        items[jury].Properties.Slots.ElementAt(2).Properties.Filters.ElementAt(0).Filter = [juryRec];
-        items[executioner].Properties.Slots.ElementAt(0).Properties.Filters.ElementAt(0).Filter = [execAics, execPmag, execWyatt];
+        items[aug].Properties!.Slots!.ElementAt(0).Properties!.Filters!.ElementAt(0).Filter = [aug30, aug42];
+        items[stm46].Properties!.Slots!.ElementAt(1).Properties!.Filters!.ElementAt(0).Filter = [stm33, stm50];
+        items[stm46].Properties!.Slots!.ElementAt(2).Properties!.Filters!.ElementAt(0).Filter = [stmRec];
+        items[judge].Properties!.Slots!.ElementAt(3).Properties!.Filters!.ElementAt(0).Filter = [judge17, judge33, judge50];
+        items[judge].Properties!.Slots!.ElementAt(2).Properties!.Filters!.ElementAt(0).Filter = [judgeSlide];
+        items[jury].Properties!.Slots!.ElementAt(1).Properties!.Filters!.ElementAt(0).Filter = [jury20, jury25, jury50];
+        items[jury].Properties!.Slots!.ElementAt(2).Properties!.Filters!.ElementAt(0).Filter = [juryRec];
+        items[executioner].Properties!.Slots!.ElementAt(0).Properties!.Filters!.ElementAt(0).Filter = [execAics, execPmag, execWyatt];
+        var mcm4MagFilter = items[mcm4].Properties!.Slots!.ElementAt(1).Properties!.Filters!.ElementAt(0).Filter!;
+        mcm4MagFilter.Add(mag300);
+        mcm4MagFilter.Add(mag545);
+        mcm4MagFilter.Add(mag57);
+        mcm4MagFilter.Add(mag762);
+        mcm4MagFilter.Add(mag939);
+        var mcm4RecFilter = items[mcm4].Properties!.Slots!.ElementAt(2).Properties!.Filters!.ElementAt(0).Filter!;
+        mcm4RecFilter.Add(rec300);
+        mcm4RecFilter.Add(rec545);
+        mcm4RecFilter.Add(rec57);
+        mcm4RecFilter.Add(rec762);
+        mcm4RecFilter.Add(rec939);
     }
 }

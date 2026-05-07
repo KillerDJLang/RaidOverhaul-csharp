@@ -1,0 +1,58 @@
+{
+  "BerserkBuff": [
+    {
+      "AbsoluteValue": true,
+      "BuffType": "MaxStamina",
+      "Chance": 1,
+      "Delay": 1,
+      "Duration": 180,
+      "SkillName": "",
+      "Value": 50
+    },
+    {
+      "AbsoluteValue": true,
+      "BuffType": "StaminaRate",
+      "Chance": 1,
+      "Delay": 1,
+      "Duration": 180,
+      "SkillName": "",
+      "Value": 3
+    },
+    {
+      "AbsoluteValue": true,
+      "BuffType": "EnergyRate",
+      "Chance": 1,
+      "Delay": 1,
+      "Duration": 180,
+      "SkillName": "",
+      "Value": 1
+    },
+    {
+      "AbsoluteValue": true,
+      "BuffType": "HydrationRate",
+      "Chance": 1,
+      "Delay": 1,
+      "Duration": 180,
+      "SkillName": "",
+      "Value": 1
+    },
+    {
+      "AbsoluteValue": false,
+      "BuffType": "DamageModifier",
+      "Chance": 1,
+      "Delay": 1,
+      "Duration": 180,
+      "SkillName": "",
+      "Value": -0.3
+    },
+    {
+      "AbsoluteValue": true,
+      "BuffType": "RemoveAllBloodLosses",
+      "Chance": 1,
+      "Delay": 1,
+      "Duration": 1,
+      "SkillName": "",
+      "Value": 0
+    }
+  ]
+}

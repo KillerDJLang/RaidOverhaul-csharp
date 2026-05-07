@@ -27,7 +27,7 @@ public class TransferRequestCallbacks(HttpResponseUtil httpResponseUtil, MailSen
         mailSendService.SendDirectNpcMessageToPlayer(
             sessionId,
             request.TraderId,
-            MessageType.NpcTraderMessage,
+            MessageType.BtrItemsDelivery,
             request.Message ?? "Your items have been delivered. Don't forget to leave a tip!",
             itemsClone,
             172800

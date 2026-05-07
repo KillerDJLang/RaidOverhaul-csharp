@@ -7,7 +7,7 @@ public class ConfigTemplate
     public bool UseLegionGlobalSpawnChance { get; set; } = false;
     public int GlobalSpawnChance { get; set; } = 15;
     public bool EnableCustomItems { get; set; } = true;
-    public bool BackupProfile { get; set; } = true;
+    public bool TimeChangesEnabled { get; set; } = false;
     public bool ReduceFoodAndHydroDegradeEnabled { get; set; } = true;
     public float EnergyDecay { get; set; } = 0.6f;
     public float HydroDecay { get; set; } = 0.6f;

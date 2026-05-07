@@ -5,6 +5,6 @@ namespace RaidOverhaul.Models
     internal struct SeasonalConfig
     {
         [JsonProperty("seasonsProgression")]
-        public int SeasonsProgression;
+        public int SeasonsProgression { get; set; }
     }
 }

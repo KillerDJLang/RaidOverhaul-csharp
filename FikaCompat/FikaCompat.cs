@@ -25,10 +25,11 @@ namespace RaidOverhaul.FikaModule
             FikaBridge.SendFlareEventRunPacketEmitted += FikaComponent.SendFlareEventPacket;
             FikaBridge.SendRandomEventRunPacketEmitted += FikaComponent.SendRandomEventPacket;
             FikaBridge.SendDoorStateChangePacketEmitted += FikaComponent.SendDoorStateChangePacket;
-            FikaBridge.SendKeycardDoorStateChangePacketEmitted += FikaComponent.SendSwitchStateChangePacket;
-            FikaBridge.SendSwitchStateChangePacketEmitted += FikaComponent.SendKeycardDoorStateChangePacket;
+            FikaBridge.SendKeycardDoorStateChangePacketEmitted += FikaComponent.SendKeycardDoorStateChangePacket;
+            FikaBridge.SendSwitchStateChangePacketEmitted += FikaComponent.SendSwitchStateChangePacket;
             FikaBridge.SendRaidStartDoorStateChangePacketEmitted += FikaComponent.SendRaidStartDoorStateChangePacket;
             FikaBridge.SendRaidStartLampStateChangePacketEmitted += FikaComponent.SendRaidStartLampStateChangePacket;
+            FikaBridge.RequestSupportBotsPacketEmitted += FikaComponent.SendRequestSupportBotsPacket;
         }
 
         private static void PluginAwake() { }

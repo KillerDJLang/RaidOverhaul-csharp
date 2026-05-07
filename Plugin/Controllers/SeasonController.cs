@@ -28,10 +28,10 @@ namespace RaidOverhaul.Controllers
         private static float _windMagnitude;
         private static WeatherDebug.Direction _windDirection;
         private static Vector2 _topWindDirection;
-        private const bool WeatherDebug = false;
+        private const bool WeatherDebugBool = false;
         private static bool _weatherChangesRun = false;
 
-        public void DoStorm()
+        private void Update()
         {
             var seasonalProgression = ConfigController.ServerConfig.SeasonalProgression;
             var seasonConfig = ConfigController.SeasonConfig;
@@ -62,22 +62,45 @@ namespace RaidOverhaul.Controllers
 
             _weatherChangesRun = true;
 
-            _cloudDensity = 0.05f;
+            var weatherDebug = WeatherController.WeatherDebug;
+            var topWindDir = Random.Range(1, 6);
+            var windDir = Random.Range(1, 8);
+
+            _cloudDensity = 1f;
             _fog = 0.004f;
             _lightningThunderProb = 0.8f;
             _rain = 1f;
             _temperature = 22f;
+            _windDirection = (WeatherDebug.Direction)windDir;
             _windMagnitude = 0.6f;
+            switch (topWindDir)
+            {
+                case 1:
+                    _topWindDirection = Vector2.down;
+                    break;
+                case 2:
+                    _topWindDirection = Vector2.left;
+                    break;
+                case 3:
+                    _topWindDirection = Vector2.one;
+                    break;
+                case 4:
+                    _topWindDirection = Vector2.right;
+                    break;
+                case 5:
+                    _topWindDirection = Vector2.up;
+                    break;
+                case 6:
+                    _topWindDirection = Vector2.zero;
+                    break;
+            }
 
-            var weatherDebug = WeatherController.WeatherDebug;
-            weatherDebug.Enabled = WeatherDebug;
+            weatherDebug.Enabled = WeatherDebugBool;
             weatherDebug.CloudDensity = _cloudDensity;
-
-            Utils.FogField.SetValue(weatherDebug, _fog);
-            Utils.LighteningThunderField.SetValue(weatherDebug, _lightningThunderProb);
-            Utils.RainField.SetValue(weatherDebug, _rain);
-            Utils.TemperatureField.SetValue(weatherDebug, _temperature);
-
+            weatherDebug.Fog = _fog;
+            weatherDebug.LightningThunderProbability = _lightningThunderProb;
+            weatherDebug.Rain = _rain;
+            weatherDebug.Temperature = _temperature;
             weatherDebug.TopWindDirection = _topWindDirection;
             weatherDebug.WindDirection = _windDirection;
             weatherDebug.WindMagnitude = _windMagnitude;

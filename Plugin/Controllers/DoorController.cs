@@ -1,11 +1,10 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using EFT.Communications;
 using EFT.Interactive;
-using RaidOverhaul.Configs;
 using RaidOverhaul.Fika;
 using RaidOverhaul.Helpers;
 using UnityEngine;
+using static RaidOverhaul.Plugin;
 
 namespace RaidOverhaul.Controllers
 {
@@ -41,11 +40,11 @@ namespace RaidOverhaul.Controllers
             "interchange",
         };
 
-        public void ManualUpdate()
+        private void Update()
         {
             _isReady = Utils.IsInRaid();
 
-            if (!_isReady || !DJConfig.EnableDoorEvents.Value)
+            if (!_isReady || !ROPluginConfig.EnableDoorEvents.Value)
             {
                 ResetEventState();
                 return;
@@ -102,11 +101,11 @@ namespace RaidOverhaul.Controllers
 
         public void PowerOn()
         {
-            if (!_switchMaps.Contains(Plugin.ROPlayer.Location))
+            if (!_switchMaps.Contains(ROPlayer.Location.ToLowerInvariant()))
             {
                 if (ConfigController.DebugConfig.DebugMode)
                 {
-                    Plugin._log.LogInfo("No switches available on this map, returning.");
+                    _log.LogInfo("No switches available on this map, returning.");
                 }
                 return;
             }
@@ -115,7 +114,7 @@ namespace RaidOverhaul.Controllers
             {
                 if (ConfigController.DebugConfig.DebugMode)
                 {
-                    Plugin._log.LogInfo("No switches left to open, returning.");
+                    _log.LogInfo("No switches left to open, returning.");
                 }
                 return;
             }
@@ -147,7 +146,7 @@ namespace RaidOverhaul.Controllers
             {
                 if (ConfigController.DebugConfig.DebugMode)
                 {
-                    Plugin._log.LogInfo("No locked doors available, returning.");
+                    _log.LogInfo("No locked doors available, returning.");
                 }
                 return;
             }
@@ -159,7 +158,7 @@ namespace RaidOverhaul.Controllers
             {
                 if (ConfigController.DebugConfig.DebugMode)
                 {
-                    Plugin._log.LogInfo("Chosen door isn't on the interactive layer, returning.");
+                    _log.LogInfo("Chosen door isn't on the interactive layer, returning.");
                 }
                 return;
             }
@@ -185,11 +184,11 @@ namespace RaidOverhaul.Controllers
 
         public void DoKUnlock()
         {
-            if (!_keycardMaps.Contains(Plugin.ROPlayer.Location))
+            if (!_keycardMaps.Contains(ROPlayer.Location.ToLowerInvariant()))
             {
                 if (ConfigController.DebugConfig.DebugMode)
                 {
-                    Plugin._log.LogInfo("No keycard doors available on this map, returning.");
+                    _log.LogInfo("No keycard doors available on this map, returning.");
                 }
                 return;
             }
@@ -198,7 +197,7 @@ namespace RaidOverhaul.Controllers
             {
                 if (ConfigController.DebugConfig.DebugMode)
                 {
-                    Plugin._log.LogInfo("No keycard doors left to open, returning.");
+                    _log.LogInfo("No keycard doors left to open, returning.");
                 }
                 return;
             }
@@ -231,7 +230,7 @@ namespace RaidOverhaul.Controllers
 
         public static void RandomizeDefaultDoors()
         {
-            if (!DJConfig.EnableRaidStartEvents.Value && Plugin.ROPlayer.Location == "laboratory")
+            if (!ROPluginConfig.EnableRaidStartEvents.Value)
             {
                 return;
             }
@@ -290,9 +289,10 @@ namespace RaidOverhaul.Controllers
                 return;
             }
 
-            NotificationManagerClass.DisplayMessageNotification(
+            NotificationHelper.Show(
                 $"[{_doorChangedCount}] total Doors have had their states changed. [{_doorNotChangedCount}] haven't been modified.",
-                ENotificationDurationType.Long
+                NotificationHelper.NotificationLength.Long,
+                NotificationHelper.NotificationColor.White
             );
             Utils.LogToServerConsole(
                 $"[{_doorChangedCount}] total Doors have had their states changed. [{_doorNotChangedCount}] haven't been modified."
@@ -301,7 +301,7 @@ namespace RaidOverhaul.Controllers
 
         public static void RandomizeLampState()
         {
-            if (!DJConfig.EnableRaidStartEvents.Value && Plugin.ROPlayer.Location == "laboratory")
+            if (!ROPluginConfig.EnableRaidStartEvents.Value)
             {
                 return;
             }
@@ -324,9 +324,10 @@ namespace RaidOverhaul.Controllers
                 return;
             }
 
-            NotificationManagerClass.DisplayMessageNotification(
+            NotificationHelper.Show(
                 $"[{_lampCount}] total Lamps have been modified.",
-                ENotificationDurationType.Long
+                NotificationHelper.NotificationLength.Long,
+                NotificationHelper.NotificationColor.White
             );
             Utils.LogToServerConsole($"[{_lampCount}] total Lamps have been modified.");
         }

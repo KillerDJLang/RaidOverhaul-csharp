@@ -5,20 +5,22 @@ using Comfort.Common;
 using CommonAssets.Scripts.Game;
 using Cysharp.Threading.Tasks;
 using EFT;
-using EFT.Communications;
+using EFT.Airdrop;
 using EFT.HealthSystem;
 using EFT.Interactive;
 using EFT.InventoryLogic;
 using EFT.MovingPlatforms;
+using EFT.Quests;
 using EFT.UI;
 using EFT.UI.BattleTimer;
 using EFT.UI.Matchmaker;
 using HarmonyLib;
 using JsonType;
-using RaidOverhaul.Configs;
 using RaidOverhaul.Fika;
 using RaidOverhaul.Helpers;
+using RaidOverhaul.Models;
 using RaidOverhaul.Patches;
+using SAIN.Components;
 using UnityEngine;
 using UnityEngine.UI;
 using static RaidOverhaul.Plugin;
@@ -28,8 +30,9 @@ namespace RaidOverhaul.Controllers
     public class EventController : MonoBehaviour
     {
         private static bool _pmcExfilEventRunning;
+        private static bool _huntedEventRunning;
         private static bool _eventIsRunning;
-        public static bool ExfilLockdown;
+        public static bool _exfilLockdown;
         public static bool GearExfil;
         private bool _metabolismDisabled;
         private bool _jokeEventHasRun;
@@ -39,10 +42,14 @@ namespace RaidOverhaul.Controllers
         private bool _weightEventHasRun;
         private bool _artyEventHasRun;
         private bool _blackoutEventHasRun;
-        internal bool _invasionHasRun;
+        private bool _invasionHasRun;
+        private bool _legionSpawnedForQuest;
+        private bool _huntedEventHasRun;
         private bool _hasInitializedReflection;
         private bool _isReady;
+        private bool _flagsChecked;
         private bool _exfilUIChanged;
+        private bool _cleanupTimerStarted;
 
         private int _skillEventCount;
         private int _repairEventCount;
@@ -50,7 +57,31 @@ namespace RaidOverhaul.Controllers
         private int _damageEventCount;
         private int _maxLLEventCount;
         private int _exfilEventCount;
-        public static int TimeStart;
+
+        public static List<Item> PendingCorpseItems = new();
+        public static int AirdropCrateCapacity = -1;
+
+        private static readonly EquipmentSlot[] _allEquipmentSlots = (EquipmentSlot[])System.Enum.GetValues(typeof(EquipmentSlot));
+
+        private static bool ShouldCollectSlot(EquipmentSlot slot)
+        {
+            if (slot == EquipmentSlot.SecuredContainer)
+            {
+                return false;
+            }
+
+            if (slot == EquipmentSlot.ArmBand && !ConfigController.ServerConfig.LootableArmbands)
+            {
+                return false;
+            }
+
+            if (slot == EquipmentSlot.Scabbard && !ConfigController.ServerConfig.LootableMelee)
+            {
+                return false;
+            }
+
+            return true;
+        }
 
         private Switch[] _pswitchs;
         private KeycardDoor[] _keydoor;
@@ -71,23 +102,7 @@ namespace RaidOverhaul.Controllers
 
         public DamageInfoStruct Blunt { get; private set; }
 
-        private class OriginalWeaponStatsBers
-        {
-            public float MalfChance;
-            public float DuraBurn;
-            public float Ergo;
-            public float RecoilBack;
-            public float RecoilUp;
-        }
-
-        private class OriginalWeaponStatsMalf
-        {
-            public float MalfChance;
-            public float DuraBurn;
-            public float Ergo;
-        }
-
-        private static readonly HashSet<string> InvalidAirdropLocations = new HashSet<string>
+        private static readonly HashSet<string> _invalidAirdropLocations = new HashSet<string>
         {
             "factory4_day",
             "factory4_night",
@@ -96,15 +111,18 @@ namespace RaidOverhaul.Controllers
             "sandbox_high",
         };
 
-        private static readonly HashSet<string> InvalidArtilleryLocations = new HashSet<string>
+        private static readonly HashSet<string> _invalidArtilleryLocations = new HashSet<string>
         {
             "factory4_day",
             "factory4_night",
             "laboratory",
         };
 
-        private Dictionary<string, OriginalWeaponStatsBers> _originalWSBers = new Dictionary<string, OriginalWeaponStatsBers>();
-        private Dictionary<string, OriginalWeaponStatsMalf> _originalWSMalf = new Dictionary<string, OriginalWeaponStatsMalf>();
+        private static readonly Dictionary<string, string[]> _legionQuestMapZones = new Dictionary<string, string[]>
+        {
+            { "interchange", new[] { "ZoneOLI", "ZoneIDEA", "ZoneGoshan" } },
+            { "tarkovstreets", new[] { "ZoneConstruction", "ZoneFactory", "ZoneConcordiaParking" } },
+        };
 
         private void Awake()
         {
@@ -114,38 +132,33 @@ namespace RaidOverhaul.Controllers
                 InitializeTimeChangeReflection();
                 _hasInitializedReflection = true;
             }
-
-            CheckForFlag();
         }
 
         private void InitializeDoorReflection()
         {
-            _switchCloseMethod = typeof(Switch).GetMethod("Close", BindingFlags.Instance | BindingFlags.Public);
-            _switchLockMethod = typeof(Switch).GetMethod("Lock", BindingFlags.Instance | BindingFlags.Public);
-            _switchUnlockMethod = typeof(Switch).GetMethod("Unlock", BindingFlags.Instance | BindingFlags.Public);
-            _keycardUnlockMethod = typeof(KeycardDoor).GetMethod("Unlock", BindingFlags.Instance | BindingFlags.Public);
-            _keycardOpenMethod = typeof(KeycardDoor).GetMethod("Open", BindingFlags.Instance | BindingFlags.Public);
+            _switchCloseMethod = AccessTools.Method(typeof(Switch), nameof(Switch.Close));
+            _switchLockMethod = AccessTools.Method(typeof(Switch), nameof(Switch.Lock));
+            _switchUnlockMethod = AccessTools.Method(typeof(Switch), nameof(Switch.Unlock));
+            _keycardUnlockMethod = AccessTools.Method(typeof(KeycardDoor), nameof(KeycardDoor.Unlock));
+            _keycardOpenMethod = AccessTools.Method(typeof(KeycardDoor), nameof(KeycardDoor.Open));
         }
 
         private void InitializeTimeChangeReflection()
         {
-            _edateTimeField = typeof(MatchMakerSelectionLocationScreen).GetField(
-                "edateTime_0",
-                BindingFlags.Instance | BindingFlags.NonPublic
-            );
+            _edateTimeField = AccessTools.Field(typeof(MatchMakerSelectionLocationScreen), "edateTime_0");
         }
 
-        public void ManualUpdate()
+        private void Update()
         {
             _isReady = Utils.IsInRaid();
 
-            if (!_isReady || !DJConfig.EnableEvents.Value)
+            if (!_isReady || !ROPluginConfig.EnableEvents.Value)
             {
                 ResetEventState();
                 return;
             }
 
-            if (DJConfig.TimeChanges.Value)
+            if (ConfigController.ServerConfig.TimeChangesEnabled)
             {
                 UpdateTimeChanges();
             }
@@ -165,14 +178,26 @@ namespace RaidOverhaul.Controllers
                     _lamp = FindObjectsOfType<LampController>();
                 }
 
+                if (!_flagsChecked)
+                {
+                    CheckForFlags();
+                    _flagsChecked = true;
+                }
+
                 if (!_eventIsRunning)
                 {
                     StartEvents().Forget();
                     _eventIsRunning = true;
                 }
+
+                if (!_cleanupTimerStarted && ROPluginConfig.EnableClean.Value)
+                {
+                    _cleanupTimerStarted = true;
+                    RunBodyCleanupCycle().Forget();
+                }
             }
 
-            if (EventExfilPatch._isLockdown && !_exfilUIChanged)
+            if (_exfilLockdown && !_exfilUIChanged)
             {
                 ChangeExfilUI().Forget();
             }
@@ -213,8 +238,13 @@ namespace RaidOverhaul.Controllers
             _exfilEventCount = 0;
             _cachedExtractionPanel = null;
             _cachedExitPanels = null;
-            _blackoutEventHasRun = false;
             _invasionHasRun = false;
+            _legionSpawnedForQuest = false;
+            _flagsChecked = false;
+            _huntedEventRunning = false;
+            _huntedEventHasRun = false;
+            _cleanupTimerStarted = false;
+            PendingCorpseItems.Clear();
         }
 
         private async UniTaskVoid StartEvents()
@@ -242,7 +272,7 @@ namespace RaidOverhaul.Controllers
 
         private async UniTask ChangeExfilUI()
         {
-            if (EventExfilPatch._isLockdown)
+            if (_exfilLockdown)
             {
                 var red = new Color(0.8113f, 0.0376f, 0.0714f, 0.8627f);
                 var green = new Color(0.4863f, 0.7176f, 0.0157f, 0.8627f);
@@ -258,9 +288,7 @@ namespace RaidOverhaul.Controllers
                 }
 
                 var mainDescription = (RectTransform)
-                    typeof(ExtractionTimersPanel)
-                        .GetField("_mainDescription", BindingFlags.Instance | BindingFlags.NonPublic)
-                        .GetValue(_cachedExtractionPanel);
+                    AccessTools.Field(typeof(ExtractionTimersPanel), "_mainDescription").GetValue(_cachedExtractionPanel);
 
                 var text = mainDescription.gameObject.GetComponentInChildren<TMPro.TextMeshProUGUI>();
                 var box = mainDescription.gameObject.GetComponentInChildren<Image>();
@@ -283,7 +311,7 @@ namespace RaidOverhaul.Controllers
 
                 _exfilUIChanged = true;
 
-                await UniTask.WaitUntil(() => !EventExfilPatch._isLockdown);
+                await UniTask.WaitUntil(() => !_exfilLockdown);
 
                 text.text = "Find an extraction point";
                 box.color = green;
@@ -315,10 +343,12 @@ namespace RaidOverhaul.Controllers
                 FikaBridge.SendRandomEventPacket(Utils.Heal);
             }
 
-            NotificationManagerClass.DisplayMessageNotification(
+            NotificationHelper.Show(
                 "Heal Event: On your feet you ain't dead yet.",
-                ENotificationDurationType.Long
+                NotificationHelper.NotificationLength.Long,
+                NotificationHelper.NotificationColor.Gold
             );
+            EventsEffectsController.Instance?.ShowPositiveEffect();
             ROPlayer.ActiveHealthController.RestoreFullHealth();
             _healthEventCount++;
 
@@ -341,11 +371,12 @@ namespace RaidOverhaul.Controllers
                 FikaBridge.SendRandomEventPacket(Utils.Damage);
             }
 
-            NotificationManagerClass.DisplayMessageNotification(
+            NotificationHelper.Show(
                 "Heart Attack Event: Better get to a medic quick, you don't have long left.",
-                ENotificationDurationType.Long,
-                ENotificationIconType.Alert
+                NotificationHelper.NotificationLength.Long,
+                NotificationHelper.NotificationColor.Red
             );
+            EventsEffectsController.Instance?.ShowNegativeEffect();
             ROPlayer.ActiveHealthController.DoContusion(4f, 50f);
             ROPlayer.ActiveHealthController.DoStun(5f, 0f);
             ROPlayer.ActiveHealthController.DoFracture(EBodyPart.LeftArm);
@@ -371,10 +402,12 @@ namespace RaidOverhaul.Controllers
                 FikaBridge.SendRandomEventPacket(Utils.Repair);
             }
 
-            NotificationManagerClass.DisplayMessageNotification(
+            NotificationHelper.Show(
                 "Armor Repair Event: All equipped armor repaired... nice!",
-                ENotificationDurationType.Long
+                NotificationHelper.NotificationLength.Long,
+                NotificationHelper.NotificationColor.Gold
             );
+            EventsEffectsController.Instance?.ShowPositiveEffect();
             ROPlayer
                 .Profile.Inventory.GetPlayerItems()
                 .ExecuteForEach(
@@ -385,9 +418,10 @@ namespace RaidOverhaul.Controllers
                             item.GetItemComponent<RepairableComponent>().Durability =
                                 item.GetItemComponent<RepairableComponent>().MaxDurability;
                         }
-                        _repairEventCount++;
                     }
                 );
+
+            _repairEventCount++;
 
             if (ConfigController.DebugConfig.DebugMode)
             {
@@ -397,20 +431,16 @@ namespace RaidOverhaul.Controllers
 
         public void DoAirdropEvent()
         {
-            if (!InvalidAirdropLocations.Contains(ROPlayer.Location) && !_airdropEventHasRun)
+            if (!_invalidAirdropLocations.Contains(ROPlayer.Location.ToLowerInvariant()) && !_airdropEventHasRun)
             {
-                if (Utils.FindTemplates(Utils.RedFlare).FirstOrDefault() is not AmmoTemplate ammoTemplate)
-                {
-                    return;
-                }
+                ROGameWorld.InitAirdrop(null, true, ROPlayer.Transform.position);
 
-                ROPlayer.HandleFlareSuccessEvent(ROPlayer.Transform.position, ammoTemplate);
-
-                NotificationManagerClass.DisplayMessageNotification(
+                NotificationHelper.Show(
                     "Aidrop Event: Incoming Airdrop!",
-                    ENotificationDurationType.Long,
-                    ENotificationIconType.Quest
+                    NotificationHelper.NotificationLength.Long,
+                    NotificationHelper.NotificationColor.White
                 );
+                EventsEffectsController.Instance?.ShowPositiveEffect();
 
                 _airdropEventHasRun = true;
 
@@ -434,19 +464,63 @@ namespace RaidOverhaul.Controllers
                     FikaBridge.SendRandomEventPacket(Utils.Jokes);
                 }
 
-                NotificationManagerClass.DisplayMessageNotification(
+                NotificationHelper.Show(
                     "Heart Attack Event: Nice knowing ya, you've got 10 seconds",
-                    ENotificationDurationType.Long,
-                    ENotificationIconType.Alert
+                    NotificationHelper.NotificationLength.Long,
+                    NotificationHelper.NotificationColor.Red
                 );
+                EventsEffectsController.Instance?.ShowCornerGlowEffect();
 
                 await UniTask.WaitForSeconds(10);
 
-                NotificationManagerClass.DisplayMessageNotification("jk", ENotificationDurationType.Long, ENotificationIconType.Quest);
+                NotificationHelper.Show("jk", NotificationHelper.NotificationLength.Short, NotificationHelper.NotificationColor.White);
+
+                await UniTask.WaitForSeconds(3);
+
+                NotificationHelper.Show(
+                    "Rolling the roulette wheel, good luck o7",
+                    NotificationHelper.NotificationLength.Short,
+                    NotificationHelper.NotificationColor.White
+                );
 
                 await UniTask.WaitForSeconds(2);
 
-                DoHealPlayer();
+                var player = ROPlayer;
+                if (player != null)
+                {
+                    var roll = SharedRandom.Next(0, 100);
+
+                    if (roll <= 1)
+                    {
+                        player.ActiveHealthController.DoExternalBuff("JokeToxic");
+                        NotificationHelper.Show(
+                            "Roulette: You feel something wrong... that can't be good.",
+                            NotificationHelper.NotificationLength.Long,
+                            NotificationHelper.NotificationColor.Red
+                        );
+                        EventsEffectsController.Instance?.ShowNegativeEffect();
+                    }
+                    else if (roll <= 51)
+                    {
+                        player.ActiveHealthController.DoExternalBuff("JokeBuff");
+                        NotificationHelper.Show(
+                            "Roulette: Lady luck is on your side!",
+                            NotificationHelper.NotificationLength.Long,
+                            NotificationHelper.NotificationColor.Gold
+                        );
+                        EventsEffectsController.Instance?.ShowPositiveEffect();
+                    }
+                    else
+                    {
+                        player.ActiveHealthController.DoExternalBuff("JokeDebuff");
+                        NotificationHelper.Show(
+                            "Roulette: Not your lucky day, I'm afraid.",
+                            NotificationHelper.NotificationLength.Long,
+                            NotificationHelper.NotificationColor.Red
+                        );
+                        EventsEffectsController.Instance?.ShowNegativeEffect();
+                    }
+                }
 
                 if (ConfigController.DebugConfig.DebugMode)
                 {
@@ -514,11 +588,12 @@ namespace RaidOverhaul.Controllers
                 _keycardOpenMethod?.Invoke(door, null);
             }
 
-            NotificationManagerClass.DisplayMessageNotification(
+            NotificationHelper.Show(
                 "Blackout Event: All power switches and lights disabled for 10 minutes",
-                ENotificationDurationType.Long,
-                ENotificationIconType.Alert
+                NotificationHelper.NotificationLength.Long,
+                NotificationHelper.NotificationColor.Red
             );
+            EventsEffectsController.Instance?.ShowNegativeEffect();
 
             if (ConfigController.DebugConfig.DebugMode)
             {
@@ -548,10 +623,10 @@ namespace RaidOverhaul.Controllers
                 lamp.enabled = true;
             }
 
-            NotificationManagerClass.DisplayMessageNotification(
+            NotificationHelper.Show(
                 "Blackout Event over",
-                ENotificationDurationType.Long,
-                ENotificationIconType.Quest
+                NotificationHelper.NotificationLength.Long,
+                NotificationHelper.NotificationColor.Green
             );
 
             if (ConfigController.DebugConfig.DebugMode)
@@ -592,11 +667,12 @@ namespace RaidOverhaul.Controllers
 
                 selectedSkill.SetLevel(level + 1);
                 _skillEventCount++;
-                NotificationManagerClass.DisplayMessageNotification(
+                NotificationHelper.Show(
                     "Skill Event: You've advanced a skill to the next level!",
-                    ENotificationDurationType.Long,
-                    ENotificationIconType.Quest
+                    NotificationHelper.NotificationLength.Long,
+                    NotificationHelper.NotificationColor.Gold
                 );
+                EventsEffectsController.Instance?.ShowPositiveEffect();
             }
             else
             {
@@ -607,11 +683,12 @@ namespace RaidOverhaul.Controllers
 
                 selectedSkill.SetLevel(level - 1);
                 _skillEventCount++;
-                NotificationManagerClass.DisplayMessageNotification(
+                NotificationHelper.Show(
                     "Skill Event: You've lost a skill level, unlucky!",
-                    ENotificationDurationType.Long,
-                    ENotificationIconType.Quest
+                    NotificationHelper.NotificationLength.Long,
+                    NotificationHelper.NotificationColor.Red
                 );
+                EventsEffectsController.Instance?.ShowNegativeEffect();
             }
 
             if (ConfigController.DebugConfig.DebugMode)
@@ -635,43 +712,46 @@ namespace RaidOverhaul.Controllers
                 {
                     ROPlayer.ActiveHealthController.DisableMetabolism();
                     _metabolismDisabled = true;
-                    NotificationManagerClass.DisplayMessageNotification(
+                    NotificationHelper.Show(
                         "Metabolism Event: You've got an iron stomach, No hunger or hydration drain!",
-                        ENotificationDurationType.Long,
-                        ENotificationIconType.Quest
+                        NotificationHelper.NotificationLength.Long,
+                        NotificationHelper.NotificationColor.Gold
                     );
+                    EventsEffectsController.Instance?.ShowPositiveEffect();
                 }
                 else if (chance >= 34 && chance <= 66)
                 {
                     AccessTools
-                        .Property(typeof(ActiveHealthController), "EnergyRate")
+                        .Property(typeof(ActiveHealthController), nameof(ActiveHealthController.EnergyRate))
                         .SetValue(ROPlayer.ActiveHealthController, ROPlayer.ActiveHealthController.EnergyRate * 0.80f);
 
                     AccessTools
-                        .Property(typeof(ActiveHealthController), "HydrationRate")
+                        .Property(typeof(ActiveHealthController), nameof(ActiveHealthController.HydrationRate))
                         .SetValue(ROPlayer.ActiveHealthController, ROPlayer.ActiveHealthController.HydrationRate * 0.80f);
 
-                    NotificationManagerClass.DisplayMessageNotification(
+                    NotificationHelper.Show(
                         "Metabolism Event: Your metabolism has slowed. Decreased hunger and hydration drain!",
-                        ENotificationDurationType.Long,
-                        ENotificationIconType.Quest
+                        NotificationHelper.NotificationLength.Long,
+                        NotificationHelper.NotificationColor.White
                     );
+                    EventsEffectsController.Instance?.ShowPositiveEffect();
                 }
                 else if (chance >= 67 && chance <= 100)
                 {
                     AccessTools
-                        .Property(typeof(ActiveHealthController), "EnergyRate")
+                        .Property(typeof(ActiveHealthController), nameof(ActiveHealthController.EnergyRate))
                         .SetValue(ROPlayer.ActiveHealthController, ROPlayer.ActiveHealthController.EnergyRate * 1.20f);
 
                     AccessTools
-                        .Property(typeof(ActiveHealthController), "HydrationRate")
+                        .Property(typeof(ActiveHealthController), nameof(ActiveHealthController.HydrationRate))
                         .SetValue(ROPlayer.ActiveHealthController, ROPlayer.ActiveHealthController.HydrationRate * 1.20f);
 
-                    NotificationManagerClass.DisplayMessageNotification(
+                    NotificationHelper.Show(
                         "Metabolism Event: Your metabolism has fastened. Increased hunger and hydration drain!",
-                        ENotificationDurationType.Long,
-                        ENotificationIconType.Quest
+                        NotificationHelper.NotificationLength.Long,
+                        NotificationHelper.NotificationColor.Red
                     );
+                    EventsEffectsController.Instance?.ShowNegativeEffect();
                 }
             }
 
@@ -679,6 +759,46 @@ namespace RaidOverhaul.Controllers
             {
                 Utils.LogToServerConsole("Metabolism Event has run");
             }
+        }
+
+        private void TryTriggerMalfunction(Player player)
+        {
+            var firearmController = player.HandsController as Player.FirearmController;
+            if (firearmController == null)
+            {
+                return;
+            }
+
+            if (firearmController.Item is not Weapon weapon || !weapon.AllowMalfunction)
+            {
+                return;
+            }
+
+            if (weapon.MalfState.State != Weapon.EMalfunctionState.None)
+            {
+                return;
+            }
+
+            if (weapon.FirstLoadedChamberSlot?.ContainedItem == null)
+            {
+                return;
+            }
+
+            var repairable = weapon.GetItemComponent<RepairableComponent>();
+            if (repairable == null)
+            {
+                return;
+            }
+
+            var original = repairable.Durability;
+            repairable.Durability = 1f;
+            RestoreDurabilityAfterDelay(repairable, original).Forget();
+        }
+
+        private async UniTaskVoid RestoreDurabilityAfterDelay(RepairableComponent repairable, float original)
+        {
+            await UniTask.WaitForSeconds(30f);
+            repairable.Durability = original;
         }
 
         internal async UniTask DoMalfEvent()
@@ -689,76 +809,47 @@ namespace RaidOverhaul.Controllers
                 return;
             }
 
-            var items = _session.Profile.Inventory.GetItemsInSlots(
-                new EquipmentSlot[] { EquipmentSlot.FirstPrimaryWeapon, EquipmentSlot.SecondPrimaryWeapon }
-            );
-
             if (FikaBridge.AmHost())
             {
                 FikaBridge.SendRandomEventPacket(Utils.Malf);
             }
 
             _malfEventHasRun = true;
-            _originalWSMalf.Clear();
 
-            foreach (var item in items)
+            var player = ROPlayer;
+            if (player == null)
             {
-                if (item is not Weapon weapon)
-                {
-                    continue;
-                }
-
-                var template = weapon.Template;
-                var templateId = item.TemplateId;
-
-                if (!_originalWSMalf.ContainsKey(templateId))
-                {
-                    _originalWSMalf[templateId] = new OriginalWeaponStatsMalf
-                    {
-                        MalfChance = template.BaseMalfunctionChance,
-                        DuraBurn = template.DurabilityBurnRatio,
-                        Ergo = template.Ergonomics,
-                    };
-                }
-
-                var origStats = _originalWSMalf[templateId];
-                template.BaseMalfunctionChance = origStats.MalfChance * 3f;
-                template.DurabilityBurnRatio = origStats.DuraBurn * 2f;
-                template.Ergonomics = origStats.Ergo * 0.5f;
+                return;
             }
 
-            NotificationManagerClass.DisplayMessageNotification(
+            NotificationHelper.Show(
                 "Malfunction Event: Be careful not to jam up!",
-                ENotificationDurationType.Long,
-                ENotificationIconType.Alert
+                NotificationHelper.NotificationLength.Long,
+                NotificationHelper.NotificationColor.Red
             );
+            EventsEffectsController.Instance?.ShowNegativeEffect();
 
             if (ConfigController.DebugConfig.DebugMode)
             {
                 Utils.LogToServerConsole("Malfunction Event has started");
             }
 
-            await UniTask.WaitForSeconds(300);
+            var elapsed = 0;
+            var duration = 300;
 
-            foreach (var item in items)
+            while (elapsed < duration)
             {
-                if (item is not Weapon weapon)
-                {
-                    continue;
-                }
-
-                if (_originalWSMalf.TryGetValue(item.TemplateId, out var origStats))
-                {
-                    var template = weapon.Template;
-                    template.BaseMalfunctionChance = origStats.MalfChance;
-                    template.DurabilityBurnRatio = origStats.DuraBurn;
-                    template.Ergonomics = origStats.Ergo;
-                }
+                TryTriggerMalfunction(player);
+                await UniTask.WaitForSeconds(60);
+                elapsed += 60;
             }
 
-            NotificationManagerClass.DisplayMessageNotification(
-                "Malfunction Event: Your weapon has had time to cool off, shouldn't have any more troubles!",
-                ENotificationDurationType.Long
+            TryTriggerMalfunction(player);
+
+            NotificationHelper.Show(
+                "Malfunction Event: Your weapon should be working properly again!",
+                NotificationHelper.NotificationLength.Long,
+                NotificationHelper.NotificationColor.Green
             );
 
             if (ConfigController.DebugConfig.DebugMode)
@@ -775,55 +866,33 @@ namespace RaidOverhaul.Controllers
                 return;
             }
 
-            var items = _session.Profile.Inventory.GetItemsInSlots(
-                new EquipmentSlot[] { EquipmentSlot.FirstPrimaryWeapon, EquipmentSlot.SecondPrimaryWeapon }
-            );
-
             if (FikaBridge.AmHost())
             {
                 FikaBridge.SendRandomEventPacket(Utils.Berserk);
             }
 
             _berserkEventHasRun = true;
-            _originalWSBers.Clear();
 
-            ROPlayer.ActiveHealthController.DoScavRegeneration(10f);
-
-            foreach (var item in items)
+            var player = ROPlayer;
+            if (player == null)
             {
-                if (item is not Weapon weapon)
-                {
-                    continue;
-                }
-
-                var template = weapon.Template;
-                var templateId = item.TemplateId;
-
-                if (!_originalWSBers.ContainsKey(templateId))
-                {
-                    _originalWSBers[templateId] = new OriginalWeaponStatsBers
-                    {
-                        Ergo = template.Ergonomics,
-                        DuraBurn = template.DurabilityBurnRatio,
-                        MalfChance = template.BaseMalfunctionChance,
-                        RecoilBack = template.RecoilForceBack,
-                        RecoilUp = template.RecoilForceUp,
-                    };
-                }
-
-                var origStats = _originalWSBers[templateId];
-                template.BaseMalfunctionChance = origStats.MalfChance * 0.25f;
-                template.DurabilityBurnRatio = origStats.DuraBurn * 0.5f;
-                template.Ergonomics = origStats.Ergo * 2f;
-                template.RecoilForceBack = origStats.RecoilBack * 0.5f;
-                template.RecoilForceUp = origStats.RecoilUp * 0.5f;
+                return;
             }
 
-            NotificationManagerClass.DisplayMessageNotification(
+            var strengthSnapshot = player.Skills.Strength.Current;
+            var aimDrillsSnapshot = player.Skills.AimDrills.Current;
+
+            player.ActiveHealthController.DoScavRegeneration(10f);
+            player.ActiveHealthController.DoExternalBuff("BerserkBuff");
+            player.Skills.Strength.SetCurrent(5100f);
+            player.Skills.AimDrills.SetCurrent(5100f);
+
+            NotificationHelper.Show(
                 "Berserk Event: You're seeing red, I feel bad for any scavs and PMCs in your way!",
-                ENotificationDurationType.Long,
-                ENotificationIconType.Alert
+                NotificationHelper.NotificationLength.Long,
+                NotificationHelper.NotificationColor.Red
             );
+            EventsEffectsController.Instance?.ShowPositiveEffect();
 
             if (ConfigController.DebugConfig.DebugMode)
             {
@@ -832,31 +901,15 @@ namespace RaidOverhaul.Controllers
 
             await UniTask.WaitForSeconds(180);
 
-            ROPlayer.ActiveHealthController.DoScavRegeneration(0);
-            ROPlayer.ActiveHealthController.PauseAllEffects();
+            player.ActiveHealthController.DoScavRegeneration(0);
+            player.ActiveHealthController.PauseAllEffects();
+            player.Skills.Strength.SetCurrent(strengthSnapshot, true);
+            player.Skills.AimDrills.SetCurrent(aimDrillsSnapshot, true);
 
-            foreach (var item in items)
-            {
-                if (item is not Weapon weapon)
-                {
-                    continue;
-                }
-
-                if (_originalWSBers.TryGetValue(item.TemplateId, out var origStats))
-                {
-                    var template = weapon.Template;
-                    template.BaseMalfunctionChance = origStats.MalfChance;
-                    template.DurabilityBurnRatio = origStats.DuraBurn;
-                    template.Ergonomics = origStats.Ergo;
-                    template.RecoilForceBack = origStats.RecoilBack;
-                    template.RecoilForceUp = origStats.RecoilUp;
-                }
-            }
-
-            NotificationManagerClass.DisplayMessageNotification(
+            NotificationHelper.Show(
                 "Berserk Event: Your vision has cleared up, I guess you got all your rage out!",
-                ENotificationDurationType.Long,
-                ENotificationIconType.Alert
+                NotificationHelper.NotificationLength.Long,
+                NotificationHelper.NotificationColor.Green
             );
 
             if (ConfigController.DebugConfig.DebugMode)
@@ -873,21 +926,6 @@ namespace RaidOverhaul.Controllers
                 return;
             }
 
-            var items = _session.Profile.Inventory.GetItemsInSlots(
-                new EquipmentSlot[]
-                {
-                    EquipmentSlot.FirstPrimaryWeapon,
-                    EquipmentSlot.SecondPrimaryWeapon,
-                    EquipmentSlot.Holster,
-                    EquipmentSlot.Scabbard,
-                    EquipmentSlot.ArmorVest,
-                    EquipmentSlot.TacticalVest,
-                    EquipmentSlot.Backpack,
-                    EquipmentSlot.Earpiece,
-                    EquipmentSlot.Headwear,
-                }
-            );
-
             var chance = SharedRandom.Next(0, 101);
 
             if (FikaBridge.AmHost())
@@ -897,23 +935,26 @@ namespace RaidOverhaul.Controllers
 
             _weightEventHasRun = true;
 
+            var player = ROPlayer;
+            if (player == null)
+            {
+                return;
+            }
+
             if (chance >= 0 && chance <= 49)
             {
-                foreach (var item in items)
-                {
-                    if (item is null)
-                    {
-                        continue;
-                    }
-                    item.Template.Weight *= 2f;
-                }
-                _session.Profile.Inventory.UpdateTotalWeight();
+                player.Physical.BaseOverweightLimits *= 0.5f;
+                player.Physical.WalkOverweightLimits *= 0.5f;
+                player.Physical.SprintOverweightLimits *= 0.5f;
+                player.Physical.WalkSpeedOverweightLimits *= 0.5f;
+                player.Physical.OnWeightUpdated();
 
-                NotificationManagerClass.DisplayMessageNotification(
+                NotificationHelper.Show(
                     "Weight Event: Better hunker down until you get your stamina back!",
-                    ENotificationDurationType.Long,
-                    ENotificationIconType.Alert
+                    NotificationHelper.NotificationLength.Long,
+                    NotificationHelper.NotificationColor.Red
                 );
+                EventsEffectsController.Instance?.ShowNegativeEffect();
 
                 if (ConfigController.DebugConfig.DebugMode)
                 {
@@ -922,44 +963,33 @@ namespace RaidOverhaul.Controllers
 
                 await UniTask.WaitForSeconds(180);
 
-                foreach (var item in items)
-                {
-                    if (item is null)
-                    {
-                        continue;
-                    }
-                    item.Template.Weight *= 0.5f;
-                }
-                _session.Profile.Inventory.UpdateTotalWeight();
+                player.Physical.OnWeightLimitsUpdated();
 
                 if (ConfigController.DebugConfig.DebugMode)
                 {
                     Utils.LogToServerConsole("Weight Event has run");
                 }
 
-                NotificationManagerClass.DisplayMessageNotification(
+                NotificationHelper.Show(
                     "Weight Event: You're rested and ready to get back out there!",
-                    ENotificationDurationType.Long,
-                    ENotificationIconType.Alert
+                    NotificationHelper.NotificationLength.Long,
+                    NotificationHelper.NotificationColor.Green
                 );
             }
             else if (chance >= 50 && chance <= 100)
             {
-                foreach (var item in items)
-                {
-                    if (item is null)
-                    {
-                        continue;
-                    }
-                    item.Template.Weight *= 0.5f;
-                }
-                _session.Profile.Inventory.UpdateTotalWeight();
+                player.Physical.BaseOverweightLimits *= 2.0f;
+                player.Physical.WalkOverweightLimits *= 2.0f;
+                player.Physical.SprintOverweightLimits *= 2.0f;
+                player.Physical.WalkSpeedOverweightLimits *= 2.0f;
+                player.Physical.OnWeightUpdated();
 
-                NotificationManagerClass.DisplayMessageNotification(
+                NotificationHelper.Show(
                     "Weight Event: You feel light on your feet, stock up on everything you can!",
-                    ENotificationDurationType.Long,
-                    ENotificationIconType.Alert
+                    NotificationHelper.NotificationLength.Long,
+                    NotificationHelper.NotificationColor.Gold
                 );
+                EventsEffectsController.Instance?.ShowPositiveEffect();
 
                 if (ConfigController.DebugConfig.DebugMode)
                 {
@@ -968,20 +998,12 @@ namespace RaidOverhaul.Controllers
 
                 await UniTask.WaitForSeconds(180);
 
-                foreach (var item in items)
-                {
-                    if (item is null)
-                    {
-                        continue;
-                    }
-                    item.Template.Weight *= 2f;
-                }
-                _session.Profile.Inventory.UpdateTotalWeight();
+                player.Physical.OnWeightLimitsUpdated();
 
-                NotificationManagerClass.DisplayMessageNotification(
+                NotificationHelper.Show(
                     "Weight Event: You've lost your extra energy, hope you didn't fill your backpack too much!",
-                    ENotificationDurationType.Long,
-                    ENotificationIconType.Alert
+                    NotificationHelper.NotificationLength.Long,
+                    NotificationHelper.NotificationColor.White
                 );
 
                 if (ConfigController.DebugConfig.DebugMode)
@@ -1004,14 +1026,16 @@ namespace RaidOverhaul.Controllers
 
             string traderName = trader.Key ?? "A trader";
 
+            var session = GetSession();
             if (chance < 50)
             {
-                _session.Profile.TradersInfo[trader.Value].SetStanding(_session.Profile.TradersInfo[trader.Value].Standing + 0.1);
-                NotificationManagerClass.DisplayMessageNotification(
+                session?.Profile.TradersInfo[trader.Value].SetStanding(session.Profile.TradersInfo[trader.Value].Standing + 0.1);
+                NotificationHelper.Show(
                     $"Trader Event: {traderName} has gained a little more respect for you.",
-                    ENotificationDurationType.Default,
-                    ENotificationIconType.Mail
+                    NotificationHelper.NotificationLength.Short,
+                    NotificationHelper.NotificationColor.Gold
                 );
+                EventsEffectsController.Instance?.ShowPositiveEffect();
 
                 if (ConfigController.DebugConfig.DebugMode)
                 {
@@ -1020,14 +1044,15 @@ namespace RaidOverhaul.Controllers
             }
             else
             {
-                if (_session.Profile.TradersInfo[trader.Value].Standing >= 0.05)
+                if (session?.Profile.TradersInfo[trader.Value].Standing >= 0.05)
                 {
-                    _session.Profile.TradersInfo[trader.Value].SetStanding(_session.Profile.TradersInfo[trader.Value].Standing - 0.05);
-                    NotificationManagerClass.DisplayMessageNotification(
+                    session?.Profile.TradersInfo[trader.Value].SetStanding(session.Profile.TradersInfo[trader.Value].Standing - 0.05);
+                    NotificationHelper.Show(
                         $"Trader Event: {traderName} has lost a little faith in you.",
-                        ENotificationDurationType.Default,
-                        ENotificationIconType.Mail
+                        NotificationHelper.NotificationLength.Short,
+                        NotificationHelper.NotificationColor.Red
                     );
+                    EventsEffectsController.Instance?.ShowNegativeEffect();
 
                     if (ConfigController.DebugConfig.DebugMode)
                     {
@@ -1043,16 +1068,18 @@ namespace RaidOverhaul.Controllers
 
         public void DoMaxLLEvent()
         {
-            if (JsonHandler.CheckFilePath("TraderRep", "Flags"))
+            var profileId = ROPlayer.ProfileId;
+
+            if (JsonHandler.CheckFilePath(profileId, "Flags"))
             {
-                JsonHandler.ReadFlagFile("TraderRep", "Flags");
+                ConfigController.ProfileFlags = JsonHandler.ReadFlagFile<ProfileFlags>(profileId, "Flags");
 
                 if (FikaBridge.AmHost())
                 {
                     FikaBridge.SendRandomEventPacket(Utils.MaxLoyaltyLevel);
                 }
 
-                if (!ConfigController.Flags.TraderRepFlag)
+                if (!ConfigController.ProfileFlags.TraderRepFlag)
                 {
                     if (_maxLLEventCount >= 1)
                     {
@@ -1064,28 +1091,32 @@ namespace RaidOverhaul.Controllers
 
                     _maxLLEventCount++;
 
+                    var session = GetSession();
                     foreach (var trader in traders)
                     {
-                        _session.Profile.TradersInfo[trader.Value].SetStanding(_session.Profile.TradersInfo[trader.Value].Standing + 1);
+                        session?.Profile.TradersInfo[trader.Value].SetStanding(session.Profile.TradersInfo[trader.Value].Standing + 1);
                     }
 
-                    ConfigController.Flags.TraderRepFlag = true;
-                    JsonHandler.SaveToJson(ConfigController.Flags, "TraderRep", "Flags");
+                    ConfigController.ProfileFlags.TraderRepFlag = true;
+                    JsonHandler.SaveToJson(ConfigController.ProfileFlags, profileId, "Flags");
 
-                    NotificationManagerClass.DisplayMessageNotification(
+                    NotificationHelper.Show(
                         "Shopping Spree Event: All Traders have maxed out standing. Better get to them in the next ten minutes!",
-                        ENotificationDurationType.Default,
-                        ENotificationIconType.Mail
+                        NotificationHelper.NotificationLength.Short,
+                        NotificationHelper.NotificationColor.Gold
                     );
+                    EventsEffectsController.Instance?.ShowPositiveEffect();
 
                     if (ConfigController.DebugConfig.DebugMode)
                     {
                         Utils.LogToServerConsole("Shopping Spree Event has run");
                     }
                 }
-                else if (ConfigController.Flags.TraderRepFlag)
+                else if (ConfigController.ProfileFlags.TraderRepFlag)
                 {
                     CorrectRep();
+                    ConfigController.ProfileFlags.TraderRepFlag = false;
+                    JsonHandler.SaveToJson(ConfigController.ProfileFlags, profileId, "Flags");
                 }
             }
             else
@@ -1101,27 +1132,12 @@ namespace RaidOverhaul.Controllers
                 FikaBridge.SendRandomEventPacket(Utils.CorrectRep);
             }
 
-            if (JsonHandler.CheckFilePath("TraderRep", "Flags"))
+            var traders = ConfigController.ServerConfig.EnableRequisitionOffice ? Utils.Traders : Utils.TradersNoReq;
+            var session = GetSession();
+
+            foreach (var trader in traders)
             {
-                JsonHandler.ReadFlagFile("TraderRep", "Flags");
-
-                if (ConfigController.Flags.TraderRepFlag)
-                {
-                    var traders = ConfigController.ServerConfig.EnableRequisitionOffice ? Utils.Traders : Utils.TradersNoReq;
-
-                    foreach (var trader in traders)
-                    {
-                        _session.Profile.TradersInfo[trader.Value].SetStanding(_session.Profile.TradersInfo[trader.Value].Standing - 1);
-                    }
-
-                    ConfigController.Flags.TraderRepFlag = false;
-                    JsonHandler.SaveToJson(ConfigController.Flags, "TraderRep", "Flags");
-                    Weighting.DoRandomEvent(Weighting.WeightedEvents);
-                }
-            }
-            else
-            {
-                Weighting.DoRandomEvent(Weighting.WeightedEvents);
+                session?.Profile.TradersInfo[trader.Value].SetStanding(session.Profile.TradersInfo[trader.Value].Standing - 1);
             }
         }
 
@@ -1139,7 +1155,7 @@ namespace RaidOverhaul.Controllers
                 FikaBridge.SendRandomEventPacket(Utils.Lockdown);
             }
 
-            if (raidTimeLeft < 900 || ROPlayer.Location == "laboratory")
+            if (raidTimeLeft < 900 || ROPlayer.Location.ToLowerInvariant() == "laboratory")
             {
                 Weighting.DoRandomEvent(Weighting.WeightedEvents);
             }
@@ -1147,19 +1163,19 @@ namespace RaidOverhaul.Controllers
             {
                 var exfils = FindObjectsOfType<ExfiltrationPoint>();
 
-                NotificationManagerClass.DisplayMessageNotification(
+                NotificationHelper.Show(
                     "Lockdown Event: All extracts are unavailable for 15 minutes",
-                    ENotificationDurationType.Long,
-                    ENotificationIconType.EntryPoint
+                    NotificationHelper.NotificationLength.Long,
+                    NotificationHelper.NotificationColor.Blue
                 );
+                EventsEffectsController.Instance?.ShowNegativeEffect();
 
                 if (ConfigController.DebugConfig.DebugMode)
                 {
                     Utils.LogToServerConsole("Lockdown Event has started");
                 }
 
-                EventExfilPatch._isLockdown = true;
-                ExfilLockdown = true;
+                _exfilLockdown = true;
 
                 foreach (var exfil in exfils)
                 {
@@ -1169,8 +1185,6 @@ namespace RaidOverhaul.Controllers
                     }
                 }
                 _exfilEventCount++;
-
-                TimeStart = System.DateTime.UtcNow.Second;
 
                 await UniTask.WaitForSeconds(600);
 
@@ -1182,13 +1196,12 @@ namespace RaidOverhaul.Controllers
                     }
                 }
 
-                EventExfilPatch._isLockdown = false;
-                ExfilLockdown = false;
+                _exfilLockdown = false;
 
-                NotificationManagerClass.DisplayMessageNotification(
+                NotificationHelper.Show(
                     "Lockdown Event: Extracts are available again. Time to get out of there!",
-                    ENotificationDurationType.Long,
-                    ENotificationIconType.EntryPoint
+                    NotificationHelper.NotificationLength.Long,
+                    NotificationHelper.NotificationColor.Green
                 );
 
                 if (ConfigController.DebugConfig.DebugMode)
@@ -1205,15 +1218,16 @@ namespace RaidOverhaul.Controllers
                 FikaBridge.SendRandomEventPacket(Utils.Artillery);
             }
 
-            if (!InvalidArtilleryLocations.Contains(ROPlayer.Location) && !_artyEventHasRun)
+            if (!_invalidArtilleryLocations.Contains(ROPlayer.Location.ToLowerInvariant()) && !_artyEventHasRun)
             {
                 _artyEventHasRun = true;
 
-                NotificationManagerClass.DisplayMessageNotification(
+                NotificationHelper.Show(
                     "Artillery Event: Get to cover. Shelling will commence in 30 seconds",
-                    ENotificationDurationType.Long,
-                    ENotificationIconType.EntryPoint
+                    NotificationHelper.NotificationLength.Long,
+                    NotificationHelper.NotificationColor.Red
                 );
+                EventsEffectsController.Instance?.ShowNegativeEffect();
 
                 if (ConfigController.DebugConfig.DebugMode)
                 {
@@ -1222,10 +1236,10 @@ namespace RaidOverhaul.Controllers
 
                 await UniTask.WaitForSeconds(30);
 
-                NotificationManagerClass.DisplayMessageNotification(
+                NotificationHelper.Show(
                     "Artillery Event: Shelling has started",
-                    ENotificationDurationType.Long,
-                    ENotificationIconType.EntryPoint
+                    NotificationHelper.NotificationLength.Long,
+                    NotificationHelper.NotificationColor.Red
                 );
 
                 ROGameWorld.ServerShellingController?.StartShellingPosition(ROPlayer.Transform.position);
@@ -1249,11 +1263,12 @@ namespace RaidOverhaul.Controllers
 
             trainExfil.Init(System.DateTime.UtcNow);
 
-            NotificationManagerClass.DisplayMessageNotification(
+            NotificationHelper.Show(
                 "Train is arriving. Get out if you're ready!",
-                ENotificationDurationType.Long,
-                ENotificationIconType.EntryPoint
+                NotificationHelper.NotificationLength.Long,
+                NotificationHelper.NotificationColor.Blue
             );
+            EventsEffectsController.Instance?.ShowPositiveEffect();
 
             if (ConfigController.DebugConfig.DebugMode)
             {
@@ -1262,16 +1277,152 @@ namespace RaidOverhaul.Controllers
 
             await UniTask.WaitForSeconds(420);
 
-            NotificationManagerClass.DisplayMessageNotification(
+            NotificationHelper.Show(
                 "Train is leaving the station.",
-                ENotificationDurationType.Long,
-                ENotificationIconType.EntryPoint
+                NotificationHelper.NotificationLength.Long,
+                NotificationHelper.NotificationColor.Blue
             );
 
             if (ConfigController.DebugConfig.DebugMode)
             {
                 Utils.LogToServerConsole("Train is leaving");
             }
+        }
+
+        private void PlaySound(AudioClip clip)
+        {
+            if (clip == null)
+            {
+                return;
+            }
+
+            MonoBehaviourSingleton<BetterAudio>.Instance.PlayAtPoint(
+                ROPlayer.Transform.position,
+                clip,
+                BetterAudio.AudioSourceGroupType.Environment,
+                0,
+                1f,
+                EOcclusionTest.None,
+                null,
+                false
+            );
+        }
+
+        private void SetPlayersHunted(bool hunted)
+        {
+            var gameWorld = ROGameWorld;
+            if (gameWorld == null)
+            {
+                return;
+            }
+
+            var processedGroups = new HashSet<BotsGroup>();
+
+            foreach (var registeredPlayer in gameWorld.RegisteredPlayers)
+            {
+                if (registeredPlayer == null || !registeredPlayer.IsAI || !registeredPlayer.HealthController.IsAlive)
+                {
+                    continue;
+                }
+
+                var botOwner = registeredPlayer.AIData?.BotOwner;
+                if (botOwner == null)
+                {
+                    continue;
+                }
+
+                var role = botOwner.Profile?.Info?.Settings?.Role;
+                if (role != null && WildSpawnTypeExtensions.IsWolf(role.Value))
+                {
+                    continue;
+                }
+
+                if (processedGroups.Add(botOwner.BotsGroup))
+                {
+                    foreach (var humanPlayer in gameWorld.RegisteredPlayers)
+                    {
+                        if (humanPlayer == null || humanPlayer.IsAI || !humanPlayer.HealthController.IsAlive)
+                        {
+                            continue;
+                        }
+
+                        if (hunted)
+                        {
+                            botOwner.BotsGroup.AddEnemy(humanPlayer, EBotEnemyCause.addPlayer);
+                        }
+                        else
+                        {
+                            botOwner.BotsGroup.RemoveEnemy(humanPlayer);
+                        }
+                    }
+                }
+
+                if (BotManagerComponent.Instance == null || !BotManagerComponent.Instance.GetSAIN(botOwner, out var sainBot))
+                {
+                    continue;
+                }
+
+                foreach (var humanPlayer in gameWorld.RegisteredPlayers)
+                {
+                    if (humanPlayer == null || humanPlayer.IsAI || !humanPlayer.HealthController.IsAlive)
+                    {
+                        continue;
+                    }
+
+                    if (hunted)
+                    {
+                        var sainEnemy = sainBot.EnemyController.CheckAddEnemy(humanPlayer);
+                        sainEnemy?.KnownPlaces.UpdateSeenPlace(humanPlayer.Transform.position, Time.time);
+                    }
+                    else
+                    {
+                        sainBot.EnemyController.RemoveEnemy(humanPlayer.ProfileId);
+                    }
+                }
+            }
+        }
+
+        private async UniTaskVoid EnforceHuntedState()
+        {
+            while (_huntedEventRunning)
+            {
+                await UniTask.WaitForSeconds(10);
+                if (_huntedEventRunning)
+                {
+                    SetPlayersHunted(true);
+                }
+            }
+        }
+
+        internal async UniTask DoHuntedEvent()
+        {
+            if (_huntedEventRunning || _huntedEventHasRun)
+            {
+                Weighting.DoRandomEvent(Weighting.WeightedEvents);
+                return;
+            }
+
+            if (FikaBridge.AmHost())
+            {
+                FikaBridge.SendRandomEventPacket(Utils.Hunted);
+            }
+
+            _huntedEventRunning = true;
+            NotificationHelper.Show(
+                "You have been marked. Every hostile in the raid is now hunting you down.",
+                NotificationHelper.NotificationLength.Long,
+                NotificationHelper.NotificationColor.Red
+            );
+            EventsEffectsController.Instance?.ShowHuntedInvasionEffect();
+            PlaySound(SoundHeartbeat);
+            SetPlayersHunted(true);
+            EnforceHuntedState().Forget();
+
+            await UniTask.WaitForSeconds(300);
+
+            SetPlayersHunted(false);
+            _huntedEventRunning = false;
+            _huntedEventHasRun = true;
         }
 
         internal async UniTask DoPmcExfilEvent()
@@ -1283,94 +1434,66 @@ namespace RaidOverhaul.Controllers
                 _pmcExfilEventRunning = true;
 
                 await UniTask.WaitForSeconds(3);
-                NotificationManagerClass.DisplayMessageNotification(
+                NotificationHelper.Show(
                     "Extract is on it's way! Hold out for two minutes for help to arrive",
-                    ENotificationDurationType.Long,
-                    ENotificationIconType.EntryPoint
+                    NotificationHelper.NotificationLength.Long,
+                    NotificationHelper.NotificationColor.Blue
                 );
+                EventsEffectsController.Instance?.ShowPositiveEffect();
                 if (ConfigController.DebugConfig.DebugMode)
                 {
                     Utils.LogToServerConsole("Extract event has started");
                 }
+                NotificationHelper.Show(
+                    "All hostiles are converging on your position! Survive until extraction arrives.",
+                    NotificationHelper.NotificationLength.Long,
+                    NotificationHelper.NotificationColor.Red
+                );
+                if (FikaBridge.AmHost())
+                {
+                    _huntedEventRunning = true;
+                    SetPlayersHunted(true);
+                    EnforceHuntedState().Forget();
+                }
                 await UniTask.WaitForSeconds(120);
-                NotificationManagerClass.DisplayMessageNotification(
-                    "10",
-                    ENotificationDurationType.Default,
-                    ENotificationIconType.EntryPoint
-                );
-                await UniTask.WaitForSeconds(1);
-                NotificationManagerClass.DisplayMessageNotification(
-                    "9",
-                    ENotificationDurationType.Default,
-                    ENotificationIconType.EntryPoint
-                );
-                await UniTask.WaitForSeconds(1);
-                NotificationManagerClass.DisplayMessageNotification(
-                    "8",
-                    ENotificationDurationType.Default,
-                    ENotificationIconType.EntryPoint
-                );
-                await UniTask.WaitForSeconds(1);
-                NotificationManagerClass.DisplayMessageNotification(
-                    "7",
-                    ENotificationDurationType.Default,
-                    ENotificationIconType.EntryPoint
-                );
-                await UniTask.WaitForSeconds(1);
-                NotificationManagerClass.DisplayMessageNotification(
-                    "6",
-                    ENotificationDurationType.Default,
-                    ENotificationIconType.EntryPoint
-                );
-                await UniTask.WaitForSeconds(1);
-                NotificationManagerClass.DisplayMessageNotification(
-                    "5",
-                    ENotificationDurationType.Default,
-                    ENotificationIconType.EntryPoint
-                );
-                await UniTask.WaitForSeconds(1);
-                NotificationManagerClass.DisplayMessageNotification(
-                    "4",
-                    ENotificationDurationType.Default,
-                    ENotificationIconType.EntryPoint
-                );
-                await UniTask.WaitForSeconds(1);
-                NotificationManagerClass.DisplayMessageNotification(
-                    "3",
-                    ENotificationDurationType.Default,
-                    ENotificationIconType.EntryPoint
-                );
-                await UniTask.WaitForSeconds(1);
-                NotificationManagerClass.DisplayMessageNotification(
-                    "2",
-                    ENotificationDurationType.Default,
-                    ENotificationIconType.EntryPoint
-                );
-                await UniTask.WaitForSeconds(1);
-                NotificationManagerClass.DisplayMessageNotification(
-                    "1",
-                    ENotificationDurationType.Default,
-                    ENotificationIconType.EntryPoint
-                );
-                await UniTask.WaitForSeconds(1);
-                NotificationManagerClass.DisplayMessageNotification(
+
+                for (int i = 10; i >= 1; i--)
+                {
+                    NotificationHelper.Show(
+                        i.ToString(),
+                        NotificationHelper.NotificationLength.Tick,
+                        NotificationHelper.NotificationColor.Blue
+                    );
+                    await UniTask.WaitForSeconds(1);
+                }
+                NotificationHelper.Show(
                     "Help has arrived",
-                    ENotificationDurationType.Default,
-                    ENotificationIconType.EntryPoint
+                    NotificationHelper.NotificationLength.Short,
+                    NotificationHelper.NotificationColor.Green
                 );
 
                 var exfilSession = Singleton<AbstractGame>.Instance as EndByExitTrigerScenario.GInterface146;
                 string profileId = GamePlayerOwner.MyPlayer.ProfileId;
                 string exitName = Singleton<GameWorld>.Instance.ExfiltrationController.ExfiltrationPoints.FirstOrDefault().name;
 
+                if (FikaBridge.AmHost())
+                {
+                    SetPlayersHunted(false);
+                    _huntedEventRunning = false;
+                }
                 exfilSession.StopSession(profileId, ExitStatus.Survived, exitName);
 
                 _pmcExfilEventRunning = false;
             }
         }
 
-        internal void ExfilNow()
+        public void ExfilNow()
         {
+            if (FikaBridge.AmHost())
+            {
+                FikaBridge.SendRandomEventPacket(Utils.ExfilNow);
+            }
+
             var exfilSession = Singleton<AbstractGame>.Instance as EndByExitTrigerScenario.GInterface146;
             string profileId = GamePlayerOwner.MyPlayer.ProfileId;
             string exitName = Singleton<GameWorld>.Instance.ExfiltrationController.ExfiltrationPoints.FirstOrDefault().name;
@@ -1389,15 +1512,51 @@ namespace RaidOverhaul.Controllers
             InvasionController.StartInvasion();
             _invasionHasRun = true;
 
-            NotificationManagerClass.DisplayMessageNotification(
+            NotificationHelper.Show(
                 "Invasion Event: Bosses incoming.",
-                ENotificationDurationType.Long,
-                ENotificationIconType.Alert
+                NotificationHelper.NotificationLength.Long,
+                NotificationHelper.NotificationColor.Red
             );
+            EventsEffectsController.Instance?.ShowHuntedInvasionEffect();
+            PlaySound(SoundAlarm);
 
             if (ConfigController.DebugConfig.DebugMode)
             {
                 Utils.LogToServerConsole("Invasion Event has started");
+            }
+        }
+
+        internal async UniTask SpawnLegionForQuest()
+        {
+            if (_legionSpawnedForQuest)
+            {
+                return;
+            }
+
+            if (!_legionQuestMapZones.TryGetValue(ROPlayer.Location.ToLowerInvariant(), out var zones))
+            {
+                return;
+            }
+
+            _legionSpawnedForQuest = true;
+
+            BossInvasionConfig legionConfig = new BossInvasionConfig
+            {
+                BossName = "bosslegion",
+                BossEscorts = "legionnaire",
+                BossType = (WildSpawnType)199,
+                BossEscortType = (WildSpawnType)200,
+                BossEscortCount = 4,
+                AdditionalSupports = null,
+            };
+
+            string zone = zones[SharedRandom.Next(zones.Length)];
+
+            await UniTask.WaitForSeconds(60);
+            if (Utils.IsInRaid())
+            {
+                Utils.SpawnBoss(legionConfig, zone);
+                EventsEffectsController.Instance?.ShowLegionQuestEffect();
             }
         }
 
@@ -1408,16 +1567,49 @@ namespace RaidOverhaul.Controllers
             _lamp = null;
         }
 
-        private void CheckForFlag()
+        private void CheckForFlags()
         {
-            if (JsonHandler.CheckFilePath("TraderRep", "Flags"))
-            {
-                JsonHandler.ReadFlagFile("TraderRep", "Flags");
+            var profileId = ROPlayer.ProfileId;
 
-                if (ConfigController.Flags.TraderRepFlag)
+            if (!JsonHandler.CheckFilePath(profileId, "Flags"))
+            {
+                JsonHandler.CreateFlagFile<ProfileFlags>(profileId, "Flags");
+            }
+
+            ConfigController.ProfileFlags = JsonHandler.ReadFlagFile<ProfileFlags>(profileId, "Flags");
+            bool dirty = false;
+
+            if (ConfigController.ProfileFlags.TraderRepFlag)
+            {
+                CorrectRep();
+                ConfigController.ProfileFlags.TraderRepFlag = false;
+                dirty = true;
+            }
+
+            if (ConfigController.ServerConfig.EnableCustomBoss && !ConfigController.ProfileFlags.UnlockQuestCompleted)
+            {
+                var quest = Utils.GetQuest(ROQuestController, "66f0eb2c12fb0ed12fbcfd46");
+                if (quest != null)
                 {
-                    CorrectRep();
+                    if (
+                        quest.QuestStatus == EQuestStatus.Started
+                        && quest.QuestStatus != EQuestStatus.AvailableForFinish
+                        && quest.QuestStatus != EQuestStatus.Success
+                    )
+                    {
+                        SpawnLegionForQuest().Forget();
+                    }
+                    else if (quest.QuestStatus == EQuestStatus.Success)
+                    {
+                        ConfigController.ProfileFlags.UnlockQuestCompleted = true;
+                        dirty = true;
+                    }
                 }
+            }
+
+            if (dirty)
+            {
+                JsonHandler.SaveToJson(ConfigController.ProfileFlags, profileId, "Flags");
             }
         }
 
@@ -1465,6 +1657,204 @@ namespace RaidOverhaul.Controllers
         {
             DoPmcExfilEvent().Forget();
         }
+
+        public void DoHuntedEventWrapper()
+        {
+            DoHuntedEvent().Forget();
+        }
+        #endregion
+
+        #region Body Cleanup & Corpse Airdrop
+
+        private async UniTaskVoid RunBodyCleanupCycle()
+        {
+            while (Utils.IsInRaid())
+            {
+                await UniTask.WaitForSeconds(ROPluginConfig.TimeToClean.Value * 60f);
+
+                if (!Utils.IsInRaid())
+                {
+                    break;
+                }
+
+                await ExecuteCleanupAndAirdrop();
+            }
+        }
+
+        private async UniTask ExecuteCleanupAndAirdrop()
+        {
+            NotificationHelper.Show(
+                "Commencing Body Cleanup",
+                NotificationHelper.NotificationLength.Long,
+                NotificationHelper.NotificationColor.White
+            );
+            EventsEffectsController.Instance?.ShowCleanupEffect();
+
+            for (int i = 10; i >= 1; i--)
+            {
+                NotificationHelper.Show(
+                    i.ToString(),
+                    NotificationHelper.NotificationLength.Tick,
+                    NotificationHelper.NotificationColor.White
+                );
+                await UniTask.WaitForSeconds(1);
+            }
+
+            PendingCorpseItems.Clear();
+
+            var bots = FindObjectsOfType<BotOwner>();
+            if (bots == null)
+            {
+                return;
+            }
+
+            foreach (var bot in bots)
+            {
+                if (bot == null || bot.HealthController == null || bot.HealthController.IsAlive)
+                {
+                    continue;
+                }
+
+                var equipment = bot.GetPlayer?.Profile?.Inventory?.Equipment;
+                if (equipment == null)
+                {
+                    continue;
+                }
+
+                foreach (var slot in _allEquipmentSlots)
+                {
+                    if (!ShouldCollectSlot(slot))
+                    {
+                        continue;
+                    }
+
+                    var item = equipment.GetSlot(slot)?.ContainedItem;
+                    if (item != null)
+                    {
+                        PendingCorpseItems.Add(item);
+                    }
+                }
+            }
+
+            DeactivateDeadBots(bots);
+
+            PendingCorpseItems.Sort((a, b) => GetItemTotalValue(b).CompareTo(GetItemTotalValue(a)));
+
+            if (!_invalidAirdropLocations.Contains(ROPlayer.Location.ToLowerInvariant()) && PendingCorpseItems.Count > 0)
+            {
+                NotificationHelper.Show(
+                    $"Items found: {PendingCorpseItems.Count}",
+                    NotificationHelper.NotificationLength.Medium,
+                    NotificationHelper.NotificationColor.Gold
+                );
+                Utils.LogToServerConsole($"Items found: {PendingCorpseItems.Count}");
+                await DispatchCorpseAirdrops();
+            }
+        }
+
+        private async UniTask DispatchCorpseAirdrops()
+        {
+            int capacity = AirdropCrateCapacity > 0 ? AirdropCrateCapacity : 120;
+            int totalCells = 0;
+            foreach (var pending in PendingCorpseItems)
+            {
+                totalCells += pending.Template.Width * pending.Template.Height;
+            }
+
+            int effectiveCapacity = System.Math.Max(1, (int)(capacity * 0.8));
+            var mapPointCount = LocationScene.GetAll<AirdropPoint>().Count();
+            int pointCap = mapPointCount > 1 ? System.Math.Min(5, mapPointCount - 1) : 1;
+            int airdropCount = System.Math.Min(
+                pointCap,
+                System.Math.Max(1, (int)System.Math.Ceiling((double)totalCells / effectiveCapacity))
+            );
+            _airdropEventHasRun = true;
+
+            NotificationHelper.Show(
+                $"Corpse Cleanup: Bodies cleared. {airdropCount} airdrop(s) inbound with salvaged gear.",
+                NotificationHelper.NotificationLength.Long,
+                NotificationHelper.NotificationColor.Gold
+            );
+            Utils.LogToServerConsole($"Corpse Cleanup: Bodies cleared. {airdropCount} airdrop(s) inbound with salvaged gear.");
+
+            for (int i = 0; i < airdropCount; i++)
+            {
+                ROGameWorld.InitAirdrop(null, true, ROPlayer.Transform.position);
+
+                if (i < airdropCount - 1)
+                {
+                    await UniTask.WaitForSeconds(15f);
+                }
+            }
+        }
+
+        private static double GetItemTotalValue(Item item)
+        {
+            if (item?.Template == null)
+            {
+                return 0;
+            }
+
+            double total = (double)item.Template.CreditsPrice * item.StackObjectsCount;
+
+            if (item is CompoundItem compound)
+            {
+                foreach (var slot in compound.Slots)
+                {
+                    if (slot.ContainedItem != null)
+                    {
+                        total += GetItemTotalValue(slot.ContainedItem);
+                    }
+                }
+
+                foreach (var grid in compound.Grids)
+                {
+                    foreach (var gridItem in grid.Items)
+                    {
+                        total += GetItemTotalValue(gridItem);
+                    }
+                }
+            }
+
+            return total;
+        }
+
+        private static void DeactivateDeadBots(BotOwner[] bots)
+        {
+            float distSqThreshold = 100f;
+            var playerPos = ROPlayer.Transform.position;
+
+            foreach (var bot in bots)
+            {
+                if (bot == null || bot.HealthController == null || bot.HealthController.IsAlive)
+                {
+                    continue;
+                }
+
+                if ((playerPos - bot.Transform.position).sqrMagnitude >= distSqThreshold)
+                {
+                    if (bot.LeaveData != null)
+                    {
+                        bot.LeaveData.RemoveFromMap();
+                    }
+                    else
+                    {
+                        bot.gameObject.SetActive(false);
+                    }
+                }
+            }
+        }
+
+        public void TriggerManualCleanup()
+        {
+            if (!Utils.IsInRaid())
+            {
+                return;
+            }
+
+            ExecuteCleanupAndAirdrop().Forget();
+        }
+
         #endregion
     }
 }

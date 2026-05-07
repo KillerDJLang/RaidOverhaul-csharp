@@ -1,13 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using BepInEx.Logging;
 using Comfort.Common;
 using EFT;
-using EFT.InventoryLogic;
-using EFT.Weather;
-using HarmonyLib;
 using Newtonsoft.Json;
 using SPT.Common.Http;
 
@@ -15,12 +11,6 @@ namespace RaidOverhaul.Helpers
 {
     public static class Utils
     {
-        public static FieldInfo FogField;
-        public static FieldInfo LighteningThunderField;
-        public static FieldInfo RainField;
-        public static FieldInfo TemperatureField;
-        private static readonly JsonConverter[] _defaultJsonConverters;
-
         public static readonly Dictionary<string, MongoID> Traders = new()
         {
             { "Prapor", "54cb50c76803fa8b248b4571" },
@@ -65,9 +55,12 @@ namespace RaidOverhaul.Helpers
 
         public const string SkeletonKey = "66a2fc926af26cc365283f23";
         public const string VipKeycard = "66a2fc9886fbd5d38c5ca2a6";
-        public const string RedFlare = "624c09cfbc2e27219346d955";
         public const string RealismKey = "RealismMod";
         public const string ROStandaloneKey = "nameless.raidoverhaul.standalone";
+        public const string UnityToolkitKey = "com.arys.unitytoolkit";
+        public const string FikaCoreKey = "com.fika.core";
+        public const string BigBrainKey = "xyz.drakia.bigbrain";
+        public const string SAINKey = "me.sol.sain";
         public const string Heal = "Heal";
         public const string Damage = "Damage";
         public const string Repair = "Repair";
@@ -87,7 +80,8 @@ namespace RaidOverhaul.Helpers
         public const string Train = "Train";
         public const string PmcExfil = "PmcExfil";
         public const string Artillery = "Artillery";
-        private static readonly Dictionary<string, ItemTemplate> _templates = [];
+        public const string Hunted = "Hunted";
+        public const string ExfilNow = "ExfilNow";
 
         public static T Get<T>(string url)
         {
@@ -104,50 +98,7 @@ namespace RaidOverhaul.Helpers
         public static void LogToServerConsole(string message)
         {
             Plugin._log.Log(LogLevel.Info, message);
-            RequestHandler.PutJson("/RaidOverhaul/LogToServer", new { message = message }.ToJson(_defaultJsonConverters));
-        }
-
-        public static void GetWeatherFields()
-        {
-            FogField = AccessTools.Field(typeof(WeatherDebug), "Fog");
-            LighteningThunderField = AccessTools.Field(typeof(WeatherDebug), "LightningThunderProbability");
-            RainField = AccessTools.Field(typeof(WeatherDebug), "Rain");
-            TemperatureField = AccessTools.Field(typeof(WeatherDebug), "Temperature");
-        }
-
-        private static void AddTemplatesToArray()
-        {
-            if (!Singleton<ItemFactoryClass>.Instantiated)
-            {
-                return;
-            }
-
-            var mongoTemplates = Singleton<ItemFactoryClass>.Instance.ItemTemplates;
-
-            if (_templates.Count == mongoTemplates.Count)
-            {
-                return;
-            }
-            foreach (var keyValuePair in mongoTemplates)
-            {
-                _templates.Add(keyValuePair.Key.ToString(), keyValuePair.Value);
-            }
-        }
-
-        public static ItemTemplate[] FindTemplates(string templateToFind)
-        {
-            AddTemplatesToArray();
-            if (_templates.TryGetValue(templateToFind, out var template))
-            {
-                return [template];
-            }
-            return
-            [
-                .. _templates.Values.Where(t =>
-                    t.ShortNameLocalizationKey.Localized().IndexOf(templateToFind, StringComparison.OrdinalIgnoreCase) >= 0
-                    || t.NameLocalizationKey.Localized().IndexOf(templateToFind, StringComparison.OrdinalIgnoreCase) >= 0
-                ),
-            ];
+            RequestHandler.PutJson("/RaidOverhaul/LogToServer", new { message = message }.ToJson(null));
         }
 
         public static bool IsInRaid()
@@ -165,5 +116,89 @@ namespace RaidOverhaul.Helpers
                 && gameWorld.MainPlayer != null
                 && gameWorld.MainPlayer is not HideoutPlayer;
         }
+
+        internal static void SpawnBoss(BossInvasionConfig bossConfig, string zoneName = null)
+        {
+            var spawner = Singleton<IBotGame>.Instance?.BotsController?.BotSpawner;
+            if (spawner == null)
+            {
+                return;
+            }
+
+            string spawnZone;
+            if (zoneName != null)
+            {
+                spawnZone = zoneName;
+            }
+            else
+            {
+                var bossZones = spawner.SpawnZones(false).Where(z => z.CanSpawnBoss).ToList();
+                if (bossZones.Count == 0)
+                {
+                    return;
+                }
+                spawnZone = bossZones[new Random().Next(bossZones.Count)].NameZone;
+            }
+
+            var wave = new BossLocationSpawn
+            {
+                BossName = bossConfig.BossName,
+                BossType = bossConfig.BossType,
+                BossChance = 100f,
+                BossPlayer = false,
+                BossDifficult = "normal",
+                BossDif = BotDifficulty.normal,
+                BossZone = spawnZone,
+                BornZone = spawnZone,
+                BossEscortType = bossConfig.BossEscorts,
+                EscortType = bossConfig.BossEscortType,
+                BossEscortAmount = bossConfig.BossEscortCount.ToString(),
+                EscortCount = bossConfig.BossEscortCount,
+                BossEscortDifficult = "normal",
+                EscortDif = BotDifficulty.normal,
+                Supports = bossConfig.AdditionalSupports,
+                ForceSpawn = true,
+                IgnoreMaxBots = true,
+                ShallSpawn = true,
+                Time = -1f,
+                TriggerType = SpawnTriggerType.none,
+                TriggerId = "",
+                TriggerName = "",
+            };
+
+            if (bossConfig.AdditionalSupports != null && bossConfig.AdditionalSupports.Length > 0)
+            {
+                wave.SubDatas = new List<BossLocationSpawnSubData>();
+                int totalEscorts = bossConfig.BossEscortCount;
+
+                foreach (var support in bossConfig.AdditionalSupports)
+                {
+                    var difficulty = (BotDifficulty)Enum.Parse(typeof(BotDifficulty), support.BossEscortDifficult[0]);
+                    var subData = new BossLocationSpawnSubData(support.BossEscortAmount, support.BossEscortType, difficulty);
+                    wave.SubDatas.Add(subData);
+                    totalEscorts += subData.BossEscortAmount;
+                }
+
+                wave.EscortCount = totalEscorts;
+            }
+
+            spawner.ActivateBotsByWave(wave);
+        }
+
+        public static QuestClass GetQuest(AbstractQuestControllerClass questController, string questId)
+        {
+            object quests = Plugin._abstractQuestControllerQuestsProp.GetValue(questController);
+            return Plugin._abstractQuestControllerGetMethod.Invoke(quests, new object[] { questId }) as QuestClass;
+        }
+    }
+
+    internal class BossInvasionConfig
+    {
+        public string BossName;
+        public string BossEscorts;
+        public WildSpawnType BossType;
+        public WildSpawnType BossEscortType;
+        public int BossEscortCount;
+        public WildSpawnSupports[] AdditionalSupports;
     }
 }

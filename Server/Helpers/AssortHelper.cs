@@ -1,4 +1,3 @@
-using System.Reflection;
 using RaidOverhaulMain.Models;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.Extensions;
@@ -12,7 +11,6 @@ using SPTarkov.Server.Core.Servers;
 using SPTarkov.Server.Core.Services;
 using SPTarkov.Server.Core.Utils;
 using SPTarkov.Server.Core.Utils.Cloners;
-using Path = System.IO.Path;
 
 namespace RaidOverhaulMain.Helpers;
 
@@ -37,13 +35,16 @@ public class ROAssortHelper(
 
     public void GenerateTraderAssorts(string traderId, DebugFile debugConfig)
     {
-        var assembly = Assembly.GetExecutingAssembly();
         var blockedSeasonalItems = seasonalEventService.GetInactiveSeasonalEventItems();
         var baseTraderAssort = databaseService.GetTrader(traderId)?.Assort;
         var defaultPresets = presetHelper.GetDefaultPresets().Values;
         var locales = localeService.GetLocaleDb();
         var items = databaseService.GetItems();
-        var devFilesPath = Path.Combine("db", "devFiles");
+
+        if (baseTraderAssort == null)
+        {
+            return;
+        }
 
         foreach (var (itemId, rootItemDb) in items)
         {
@@ -74,7 +75,8 @@ public class ROAssortHelper(
 
             if (
                 itemHelper.IsOfBaseclass(itemId, BaseClasses.VEST)
-                && (rootItemDb.Properties?.Slots is not null && rootItemDb.Properties.Slots.Any())
+                && rootItemDb.Properties?.Slots is not null
+                && rootItemDb.Properties.Slots.Any()
             )
             {
                 continue;
@@ -200,8 +202,13 @@ public class ROAssortHelper(
         {
             if (randomUtil.GetChance100(7))
             {
-                var itemAndChildren = cloner.Clone(defaultPreset.Items).ReplaceIDs();
+                var itemAndChildren = cloner.Clone(defaultPreset.Items)!.ReplaceIDs();
                 var rootItem = itemAndChildren.FirstOrDefault(item => string.IsNullOrEmpty(item.ParentId));
+
+                if (rootItem == null)
+                {
+                    continue;
+                }
 
                 rootItem.ParentId = "hideout";
                 rootItem.SlotId = "hideout";
@@ -234,8 +241,6 @@ public class ROAssortHelper(
 
     public void AddCustomItemsToTraderShop(string traderId, DebugFile debugConfig)
     {
-        var assembly = Assembly.GetExecutingAssembly();
-        var devFilesPath = Path.Combine("db", "devFiles");
         var baseTraderAssort = databaseService.GetTrader(traderId)?.Assort;
         var customPresets = DevModels.CustomPresetMaps;
 
@@ -244,11 +249,16 @@ public class ROAssortHelper(
         var specialReqs = helpers.FetchIdFromMap("SpecialSlips", ClassMaps.CustomItemMap);
         var roubles = helpers.FetchIdFromMap("MONEY_RUB", ClassMaps.AllItemList);
 
+        if (baseTraderAssort == null)
+        {
+            return;
+        }
+
         fluentAssortHelper.CreateSingleItemOffer(
             "66280a30d3b6f288cb6b9653",
             randomUtil.RandInt(50, 300),
             1,
-            (int)GetCoinCost((double)helpers.GetItemInHandbook("66280a30d3b6f288cb6b9653").Price),
+            (int)GetCoinCost(helpers.GetItemInHandbook("66280a30d3b6f288cb6b9653")?.Price ?? 1),
             reqCoins,
             traderId
         );
@@ -256,7 +266,7 @@ public class ROAssortHelper(
             "662809f445b5ff428e21ac0a",
             randomUtil.RandInt(50, 300),
             1,
-            (int)GetCoinCost((double)helpers.GetItemInHandbook("662809f445b5ff428e21ac0a").Price),
+            (int)GetCoinCost(helpers.GetItemInHandbook("662809f445b5ff428e21ac0a")?.Price ?? 1),
             reqCoins,
             traderId
         );
@@ -264,7 +274,7 @@ public class ROAssortHelper(
             "662808ec26a8e83120bb25fe",
             randomUtil.RandInt(50, 300),
             1,
-            (int)GetCoinCost((double)helpers.GetItemInHandbook("662808ec26a8e83120bb25fe").Price),
+            (int)GetCoinCost(helpers.GetItemInHandbook("662808ec26a8e83120bb25fe")?.Price ?? 1),
             reqCoins,
             traderId
         );
@@ -273,7 +283,7 @@ public class ROAssortHelper(
             "6628185208dd86f969db7e03",
             randomUtil.RandInt(50, 300),
             1,
-            (int)GetCoinCost((double)helpers.GetItemInHandbook("6628185208dd86f969db7e03").Price),
+            (int)GetCoinCost(helpers.GetItemInHandbook("6628185208dd86f969db7e03")?.Price ?? 1),
             reqCoins,
             traderId
         );
@@ -281,7 +291,7 @@ public class ROAssortHelper(
             "662818a23a552da6aef8fada",
             randomUtil.RandInt(50, 300),
             1,
-            (int)GetCoinCost((double)helpers.GetItemInHandbook("662818a23a552da6aef8fada").Price),
+            (int)GetCoinCost(helpers.GetItemInHandbook("662818a23a552da6aef8fada")?.Price ?? 1),
             reqCoins,
             traderId
         );
@@ -290,7 +300,7 @@ public class ROAssortHelper(
             "66281ab7fca966e5021f81b5",
             randomUtil.RandInt(10, 50),
             1,
-            (int)GetCoinCost((double)helpers.GetItemInHandbook("66281ab7fca966e5021f81b5").Price),
+            (int)GetCoinCost(helpers.GetItemInHandbook("66281ab7fca966e5021f81b5")?.Price ?? 1),
             reqCoins,
             traderId
         );
@@ -298,7 +308,7 @@ public class ROAssortHelper(
             "66281ac038f9aebf6f914138",
             randomUtil.RandInt(5, 30),
             1,
-            (int)GetCoinCost((double)helpers.GetItemInHandbook("66281ac038f9aebf6f914138").Price),
+            (int)GetCoinCost(helpers.GetItemInHandbook("66281ac038f9aebf6f914138")?.Price ?? 1),
             reqCoins,
             traderId
         );
@@ -345,8 +355,13 @@ public class ROAssortHelper(
         {
             if (randomUtil.GetChance100(15))
             {
-                var itemAndChildren = cloner.Clone(customPreset.Items).ReplaceIDs();
+                var itemAndChildren = cloner.Clone(customPreset.Items)!.ReplaceIDs();
                 var rootItem = itemAndChildren.FirstOrDefault(item => string.IsNullOrEmpty(item.ParentId));
+
+                if (rootItem == null)
+                {
+                    continue;
+                }
 
                 rootItem.ParentId = "hideout";
                 rootItem.SlotId = "hideout";
@@ -412,7 +427,7 @@ public class ROAssortHelper(
             itemWithChildrenToAdd[0].ParentId = "hideout";
         }
 
-        var price = Math.Round((double)helpers.GetStackedItemPrice(itemId, itemWithChildrenToAdd));
+        var price = Math.Round(helpers.GetStackedItemPrice(itemId, itemWithChildrenToAdd) ?? 0);
         var finalPrice = GetFinalItemCost(price);
         var moneyType = GetMoneyType(price);
         var barterSchemeToAdd = new BarterScheme { Count = finalPrice, Template = moneyType };

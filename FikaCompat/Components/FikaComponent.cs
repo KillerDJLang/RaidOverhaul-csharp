@@ -8,25 +8,22 @@ using Fika.Core.Modding;
 using Fika.Core.Modding.Events;
 using Fika.Core.Networking;
 using Fika.Core.Networking.LiteNetLib;
+using HarmonyLib;
 using RaidOverhaul.FikaModule.Packets;
 using RaidOverhaul.Helpers;
+using RaidOverhaul.Managers;
+using UnityEngine;
 
 namespace RaidOverhaul.FikaModule.Components
 {
     internal class FikaComponent
     {
-        private static readonly MethodInfo DoorUnlockMethod = typeof(Door).GetMethod("Unlock", BindingFlags.Instance | BindingFlags.Public);
-        private static readonly MethodInfo DoorOpenMethod = typeof(Door).GetMethod("Open", BindingFlags.Instance | BindingFlags.Public);
-        private static readonly MethodInfo DoorCloseMethod = typeof(Door).GetMethod("Close", BindingFlags.Instance | BindingFlags.Public);
-        private static readonly MethodInfo KeycardDoorUnlockMethod = typeof(KeycardDoor).GetMethod(
-            "Unlock",
-            BindingFlags.Instance | BindingFlags.Public
-        );
-        private static readonly MethodInfo KeycardDoorOpenMethod = typeof(KeycardDoor).GetMethod(
-            "Open",
-            BindingFlags.Instance | BindingFlags.Public
-        );
-        private static readonly MethodInfo SwitchOpenMethod = typeof(Switch).GetMethod("Open", BindingFlags.Instance | BindingFlags.Public);
+        private static readonly MethodInfo DoorUnlockMethod = AccessTools.Method(typeof(Door), nameof(Door.Unlock));
+        private static readonly MethodInfo DoorOpenMethod = AccessTools.Method(typeof(Door), nameof(Door.Open));
+        private static readonly MethodInfo DoorCloseMethod = AccessTools.Method(typeof(Door), nameof(Door.Close));
+        private static readonly MethodInfo KeycardDoorUnlockMethod = AccessTools.Method(typeof(KeycardDoor), nameof(KeycardDoor.Unlock));
+        private static readonly MethodInfo KeycardDoorOpenMethod = AccessTools.Method(typeof(KeycardDoor), nameof(KeycardDoor.Open));
+        private static readonly MethodInfo SwitchOpenMethod = AccessTools.Method(typeof(Switch), nameof(Switch.Open));
 
         public static bool AmHost()
         {
@@ -107,18 +104,70 @@ namespace RaidOverhaul.FikaModule.Components
             }
         }
 
+        public static void SendRequestSupportBotsPacket(string callerProfileId, float spawnX, float spawnY, float spawnZ)
+        {
+            if (Singleton<FikaClient>.Instantiated)
+            {
+                var packet = new RequestSupportBotsPacket
+                {
+                    CallerProfileId = callerProfileId,
+                    SpawnX = spawnX,
+                    SpawnY = spawnY,
+                    SpawnZ = spawnZ,
+                };
+                Singleton<FikaClient>.Instance.SendData(ref packet, DeliveryMethod.ReliableOrdered);
+            }
+        }
+
+        private static void ReceiveRequestSupportBotsPacket(RequestSupportBotsPacket packet, NetPeer peer)
+        {
+            if (!Singleton<FikaServer>.Instantiated)
+            {
+                return;
+            }
+
+            var gameWorld = Plugin.ROGameWorld;
+            if (gameWorld == null)
+            {
+                return;
+            }
+
+            Player callerPlayer = null;
+            foreach (var registeredPlayer in gameWorld.RegisteredPlayers)
+            {
+                if (registeredPlayer == null || registeredPlayer.IsAI)
+                {
+                    continue;
+                }
+
+                if (registeredPlayer.ProfileId == packet.CallerProfileId)
+                {
+                    callerPlayer = registeredPlayer as Player;
+                    break;
+                }
+            }
+
+            if (callerPlayer == null)
+            {
+                return;
+            }
+
+            var spawnPos = new Vector3(packet.SpawnX, packet.SpawnY, packet.SpawnZ);
+            SupportBotManager.Instance?.Activate(callerPlayer, spawnPos);
+        }
+
         private static void ReceiveRandomEventPacket(RandomEventSyncPacket packet, NetPeer peer)
         {
             switch (packet.EventToRun)
             {
                 case Utils.Heal:
-                    Plugin._ecScript.DoHealPlayer();
+                    Plugin.GetEventController()?.DoHealPlayer();
                     break;
                 case Utils.Damage:
-                    Plugin._ecScript.DoDamageEvent();
+                    Plugin.GetEventController()?.DoDamageEvent();
                     break;
                 case Utils.Repair:
-                    Plugin._ecScript.DoArmorRepair();
+                    Plugin.GetEventController()?.DoArmorRepair();
                     break;
                 case Utils.Airdrop:
                     NotificationManagerClass.DisplayMessageNotification(
@@ -128,37 +177,37 @@ namespace RaidOverhaul.FikaModule.Components
                     );
                     break;
                 case Utils.Jokes:
-                    Plugin._ecScript.DoFunnyWrapper();
+                    Plugin.GetEventController()?.DoFunnyWrapper();
                     break;
                 case Utils.Blackout:
-                    Plugin._ecScript.DoBlackoutEventWrapper();
+                    Plugin.GetEventController()?.DoBlackoutEventWrapper();
                     break;
                 case Utils.Skill:
-                    Plugin._ecScript.DoSkillEvent();
+                    Plugin.GetEventController()?.DoSkillEvent();
                     break;
                 case Utils.Metabolism:
-                    Plugin._ecScript.DoMetabolismEvent();
+                    Plugin.GetEventController()?.DoMetabolismEvent();
                     break;
                 case Utils.Malf:
-                    Plugin._ecScript.DoMalfEventWrapper();
+                    Plugin.GetEventController()?.DoMalfEventWrapper();
                     break;
                 case Utils.LoyaltyLevel:
-                    Plugin._ecScript.DoLLEvent();
+                    Plugin.GetEventController()?.DoLLEvent();
                     break;
                 case Utils.Berserk:
-                    Plugin._ecScript.DoBerserkEventWrapper();
+                    Plugin.GetEventController()?.DoBerserkEventWrapper();
                     break;
                 case Utils.Weight:
-                    Plugin._ecScript.DoWeightEventWrapper();
+                    Plugin.GetEventController()?.DoWeightEventWrapper();
                     break;
                 case Utils.MaxLoyaltyLevel:
-                    Plugin._ecScript.DoMaxLLEvent();
+                    Plugin.GetEventController()?.DoMaxLLEvent();
                     break;
                 case Utils.CorrectRep:
-                    Plugin._ecScript.CorrectRep();
+                    Plugin.GetEventController()?.CorrectRep();
                     break;
                 case Utils.Lockdown:
-                    Plugin._ecScript.DoLockDownEventWrapper();
+                    Plugin.GetEventController()?.DoLockDownEventWrapper();
                     break;
                 case Utils.GearExfilEvent:
                     NotificationManagerClass.DisplayMessageNotification(
@@ -168,13 +217,23 @@ namespace RaidOverhaul.FikaModule.Components
                     );
                     break;
                 case Utils.Train:
-                    Plugin._ecScript.RunTrainWrapper();
+                    Plugin.GetEventController()?.RunTrainWrapper();
                     break;
                 case Utils.PmcExfil:
-                    Plugin._ecScript.DoPmcExfilEventWrapper();
+                    Plugin.GetEventController()?.DoPmcExfilEventWrapper();
                     break;
                 case Utils.Artillery:
-                    Plugin._ecScript.DoArtyEventWrapper();
+                    Plugin.GetEventController()?.DoArtyEventWrapper();
+                    break;
+                case Utils.Hunted:
+                    NotificationManagerClass.DisplayMessageNotification(
+                        "You have been marked. Every hostile in the raid is now hunting you down.",
+                        ENotificationDurationType.Long,
+                        ENotificationIconType.Alert
+                    );
+                    break;
+                case Utils.ExfilNow:
+                    Plugin.GetEventController()?.ExfilNow();
                     break;
             }
 
@@ -185,7 +244,7 @@ namespace RaidOverhaul.FikaModule.Components
                 && (Plugin.ROPlayer is not HideoutPlayer)
             )
             {
-                Plugin._ecScript.CleanForNewEvent();
+                Plugin.GetEventController()?.CleanForNewEvent();
             }
         }
 
@@ -259,6 +318,7 @@ namespace RaidOverhaul.FikaModule.Components
             managerCreatedEvent.Manager.RegisterPacket<SwitchEventSyncPacket, NetPeer>(ReceiveSwitchStateChangePacket);
             managerCreatedEvent.Manager.RegisterPacket<RaidStartDoorStateSyncPacket, NetPeer>(ReceiveRaidStartDoorStateChangePacket);
             managerCreatedEvent.Manager.RegisterPacket<RaidStartLampStateSyncPacket, NetPeer>(ReceiveRaidStartLampStateChangePacket);
+            managerCreatedEvent.Manager.RegisterPacket<RequestSupportBotsPacket, NetPeer>(ReceiveRequestSupportBotsPacket);
         }
 
         public static void InitOnPluginEnabled()

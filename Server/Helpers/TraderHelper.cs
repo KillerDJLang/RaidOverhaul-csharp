@@ -24,6 +24,10 @@ public class ROTraderHelper(ISptLogger<ROTraderHelper> logger, ICloner cloner, D
 
     public void AddTraderWithEmptyAssortToDb(TraderBase traderDetailsToAdd)
     {
+        if (traderDetailsToAdd == null)
+        {
+            return;
+        }
         var emptyTraderItemAssortObject = new TraderAssort
         {
             Items = [],
@@ -34,7 +38,7 @@ public class ROTraderHelper(ISptLogger<ROTraderHelper> logger, ICloner cloner, D
         var traderDataToAdd = new Trader
         {
             Assort = emptyTraderItemAssortObject,
-            Base = cloner.Clone(traderDetailsToAdd),
+            Base = cloner.Clone(traderDetailsToAdd)!,
             QuestAssort = new()
             {
                 { "Started", new() },
@@ -62,12 +66,13 @@ public class ROTraderHelper(ISptLogger<ROTraderHelper> logger, ICloner cloner, D
         {
             localeKvP.AddTransformer(lazyloadedLocaleData =>
             {
-                lazyloadedLocaleData.Add($"{newTraderId} FullName", fullName);
-                lazyloadedLocaleData.Add($"{newTraderId} FirstName", firstName);
-                lazyloadedLocaleData.Add($"{newTraderId} Nickname", nickName);
-                lazyloadedLocaleData.Add($"{newTraderId} Location", location);
-                lazyloadedLocaleData.Add($"{newTraderId} Description", description);
-                return lazyloadedLocaleData;
+                var localeData = lazyloadedLocaleData!;
+                localeData.Add($"{newTraderId} FullName", fullName);
+                localeData.Add($"{newTraderId} FirstName", firstName);
+                localeData.Add($"{newTraderId} Nickname", nickName ?? string.Empty);
+                localeData.Add($"{newTraderId} Location", location ?? string.Empty);
+                localeData.Add($"{newTraderId} Description", description);
+                return localeData;
             });
         }
     }

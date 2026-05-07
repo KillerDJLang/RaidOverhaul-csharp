@@ -19,8 +19,8 @@ namespace RaidOverhaul.Models
         [JsonProperty("EnableCustomItems")]
         public bool EnableCustomItems { get; set; }
 
-        [JsonProperty("BackupProfile")]
-        public bool BackupProfile { get; set; }
+        [JsonProperty("TimeChangesEnabled")]
+        public bool TimeChangesEnabled { get; set; }
 
         [JsonProperty("ReduceFoodAndHydroDegradeEnabled")]
         public bool ReduceFoodAndHydroDegradeEnabled { get; set; }

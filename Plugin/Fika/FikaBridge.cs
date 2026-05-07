@@ -96,5 +96,13 @@ namespace RaidOverhaul.Fika
         {
             SendRaidStartLampStateChangePacketEmitted?.Invoke(lampId);
         }
+
+        public delegate void RequestSupportBotsPacketEvent(string callerProfileId, float spawnX, float spawnY, float spawnZ);
+        public static event RequestSupportBotsPacketEvent RequestSupportBotsPacketEmitted;
+
+        public static void RequestSupportBotsPacket(string callerProfileId, float spawnX, float spawnY, float spawnZ)
+        {
+            RequestSupportBotsPacketEmitted?.Invoke(callerProfileId, spawnX, spawnY, spawnZ);
+        }
     }
 }

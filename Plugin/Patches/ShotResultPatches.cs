@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using EFT;
 using EFT.InventoryLogic;
+using HarmonyLib;
 using SPT.Reflection.Patching;
 using UnityEngine;
 
@@ -31,7 +32,7 @@ namespace RaidOverhaul.Patches
             }
 
             return helm.Slots.Any(slot =>
-                slot.ContainedItem.GetItemComponent<SlotBlockerComponent>().ConflictingSlotNames != null
+                slot.ContainedItem?.GetItemComponent<SlotBlockerComponent>()?.ConflictingSlotNames != null
                 && slot.ContainedItem.GetItemComponent<SlotBlockerComponent>().ConflictingSlotNames.Contains("Earpiece")
             );
         }
@@ -41,7 +42,7 @@ namespace RaidOverhaul.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(Player.FirearmController).GetMethod("RegisterShot", BindingFlags.Instance | BindingFlags.Public);
+            return AccessTools.Method(typeof(Player.FirearmController), nameof(Player.FirearmController.RegisterShot));
         }
 
         [PatchPostfix]
@@ -109,7 +110,7 @@ namespace RaidOverhaul.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(Grenade).GetMethod(nameof(Grenade.OnExplosion), BindingFlags.Instance | BindingFlags.Public);
+            return AccessTools.Method(typeof(Grenade), nameof(Grenade.OnExplosion));
         }
 
         [PatchPrefix]
@@ -130,7 +131,7 @@ namespace RaidOverhaul.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(Player).GetMethod("ApplyShot", BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
+            return AccessTools.DeclaredMethod(typeof(Player), nameof(Player.ApplyShot));
         }
 
         [PatchPostfix]

@@ -5,6 +5,6 @@ namespace RaidOverhaul.Models
     internal struct LegionProgressionConfig
     {
         [JsonProperty("LegionChance")]
-        public double LegionChance;
+        public double LegionChance { get; set; }
     }
 }

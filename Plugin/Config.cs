@@ -2,9 +2,9 @@ using System;
 using BepInEx.Configuration;
 using UnityEngine;
 
-namespace RaidOverhaul.Configs
+namespace RaidOverhaul
 {
-    public static class DJConfig
+    public static class ROPluginConfig
     {
         [Flags]
         public enum RaidEvents
@@ -25,6 +25,7 @@ namespace RaidOverhaul.Configs
             ExfilLockdown = 8192,
             Artillery = 16384,
             Invasion = 32768,
+            Hunted = 65536,
 
             All =
                 Damage
@@ -42,7 +43,8 @@ namespace RaidOverhaul.Configs
                 | ShoppingSpree
                 | ExfilLockdown
                 | Artillery
-                | Invasion,
+                | Invasion
+                | Hunted,
         }
 
         [Flags]
@@ -55,11 +57,9 @@ namespace RaidOverhaul.Configs
             All = PowerOn | DoorUnlock | KDoorUnlock,
         }
 
-        public static ConfigEntry<bool> CleanBodiesAsap { get; set; }
         public static ConfigEntry<bool> DropBackPack;
         public static ConfigEntry<bool> EnableClean;
         public static ConfigEntry<int> TimeToClean;
-        public static ConfigEntry<int> DistToClean;
         public static ConfigEntry<float> DropBackPackChance;
 
         public static ConfigEntry<bool> Deafness;
@@ -72,8 +72,6 @@ namespace RaidOverhaul.Configs
         public static ConfigEntry<RaidEvents> RandomEventsToEnable;
 
         public static ConfigEntry<DoorEvents> DoorEventsToEnable;
-
-        public static ConfigEntry<bool> TimeChanges;
 
         public static ConfigEntry<bool> SpecialReqFeatures;
 
@@ -94,7 +92,7 @@ namespace RaidOverhaul.Configs
                     {
                         IsAdvanced = false,
                         ShowRangeAsPercent = false,
-                        Order = 6,
+                        Order = 5,
                     }
                 )
             );
@@ -105,22 +103,6 @@ namespace RaidOverhaul.Configs
                 true,
                 new ConfigDescription(
                     "Enable the Exfil and Train Call Menu.",
-                    null,
-                    new ConfigurationManagerAttributes
-                    {
-                        IsAdvanced = false,
-                        ShowRangeAsPercent = false,
-                        Order = 5,
-                    }
-                )
-            );
-
-            TimeChanges = cfg.Bind(
-                "1. Core Events  (Changing Any Of These Options Requires Restart)",
-                "Time Changes",
-                false,
-                new ConfigDescription(
-                    "Enable the syncing of in game time to your irl time.",
                     null,
                     new ConfigurationManagerAttributes
                     {
@@ -223,17 +205,6 @@ namespace RaidOverhaul.Configs
 
             #region Body Clean Up
 
-            CleanBodiesAsap = cfg.Bind(
-                "4. Body Cleanup Configs",
-                "Maid Service",
-                true,
-                new ConfigDescription(
-                    "Clean bodies immediately. For when you go on too much of a killing spree.",
-                    null,
-                    new ConfigurationManagerAttributes { Order = 4, CustomDrawer = MaidService }
-                )
-            );
-
             EnableClean = cfg.Bind(
                 "4. Body Cleanup Configs",
                 "Enable Clean",
@@ -245,7 +216,7 @@ namespace RaidOverhaul.Configs
                     {
                         IsAdvanced = false,
                         ShowRangeAsPercent = false,
-                        Order = 3,
+                        Order = 2,
                     }
                 )
             );
@@ -253,26 +224,10 @@ namespace RaidOverhaul.Configs
             TimeToClean = cfg.Bind(
                 "4. Body Cleanup Configs",
                 "Time to Clean",
-                15,
+                60,
                 new ConfigDescription(
                     "The time to clean bodies calculated in minutes.",
-                    new AcceptableValueRange<int>(1, 60),
-                    new ConfigurationManagerAttributes
-                    {
-                        IsAdvanced = false,
-                        ShowRangeAsPercent = false,
-                        Order = 2,
-                    }
-                )
-            );
-
-            DistToClean = cfg.Bind(
-                "4. Body Cleanup Configs",
-                "Distance to Clean",
-                50,
-                new ConfigDescription(
-                    "How far away bodies should be for cleanup.",
-                    null,
+                    new AcceptableValueRange<int>(30, 90),
                     new ConfigurationManagerAttributes
                     {
                         IsAdvanced = false,
@@ -305,7 +260,7 @@ namespace RaidOverhaul.Configs
             DropBackPackChance = cfg.Bind(
                 "5. Bot Drop Configs",
                 "Backpack Drop Chance",
-                0.3f,
+                0.2f,
                 new ConfigDescription(
                     "Chance of bots dropping a backpack on death.",
                     new AcceptableValueRange<float>(0f, 1f),
@@ -333,7 +288,7 @@ namespace RaidOverhaul.Configs
                     {
                         IsAdvanced = false,
                         ShowRangeAsPercent = false,
-                        Order = 1,
+                        Order = 2,
                     }
                 )
             );
@@ -355,15 +310,6 @@ namespace RaidOverhaul.Configs
             );
 
             #endregion
-        }
-
-        public static void MaidService(ConfigEntryBase entry)
-        {
-            var button = GUILayout.Button("Maid Service", GUILayout.ExpandWidth(true));
-            if (button)
-            {
-                Patches.BodyCleanup.MaidServiceRun();
-            }
         }
     }
 }

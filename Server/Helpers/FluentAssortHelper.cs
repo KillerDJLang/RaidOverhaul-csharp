@@ -31,7 +31,7 @@ public class ROFluentTraderAssortHelper(DatabaseService databaseService, ISptLog
 
     public ROFluentTraderAssortHelper AddStackCount(int stackCount)
     {
-        _itemsToSell[0].Upd.StackObjectsCount = stackCount;
+        _itemsToSell[0].Upd!.StackObjectsCount = stackCount;
 
         return this;
     }
@@ -74,9 +74,9 @@ public class ROFluentTraderAssortHelper(DatabaseService databaseService, ISptLog
 
     public ROFluentTraderAssortHelper? Export(string traderId)
     {
-        var traderData = databaseService.GetTables().Traders.GetValueOrDefault(traderId);
+        var traderData = databaseService.GetTables().Traders.GetValueOrDefault(traderId)!;
+        var rootItemAddedId = _itemsToSell[0].Id;
 
-        var rootItemAddedId = _itemsToSell.FirstOrDefault().Id;
         if (traderData.Assort.Items.Exists(x => x.Id == rootItemAddedId))
         {
             logger.Error($"Unable to add complex item with item key: {_itemsToSell[0].Id}, key already in use");

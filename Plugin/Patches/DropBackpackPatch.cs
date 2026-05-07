@@ -1,22 +1,24 @@
 ﻿using System;
 using System.Reflection;
 using EFT;
-using RaidOverhaul.Configs;
+using HarmonyLib;
 using SPT.Reflection.Patching;
 
 namespace RaidOverhaul.Patches
 {
     internal class OnDeadPatch : ModulePatch
     {
+        private static readonly Random _random = new();
+
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(Player).GetMethod("OnDead", BindingFlags.Instance | BindingFlags.Public);
+            return AccessTools.Method(typeof(Player), nameof(Player.OnDead));
         }
 
         [PatchPostfix]
         private static void PatchPostFix(ref Player __instance)
         {
-            if (DJConfig.DropBackPack.Value && DJConfig.DropBackPackChance.Value > new Random().NextDouble())
+            if (ROPluginConfig.DropBackPack.Value && ROPluginConfig.DropBackPackChance.Value > _random.NextDouble())
             {
                 __instance.DropBackpack();
             }

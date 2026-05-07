@@ -6,10 +6,11 @@ using BepInEx;
 using BepInEx.Bootstrap;
 using BepInEx.Logging;
 using Comfort.Common;
+using DrakiaXYZ.BigBrain.Brains;
 using EFT;
-using EFT.UI;
+using HarmonyLib;
+using RaidOverhaul.Behavior.Layers;
 using RaidOverhaul.Checkers;
-using RaidOverhaul.Configs;
 using RaidOverhaul.Controllers;
 using RaidOverhaul.Fika;
 using RaidOverhaul.Helpers;
@@ -26,25 +27,34 @@ using UnityEngine;
 
 namespace RaidOverhaul
 {
-    [BepInDependency("com.arys.unitytoolkit", BepInDependency.DependencyFlags.HardDependency)]
+    [BepInIncompatibility(Utils.ROStandaloneKey)]
+    [BepInDependency(Utils.UnityToolkitKey, BepInDependency.DependencyFlags.HardDependency)]
+    [BepInDependency(Utils.BigBrainKey, BepInDependency.DependencyFlags.HardDependency)]
+    [BepInDependency(Utils.SAINKey, BepInDependency.DependencyFlags.HardDependency)]
     [BepInPlugin(ClientInfo.ROGUID, ClientInfo.ROPluginName, ClientInfo.PluginVersion)]
     public class Plugin : BaseUnityPlugin
     {
         public static string ModPath = Path.Combine(Environment.CurrentDirectory, "SPT", "user", "mods", "RaidOverhaul");
         public static readonly string PluginPath = Path.Combine(Environment.CurrentDirectory, "BepInEx", "plugins", "RaidOverhaul");
         public static readonly string ResourcePath = Path.Combine(PluginPath, "Resources");
-        internal static readonly List<string> _softDependancies = ["com.fika.core", "xyz.drakia.bigbrain", "me.sol.sain"];
+        internal static readonly List<string> _softDependancies = [Utils.FikaCoreKey];
 
-        private static GameObject _hook;
-        public static EventController _ecScript;
-        internal static DoorController _dcScript;
-        internal static SeasonalWeatherController _wScript;
-        internal static BodyCleanup _bcScript;
-        internal static InRaidUIController _smScript;
-        internal static DebugUIController _dbgScript;
+        public static GameObject UICanvasPrefab;
+        public static GameObject UIItemRowPrefab;
+        public static GameObject NotificationCanvasPrefab;
+        public static GameObject DebugCanvasPrefab;
+        public static GameObject EffectsCanvasPrefab;
+
+        public static AudioClip SoundAlarm;
+        public static AudioClip SoundHeartbeat;
+        public static AudioClip SoundButtonClick;
+        public static AudioClip SoundBeepGreen;
+        public static AudioClip SoundBeepRed;
+        public static AudioClip SoundBeepYellow;
+
         internal static ManualLogSource _log;
-
-        internal static ISession _session;
+        internal static PropertyInfo _abstractQuestControllerQuestsProp;
+        internal static MethodInfo _abstractQuestControllerGetMethod;
 
         public static GameWorld ROGameWorld
         {
@@ -66,8 +76,12 @@ namespace RaidOverhaul
             get { return ROPlayer.HandsController as Player.FirearmController; }
         }
 
+        internal static AbstractQuestControllerClass ROQuestController
+        {
+            get { return ROGameWorld.MainPlayer.AbstractQuestControllerClass; }
+        }
+
         private static bool RealismDetected { get; set; }
-        private static bool StandaloneDetected { get; set; }
         private static bool FikaDetected { get; set; }
 
         private void Awake()
@@ -82,178 +96,157 @@ namespace RaidOverhaul
                 throw new Exception("Missing Dependencies");
             }
 
-            if (Chainloader.PluginInfos.ContainsKey("com.fika.core"))
-            {
-                FikaDetected = true;
-            }
+            InitializeModDetections();
 
-            // Bind the configs
-            DJConfig.BindConfig(Config);
+            ROPluginConfig.BindConfig(Config);
 
             _log = Logger;
             Logger.LogInfo("Loading Raid Overhaul");
+
+            string bundlePath = Path.Combine(ResourcePath, "Bundles", "ui_elements_ro.nameless");
+            var uiBundle = AssetBundle.LoadFromFile(bundlePath);
+            if (uiBundle == null)
+            {
+                Logger.LogError("[RaidOverhaul] Failed to load ui_elements_ro bundle.");
+            }
+            else
+            {
+                UICanvasPrefab = uiBundle.LoadAsset<GameObject>("Canvas");
+                UIItemRowPrefab = uiBundle.LoadAsset<GameObject>("ItemRow");
+                NotificationCanvasPrefab = uiBundle.LoadAsset<GameObject>("NotificationCanvas");
+                DebugCanvasPrefab = uiBundle.LoadAsset<GameObject>("DebugCanvas");
+                uiBundle.Unload(false);
+            }
+
+            string effectsBundlePath = Path.Combine(ResourcePath, "Bundles", "effects_ro.nameless");
+            var effectsBundle = AssetBundle.LoadFromFile(effectsBundlePath);
+            if (effectsBundle == null)
+            {
+                Logger.LogError("[RaidOverhaul] Failed to load effects_ro bundle.");
+            }
+            else
+            {
+                EffectsCanvasPrefab = effectsBundle.LoadAsset<GameObject>("EffectsCanvas");
+                effectsBundle.Unload(false);
+            }
+
+            string audioBundlePath = Path.Combine(ResourcePath, "Sound", "audio_ro.nameless");
+            var audioBundle = AssetBundle.LoadFromFile(audioBundlePath);
+            if (audioBundle == null)
+            {
+                Logger.LogError("[RaidOverhaul] Failed to load audio_ro bundle.");
+            }
+            else
+            {
+                SoundAlarm = audioBundle.LoadAsset<AudioClip>("alarm_oneshot");
+                SoundHeartbeat = audioBundle.LoadAsset<AudioClip>("heartbeat");
+                SoundButtonClick = audioBundle.LoadAsset<AudioClip>("button_click");
+                SoundBeepGreen = audioBundle.LoadAsset<AudioClip>("beep_green");
+                SoundBeepRed = audioBundle.LoadAsset<AudioClip>("beep_red");
+                SoundBeepYellow = audioBundle.LoadAsset<AudioClip>("beep_yellow");
+            }
 
             ConfigController.EventConfig = Utils.Get<EventsConfig>("/RaidOverhaul/GetEventConfig");
             ConfigController.ServerConfig = Utils.Get<ServerConfigs>("/RaidOverhaul/GetServerConfig");
             ConfigController.DebugConfig = Utils.Get<DebugConfigs>("/RaidOverhaul/GetDebugConfig");
             ConfigController.SeasonConfig = Utils.Get<SeasonalConfig>("/RaidOverhaul/GetWeatherConfig");
-            //ConfigController.LegionConfig = Utils.Get<LegionProgressionConfig>("/RaidOverhaul/GetLegionConfig");
+            ConfigController.LegionConfig = Utils.Get<LegionProgressionConfig>("/RaidOverhaul/GetLegionConfig");
 
-            _hook = new GameObject("Event Object");
+            _abstractQuestControllerQuestsProp = AccessTools.Property(
+                typeof(AbstractQuestControllerClass),
+                nameof(AbstractQuestControllerClass.Quests)
+            );
+            _abstractQuestControllerGetMethod = AccessTools.Method(
+                _abstractQuestControllerQuestsProp.PropertyType,
+                "GetConditional",
+                new Type[] { typeof(string) }
+            );
 
-            _ecScript = _hook.GetOrAddComponent<EventController>();
-            _dcScript = _hook.GetOrAddComponent<DoorController>();
-            _wScript = _hook.GetOrAddComponent<SeasonalWeatherController>();
-            _bcScript = _hook.GetOrAddComponent<BodyCleanup>();
-            _smScript = _hook.GetOrAddComponent<InRaidUIController>();
-            if (ConfigController.DebugConfig.IsDev)
-            {
-                _dbgScript = _hook.GetOrAddComponent<DebugUIController>();
-            }
-
-            DontDestroyOnLoad(_hook);
-            _hook.SetActive(true);
-
-            Weighting.InitWeightings();
-
-            Utils.GetWeatherFields();
-
-            if (DJConfig.TimeChanges.Value)
+            if (ConfigController.ServerConfig.TimeChangesEnabled)
             {
                 new GlobalsPatch().Enable();
                 new EnableEntryPointPatch().Enable();
                 new UIPanelPatch().Enable();
                 new TimerUIPatch().Enable();
                 new FactoryTimerPanelPatch().Enable();
-                //new ExitTimerUIPatch().Enable();
+                new ExitTimerUIPatch().Enable();
                 new WeatherControllerPatch().Enable();
                 new WatchPatch().Enable();
+                new LocationTimeUIPatch().Enable();
             }
 
-            if (DJConfig.Deafness.Value && !RealismDetected)
+            if (ROPluginConfig.Deafness.Value && !RealismDetected)
             {
                 new DeafnessPatch().Enable();
                 new GrenadeDeafnessPatch().Enable();
             }
 
-            if (DJConfig.Concussion.Value && !RealismDetected)
+            if (ROPluginConfig.Concussion.Value && !RealismDetected)
             {
                 new ConcussionPatch().Enable();
             }
 
             //new KeyPatch().Enable();
             //new KeycardPatch().Enable();
+            new TarkovInitPatch().Enable();
             new GameWorldPatch().Enable();
             new OnDeadPatch().Enable();
             new RandomizeDefaultStatePatch().Enable();
-            new EventExfilPatch().Enable();
-            new BotNVGPatch().Enable();
+            if (ROPluginConfig.EnableClean.Value)
+            {
+                new AirdropLootOverridePatch().Enable();
+            }
 
             TryInitFikaAssembly();
-        }
-
-        private void Update()
-        {
-            if (_hook == null)
-            {
-                var foundObject = GameObject.Find("Event Object");
-                if (foundObject != null)
-                {
-                    _hook = foundObject;
-                    _ecScript = _hook.GetOrAddComponent<EventController>();
-                    _dcScript = _hook.GetOrAddComponent<DoorController>();
-                    _wScript = _hook.GetOrAddComponent<SeasonalWeatherController>();
-                    _bcScript = _hook.GetOrAddComponent<BodyCleanup>();
-                    _smScript = _hook.GetOrAddComponent<InRaidUIController>();
-                    if (ConfigController.DebugConfig.IsDev)
-                    {
-                        _dbgScript = _hook.GetOrAddComponent<DebugUIController>();
-                    }
-                }
-                else
-                {
-                    RecreateGameObject();
-                }
-            }
-
-            if (_ecScript != null && _ecScript.enabled)
-            {
-                _ecScript.ManualUpdate();
-            }
-
-            if (_dcScript != null && _dcScript.enabled)
-            {
-                _dcScript.ManualUpdate();
-            }
-
-            if (_wScript != null && _wScript.enabled)
-            {
-                _wScript.DoStorm();
-            }
-
-            if (_bcScript != null && _bcScript.enabled)
-            {
-                _bcScript.ManualUpdate();
-            }
-
-            if (_smScript != null && _smScript.enabled)
-            {
-                _smScript.ManualUpdate();
-            }
-
-            if (_dbgScript != null && _dbgScript.enabled)
-            {
-                _dbgScript.ManualUpdate();
-            }
-
-            if (Chainloader.PluginInfos.ContainsKey(Utils.RealismKey) && PreloaderUI.Instantiated && !RealismDetected)
-            {
-                RealismDetected = true;
-                if (ConfigController.DebugConfig.DebugMode)
-                {
-                    Utils.LogToServerConsole("Realism Detected, disabling ROs deafness and concussion mechanics.");
-                }
-            }
-
-            if (Chainloader.PluginInfos.ContainsKey(Utils.ROStandaloneKey) && PreloaderUI.Instantiated && !StandaloneDetected)
-            {
-                StandaloneDetected = true;
-                if (GameObject.Find("ErrorScreen"))
-                {
-                    PreloaderUI.Instance.CloseErrorScreen();
-                }
-
-                PreloaderUI.Instance.ShowErrorScreen(
-                    "Raid Overhaul Error",
-                    "Raid Overhaul is not compatible with Raid Overhaul Standalone. Install only one of the mods or errors will occur."
-                );
-            }
-
-            if (_session == null)
-            {
-                _session = ClientAppUtils.GetMainApp()?.GetClientBackEndSession();
-            }
-        }
-
-        private void RecreateGameObject()
-        {
-            _hook = new GameObject("Event Object");
-            _ecScript = _hook.GetOrAddComponent<EventController>();
-            _dcScript = _hook.GetOrAddComponent<DoorController>();
-            _wScript = _hook.GetOrAddComponent<SeasonalWeatherController>();
-            _bcScript = _hook.GetOrAddComponent<BodyCleanup>();
-            _smScript = _hook.GetOrAddComponent<InRaidUIController>();
-            if (ConfigController.DebugConfig.IsDev)
-            {
-                _dbgScript = _hook.GetOrAddComponent<DebugUIController>();
-            }
-            DontDestroyOnLoad(_hook);
-            _hook.SetActive(true);
         }
 
         private void OnEnable()
         {
             FikaBridge.PluginEnable();
+        }
+
+        internal static ISession GetSession()
+        {
+            return ClientAppUtils.GetMainApp()?.GetClientBackEndSession();
+        }
+
+        public static EventController GetEventController()
+        {
+            return ClientAppUtils.GetMainApp()?.GetComponent<EventController>();
+        }
+
+        private void InitializeModDetections()
+        {
+            if (Chainloader.PluginInfos.ContainsKey(Utils.FikaCoreKey))
+            {
+                FikaDetected = true;
+            }
+            if (Chainloader.PluginInfos.ContainsKey(Utils.RealismKey))
+            {
+                RealismDetected = true;
+            }
+        }
+
+        internal static void RegisterLegionBrainLayers()
+        {
+            var brains = new List<string> { "PMC", "ExUsec", "Assault", "PmcUsec", "PmcBear", "PmcUSEC", "PmcBEAR" };
+            var types = new List<WildSpawnType> { (WildSpawnType)199, (WildSpawnType)200 };
+            BrainManager.AddCustomLayer(typeof(LegionFallbackLayer), brains, 65, types);
+            BrainManager.AddCustomLayer(typeof(LegionBreachLayer), brains, 60, types);
+            BrainManager.AddCustomLayer(typeof(LegionSuppressFlankLayer), brains, 55, types);
+            BrainManager.AddCustomLayer(typeof(LegionGroupLayer), brains, 50, types);
+            BrainManager.AddCustomLayer(typeof(LegionAmbushLayer), brains, 45, types);
+            BrainManager.AddCustomLayer(typeof(LegionSweepLayer), brains, 40, types);
+        }
+
+        internal static void RegisterSupportBrainLayers()
+        {
+            var brains = new List<string> { "PMC", "ExUsec", "Assault", "PmcUsec", "PmcBear", "PmcUSEC", "PmcBEAR" };
+            var types = new List<WildSpawnType> { (WildSpawnType)201, (WildSpawnType)202 };
+            BrainManager.AddCustomLayer(typeof(SupportDespawnLayer), brains, 65, types);
+            BrainManager.AddCustomLayer(typeof(SupportBreachLayer), brains, 60, types);
+            BrainManager.AddCustomLayer(typeof(SupportSuppressFlankLayer), brains, 55, types);
+            BrainManager.AddCustomLayer(typeof(SupportGuardLayer), brains, 50, types);
         }
 
         private static void TryInitFikaAssembly()

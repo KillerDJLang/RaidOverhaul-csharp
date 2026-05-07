@@ -19,8 +19,8 @@ public class ConfigFile
     [JsonPropertyName("EnableCustomItems")]
     public bool EnableCustomItems { get; set; }
 
-    [JsonPropertyName("BackupProfile")]
-    public bool BackupProfile { get; set; }
+    [JsonPropertyName("TimeChangesEnabled")]
+    public bool TimeChangesEnabled { get; set; }
 
     [JsonPropertyName("ReduceFoodAndHydroDegradeEnabled")]
     public bool ReduceFoodAndHydroDegradeEnabled { get; set; }
@@ -294,6 +294,9 @@ public class EventsConfigFile
 
     [JsonPropertyName("InvasionEvent")]
     public int InvasionEvent { get; set; }
+
+    [JsonPropertyName("HuntedEvent")]
+    public int HuntedEvent { get; set; }
 
     [JsonPropertyName("RandomEventRangeMinimum")]
     public float RandomEventRangeMinimum { get; set; }

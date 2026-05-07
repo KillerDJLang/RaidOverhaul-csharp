@@ -1,27 +1,42 @@
 using System;
 using System.IO;
 using Newtonsoft.Json;
-using RaidOverhaul.Controllers;
-using RaidOverhaul.Models;
 
 namespace RaidOverhaul.Helpers
 {
     public class JsonHandler
     {
-        public static void ReadFlagFile(string fileName, string resourceFolderName)
+        public static T ReadFlagFile<T>(string fileName, string resourceFolderName)
         {
             var filePath = Path.Combine(Plugin.ResourcePath, resourceFolderName, fileName);
             filePath += ".json";
             var json = File.ReadAllText(filePath);
 
-            var data = JsonConvert.DeserializeObject<Flags>(json);
-
-            ConfigController.Flags = data;
+            return JsonConvert.DeserializeObject<T>(json);
         }
 
         private static string SerializeObject(object data)
         {
             return JsonConvert.SerializeObject(data, Formatting.Indented);
+        }
+
+        public static void CreateFlagFile<T>(string fileName, string resourceFolderName)
+            where T : new()
+        {
+            var filePath = Path.Combine(Plugin.ResourcePath, resourceFolderName, fileName);
+            filePath += ".json";
+            var jsonString = SerializeObject(new T());
+
+            if (!Directory.Exists(Path.GetDirectoryName(filePath)))
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+            }
+            File.Create(filePath).Dispose();
+
+            var streamWriter = new StreamWriter(filePath);
+            streamWriter.Write(jsonString);
+            streamWriter.Flush();
+            streamWriter.Close();
         }
 
         public static bool CheckFilePath(string fileName, string resourceFolderName)
@@ -32,7 +47,7 @@ namespace RaidOverhaul.Helpers
             return File.Exists(filePath);
         }
 
-        public static void SaveToJson(object data, string fileName, string resourceFolderName)
+        public static void SaveToJson<T>(T data, string fileName, string resourceFolderName)
         {
             if (data == null)
             {
@@ -41,31 +56,25 @@ namespace RaidOverhaul.Helpers
 
             try
             {
-                if (!CheckFilePath(fileName, resourceFolderName))
-                {
-                    var filePath = Path.Combine(Plugin.ResourcePath, resourceFolderName, fileName);
-                    filePath += ".json";
-                    var jsonString = SerializeObject(data);
-                    File.Create(filePath).Dispose();
+                var filePath = Path.Combine(Plugin.ResourcePath, resourceFolderName, fileName);
+                filePath += ".json";
+                var jsonString = SerializeObject(data);
 
-                    var streamWriter = new StreamWriter(filePath);
-                    streamWriter.Write(jsonString);
-                    streamWriter.Flush();
-                    streamWriter.Close();
-                }
-                else if (CheckFilePath(fileName, resourceFolderName))
+                if (!Directory.Exists(Path.GetDirectoryName(filePath)))
                 {
-                    var filePath = Path.Combine(Plugin.ResourcePath, resourceFolderName, fileName);
-                    filePath += ".json";
-                    var jsonString = SerializeObject(data);
+                    Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+                }
+
+                if (File.Exists(filePath))
+                {
                     File.Delete(filePath);
-                    File.Create(filePath).Dispose();
-
-                    var streamWriter = new StreamWriter(filePath);
-                    streamWriter.Write(jsonString);
-                    streamWriter.Flush();
-                    streamWriter.Close();
                 }
+
+                File.Create(filePath).Dispose();
+                var streamWriter = new StreamWriter(filePath);
+                streamWriter.Write(jsonString);
+                streamWriter.Flush();
+                streamWriter.Close();
             }
             catch (Exception ex)
             {

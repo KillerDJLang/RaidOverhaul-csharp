@@ -1,34 +1,57 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using BepInEx;
-using Comfort.Common;
 using EFT;
 using EFT.InventoryLogic;
 using RaidOverhaul.Helpers;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+using static RaidOverhaul.Plugin;
 
 namespace RaidOverhaul.Controllers
 {
     public class DebugUIController : MonoBehaviour
     {
         private bool _menuVisible;
-        private Rect _windowRect = new Rect(Screen.width / 2 - 225, Screen.height / 2 - 350, 450, 700);
-        private Vector2 _scrollPosition;
-        private GUIStyle _windowStyle;
-        private GUIStyle _buttonStyle;
-        private GUIStyle _labelStyle;
-        private GUIStyle _headerStyle;
-        private GUIStyle _dropdownButtonStyle;
-        private GUIStyle _dropdownItemStyle;
-        private bool _stylesInitialized;
-        private bool _hasInitialized;
+        private bool _tookInputOwnership;
 
         private EventController _eventController;
 
-        private int _selectedBossIndex;
-        private bool _bossDropdownOpen;
-        private Vector2 _bossDropdownScroll;
+        private GameObject _menuPrefab;
+        private GameObject _menuInstance;
+        private AudioSource _audioSource;
+
+        private Button _healPlayerButton;
+        private Button _damageEventButton;
+        private Button _metabolismEventButton;
+        private Button _berserkEventButton;
+        private Button _weightEventButton;
+        private Button _skillEventButton;
+
+        private Button _armorRepairButton;
+        private Button _malfunctionButton;
+
+        private Button _airdropButton;
+        private Button _triggerCleanupButton;
+        private Button _blackoutButton;
+        private Button _lockdownButton;
+        private Button _artilleryButton;
+        private Button _invasionButton;
+        private Button _huntedButton;
+        private Button _funnyButton;
+
+        private Button _loyaltyLevelButton;
+        private Button _maxLoyaltyButton;
+        private Button _correctRepButton;
+        private Button _pmcExfilButton;
+        private Button _exfilNowButton;
+        private Button _runTrainButton;
+
+        private Button _logWeaponIDsButton;
+        private Button _logItemIDsButton;
+
+        private TMP_Dropdown _bossDropdown;
+        private Button _spawnBossButton;
 
         // Matches the order of the BossInvasionConfig list so the indexes align when selecting from the dropdown menu
         // This ensures that the correct boss config is applied when a boss is selected from the debug UI
@@ -65,7 +88,7 @@ namespace RaidOverhaul.Controllers
                     {
                         BossEscortType = WildSpawnType.followerBoar,
                         BossEscortAmount = 4,
-                        BossEscortDifficult = new[] { "normal", "normal", "normal", "normal" },
+                        BossEscortDifficult = new[] { "normal" },
                     },
                     new WildSpawnSupports
                     {
@@ -103,19 +126,19 @@ namespace RaidOverhaul.Controllers
                     {
                         BossEscortType = WildSpawnType.followerGluharAssault,
                         BossEscortAmount = 2,
-                        BossEscortDifficult = new[] { "normal", "normal" },
+                        BossEscortDifficult = new[] { "normal" },
                     },
                     new WildSpawnSupports
                     {
                         BossEscortType = WildSpawnType.followerGluharSecurity,
                         BossEscortAmount = 2,
-                        BossEscortDifficult = new[] { "normal", "normal" },
+                        BossEscortDifficult = new[] { "normal" },
                     },
                     new WildSpawnSupports
                     {
                         BossEscortType = WildSpawnType.followerGluharScout,
                         BossEscortAmount = 2,
-                        BossEscortDifficult = new[] { "normal", "normal" },
+                        BossEscortDifficult = new[] { "normal" },
                     },
                 },
             },
@@ -173,13 +196,13 @@ namespace RaidOverhaul.Controllers
                     {
                         BossEscortType = WildSpawnType.followerKolontayAssault,
                         BossEscortAmount = 2,
-                        BossEscortDifficult = new[] { "normal", "normal" },
+                        BossEscortDifficult = new[] { "normal" },
                     },
                     new WildSpawnSupports
                     {
                         BossEscortType = WildSpawnType.followerKolontaySecurity,
                         BossEscortAmount = 2,
-                        BossEscortDifficult = new[] { "normal", "normal" },
+                        BossEscortDifficult = new[] { "normal" },
                     },
                 },
             },
@@ -241,18 +264,13 @@ namespace RaidOverhaul.Controllers
 
         private const KeyCode TOGGLE_KEY = KeyCode.F8;
 
-        public static Vector2 ScaledPivot
+        private void Awake()
         {
-            get { return GetScaling(); }
+            _menuPrefab = DebugCanvasPrefab;
+            _eventController = GetComponent<EventController>();
         }
 
-        private static Vector2 GetScaling()
-        {
-            float scaling = Mathf.Min(Screen.width / 1920, Screen.height / 1080);
-            return new Vector2(scaling, scaling);
-        }
-
-        public void ManualUpdate()
+        private void Update()
         {
             if (!ConfigController.DebugConfig.IsDev)
             {
@@ -261,12 +279,6 @@ namespace RaidOverhaul.Controllers
                     CloseMenu();
                 }
                 return;
-            }
-
-            if (!_hasInitialized)
-            {
-                _eventController = Plugin._ecScript;
-                _hasInitialized = true;
             }
 
             if (_menuVisible)
@@ -306,356 +318,276 @@ namespace RaidOverhaul.Controllers
             }
             else
             {
-                _menuVisible = true;
+                ShowMenu();
             }
+        }
+
+        private void PlayClick()
+        {
+            _audioSource?.PlayOneShot(SoundButtonClick);
+        }
+
+        private void ShowMenu()
+        {
+            if (_menuInstance == null)
+            {
+                _menuInstance = Instantiate(_menuPrefab);
+                DontDestroyOnLoad(_menuInstance);
+                _audioSource = _menuInstance.GetComponent<AudioSource>();
+                WireUpUI();
+            }
+            EventsEffectsController.Instance?.ShowCornerGlowEffect();
+            _menuInstance.SetActive(true);
+            _menuVisible = true;
+            _tookInputOwnership = !GamePlayerOwner.IgnoreInputInNPCDialog;
+            if (_tookInputOwnership)
+            {
+                GamePlayerOwner.SetIgnoreInputInNPCDialog(true);
+            }
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
 
         private void CloseMenu()
         {
             _menuVisible = false;
+            if (_tookInputOwnership)
+            {
+                GamePlayerOwner.SetIgnoreInputInNPCDialog(false);
+            }
+            _tookInputOwnership = false;
+            if (_menuInstance != null)
+            {
+                _menuInstance.SetActive(false);
+            }
         }
 
-        private void InitializeStyles()
+        private void WireUpUI()
         {
-            if (_stylesInitialized)
+            var es = _menuInstance.GetComponentInChildren<UnityEngine.EventSystems.EventSystem>();
+            if (es != null && UnityEngine.EventSystems.EventSystem.current != null && UnityEngine.EventSystems.EventSystem.current != es)
             {
-                return;
+                es.gameObject.SetActive(false);
             }
 
-            _windowStyle = new GUIStyle(GUI.skin.window)
+            var bg = _menuInstance.transform.Find("Background");
+            var content = bg.Find("Scroll View/Viewport/Content");
+
+            var playerSection = content.Find("PlayerEventsSection");
+            var equipSection = content.Find("EquipmentEventsSection");
+            var worldSection = content.Find("WorldEventsSection");
+            var traderSection = content.Find("TraderExtractionSection");
+            var utilSection = content.Find("UtilitiesSection");
+            var spawnSection = content.Find("SpawnBossesSection");
+
+            _healPlayerButton = playerSection.Find("HealPlayerButton").GetComponent<Button>();
+            _damageEventButton = playerSection.Find("DamageEventButton").GetComponent<Button>();
+            _metabolismEventButton = playerSection.Find("MetabolismEventButton").GetComponent<Button>();
+            _berserkEventButton = playerSection.Find("BerserkEventButton").GetComponent<Button>();
+            _weightEventButton = playerSection.Find("WeightEventButton").GetComponent<Button>();
+            _skillEventButton = playerSection.Find("SkillEventButton").GetComponent<Button>();
+
+            _armorRepairButton = equipSection.Find("ArmorRepairButton").GetComponent<Button>();
+            _malfunctionButton = equipSection.Find("MalfunctionButton").GetComponent<Button>();
+
+            _airdropButton = worldSection.Find("AirdropButton").GetComponent<Button>();
+            _triggerCleanupButton = worldSection.Find("TriggerCleanupButton").GetComponent<Button>();
+            _blackoutButton = worldSection.Find("BlackoutButton").GetComponent<Button>();
+            _lockdownButton = worldSection.Find("LockdownButton").GetComponent<Button>();
+            _artilleryButton = worldSection.Find("ArtilleryButton").GetComponent<Button>();
+            _invasionButton = worldSection.Find("InvasionButton").GetComponent<Button>();
+            _huntedButton = worldSection.Find("HuntedButton").GetComponent<Button>();
+            _funnyButton = worldSection.Find("FunnyButton").GetComponent<Button>();
+
+            _loyaltyLevelButton = traderSection.Find("LoyaltyLevelButton").GetComponent<Button>();
+            _maxLoyaltyButton = traderSection.Find("MaxLoyaltyButton").GetComponent<Button>();
+            _correctRepButton = traderSection.Find("CorrectRepButton").GetComponent<Button>();
+            _pmcExfilButton = traderSection.Find("PmcExfilButton").GetComponent<Button>();
+            _exfilNowButton = traderSection.Find("ExfilNowButton").GetComponent<Button>();
+            _runTrainButton = traderSection.Find("RunTrainButton").GetComponent<Button>();
+
+            _logWeaponIDsButton = utilSection.Find("LogWeaponIDsButton").GetComponent<Button>();
+            _logItemIDsButton = utilSection.Find("LogItemIDsButton").GetComponent<Button>();
+
+            _spawnBossButton = spawnSection.Find("SpawnBossButton").GetComponent<Button>();
+            _bossDropdown = spawnSection.Find("BossDropdown").GetComponent<TMP_Dropdown>();
+            _bossDropdown.ClearOptions();
+            _bossDropdown.AddOptions(new List<string>(_bossDisplayNames));
+            _bossDropdown.value = 0;
+
+            var captionText = _bossDropdown.captionText;
+            if (captionText != null)
             {
-                normal = { background = MakeTex(2, 2, new Color(0.1f, 0.1f, 0.1f, 0.95f)) },
-                padding = new RectOffset(10, 10, 20, 10),
-            };
-
-            _buttonStyle = new GUIStyle(GUI.skin.button)
-            {
-                normal = { background = MakeTex(2, 2, new Color(0.3f, 0.3f, 0.3f, 0.9f)), textColor = Color.white },
-                hover = { background = MakeTex(2, 2, new Color(0.4f, 0.4f, 0.9f)), textColor = Color.white },
-                active = { background = MakeTex(2, 2, new Color(0.2f, 0.2f, 0.2f, 0.9f)), textColor = Color.white },
-                fontSize = 14,
-                fontStyle = FontStyle.Bold,
-                alignment = TextAnchor.MiddleCenter,
-                padding = new RectOffset(10, 10, 5, 5),
-            };
-
-            _labelStyle = new GUIStyle(GUI.skin.label)
-            {
-                normal = { textColor = Color.white },
-                fontSize = 13,
-                alignment = TextAnchor.MiddleLeft,
-                wordWrap = true,
-            };
-
-            _headerStyle = new GUIStyle(GUI.skin.label)
-            {
-                normal = { textColor = new Color(1f, 0.84f, 0f) },
-                fontSize = 16,
-                fontStyle = FontStyle.Bold,
-                alignment = TextAnchor.MiddleCenter,
-            };
-
-            _dropdownButtonStyle = new GUIStyle(GUI.skin.button)
-            {
-                normal = { background = MakeTex(2, 2, new Color(0.25f, 0.25f, 0.25f, 0.9f)), textColor = Color.white },
-                hover = { background = MakeTex(2, 2, new Color(0.35f, 0.35f, 0.35f, 0.9f)), textColor = Color.white },
-                active = { background = MakeTex(2, 2, new Color(0.2f, 0.2f, 0.2f, 0.9f)), textColor = Color.white },
-                fontSize = 13,
-                alignment = TextAnchor.MiddleLeft,
-                padding = new RectOffset(10, 10, 5, 5),
-            };
-
-            _dropdownItemStyle = new GUIStyle(GUI.skin.button)
-            {
-                normal = { background = MakeTex(2, 2, new Color(0.2f, 0.2f, 0.2f, 0.95f)), textColor = Color.white },
-                hover = { background = MakeTex(2, 2, new Color(0.3f, 0.3f, 0.8f)), textColor = Color.white },
-                active = { background = MakeTex(2, 2, new Color(0.15f, 0.15f, 0.15f, 0.95f)), textColor = Color.white },
-                fontSize = 13,
-                alignment = TextAnchor.MiddleLeft,
-                padding = new RectOffset(15, 10, 4, 4),
-            };
-
-            _stylesInitialized = true;
-        }
-
-        private Texture2D MakeTex(int width, int height, Color col)
-        {
-            Color[] pix = new Color[width * height];
-            for (int i = 0; i < pix.Length; i++)
-            {
-                pix[i] = col;
-            }
-
-            Texture2D result = new Texture2D(width, height);
-            result.SetPixels(pix);
-            result.Apply();
-            return result;
-        }
-
-        private void OnGUI()
-        {
-            if (!_menuVisible)
-            {
-                return;
-            }
-
-            if (Event.current.type == EventType.KeyDown)
-            {
-                if (Event.current.keyCode == KeyCode.Escape)
+                float maxWidth = 0f;
+                foreach (var name in _bossDisplayNames)
                 {
-                    CloseMenu();
-                    Event.current.Use();
-                    return;
-                }
-
-                if (Event.current.keyCode == TOGGLE_KEY)
-                {
-                    CloseMenu();
-                    Event.current.Use();
-                    return;
-                }
-            }
-
-            InitializeStyles();
-
-            _windowRect = GUILayout.Window(
-                64196,
-                _windowRect,
-                DrawWindow,
-                "Debug Menu",
-                _windowStyle,
-                GUILayout.MinWidth(450),
-                GUILayout.MinHeight(700)
-            );
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-            GUIUtility.ScaleAroundPivot(ScaledPivot, Vector2.zero);
-            UnityInput.Current.ResetInputAxes();
-        }
-
-        private void DrawWindow(int windowID)
-        {
-            GUILayout.BeginVertical();
-
-            GUILayout.Label("Debug Actions", _headerStyle);
-            GUILayout.Space(10);
-
-            _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, GUILayout.ExpandHeight(true));
-
-            DrawSection(
-                "Player Events",
-                () =>
-                {
-                    DrawButton("Heal Player", () => _eventController.DoHealPlayer());
-                    DrawButton("Damage Event", () => _eventController.DoDamageEvent());
-                    DrawButton("Metabolism Event", () => _eventController.DoMetabolismEvent());
-                    DrawButton("Berserk Event", () => _eventController.DoBerserkEventWrapper());
-                    DrawButton("Weight Event", () => _eventController.DoWeightEventWrapper());
-                    DrawButton("Skill Event", () => _eventController.DoSkillEvent());
-                }
-            );
-
-            GUILayout.Space(10);
-
-            DrawSection(
-                "Equipment Events",
-                () =>
-                {
-                    DrawButton("Armor Repair", () => _eventController.DoArmorRepair());
-                    DrawButton("Malfunction Event", () => _eventController.DoMalfEventWrapper());
-                }
-            );
-
-            GUILayout.Space(10);
-
-            DrawSection(
-                "World Events",
-                () =>
-                {
-                    DrawButton("Airdrop Event", () => _eventController.DoAirdropEvent());
-                    DrawButton("Blackout Event", () => _eventController.DoBlackoutEventWrapper());
-                    DrawButton("Lockdown Event", () => _eventController.DoLockDownEventWrapper());
-                    DrawButton("Artillery Event", () => _eventController.DoArtyEventWrapper());
-                    DrawButton("Invasion Event", () => _eventController.StartInvasion());
-                    DrawButton("Funny Event", () => _eventController.DoFunnyWrapper());
-                }
-            );
-
-            GUILayout.Space(10);
-
-            DrawSection(
-                "Trader & Extraction",
-                () =>
-                {
-                    DrawButton("Loyalty Level Event", () => _eventController.DoLLEvent());
-                    DrawButton("Max Loyalty Level", () => _eventController.DoMaxLLEvent());
-                    DrawButton("Correct Rep", () => _eventController.CorrectRep());
-                    DrawButton("PMC Exfil Event", () => _eventController.DoPmcExfilEventWrapper());
-                    DrawButton("Exfil Now", () => _eventController.ExfilNow());
-                    DrawButton("Run Train", () => _eventController.RunTrainWrapper());
-                }
-            );
-
-            GUILayout.Space(10);
-
-            DrawSection(
-                "Utilities",
-                () =>
-                {
-                    DrawButton("Log All Weapon IDs", GetAllWeaponIDs);
-                    DrawButton("Log All Item IDs", GetAllItemIDs);
-                }
-            );
-
-            GUILayout.Space(10);
-
-            DrawSection(
-                "Spawn Bosses",
-                () =>
-                {
-                    GUILayout.Label("Select Boss:", _labelStyle);
-                    GUILayout.Space(3);
-
-                    if (GUILayout.Button(_bossDisplayNames[_selectedBossIndex] + "  ▼", _dropdownButtonStyle, GUILayout.Height(30)))
+                    float w = captionText.GetPreferredValues(name).x;
+                    if (w > maxWidth)
                     {
-                        _bossDropdownOpen = !_bossDropdownOpen;
+                        maxWidth = w;
                     }
-
-                    if (_bossDropdownOpen)
-                    {
-                        _bossDropdownScroll = GUILayout.BeginScrollView(_bossDropdownScroll, GUILayout.Height(150));
-                        for (int i = 0; i < _bossDisplayNames.Length; i++)
-                        {
-                            string label = _selectedBossIndex == i ? "► " + _bossDisplayNames[i] : "   " + _bossDisplayNames[i];
-                            if (GUILayout.Button(label, _dropdownItemStyle, GUILayout.Height(26)))
-                            {
-                                _selectedBossIndex = i;
-                                _bossDropdownOpen = false;
-                            }
-                        }
-                        GUILayout.EndScrollView();
-                    }
-
-                    GUILayout.Space(5);
-                    DrawButton("Spawn Selected Boss", () => SpawnBoss(_bossSpawnConfigs[_selectedBossIndex]));
                 }
-            );
+                var dropdownRect = _bossDropdown.GetComponent<RectTransform>();
+                dropdownRect.sizeDelta = new Vector2(maxWidth + 50f, dropdownRect.sizeDelta.y);
+            }
 
-            GUILayout.EndScrollView();
-
-            GUILayout.Space(10);
-
-            GUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
-            GUILayout.Label($"Press ESC or {TOGGLE_KEY} to close", _labelStyle);
-            GUILayout.FlexibleSpace();
-            GUILayout.EndHorizontal();
-
-            GUILayout.EndVertical();
-
-            GUI.DragWindow(new Rect(0, 0, 10000, 20));
-        }
-
-        private void DrawSection(string title, Action drawContent)
-        {
-            GUILayout.BeginVertical(GUI.skin.box);
-            GUILayout.Label(title, _headerStyle);
-            GUILayout.Space(5);
-            drawContent();
-            GUILayout.EndVertical();
-        }
-
-        private void DrawButton(string label, Action onClick)
-        {
-            if (_eventController != null && GUILayout.Button(label, _buttonStyle, GUILayout.Height(35)))
+            _healPlayerButton.onClick.AddListener(() =>
             {
-                onClick();
+                PlayClick();
+                _eventController.DoHealPlayer();
+            });
+            _damageEventButton.onClick.AddListener(() =>
+            {
+                PlayClick();
+                _eventController.DoDamageEvent();
+            });
+            _metabolismEventButton.onClick.AddListener(() =>
+            {
+                PlayClick();
+                _eventController.DoMetabolismEvent();
+            });
+            _berserkEventButton.onClick.AddListener(() =>
+            {
+                PlayClick();
+                _eventController.DoBerserkEventWrapper();
+            });
+            _weightEventButton.onClick.AddListener(() =>
+            {
+                PlayClick();
+                _eventController.DoWeightEventWrapper();
+            });
+            _skillEventButton.onClick.AddListener(() =>
+            {
+                PlayClick();
+                _eventController.DoSkillEvent();
+            });
+            _armorRepairButton.onClick.AddListener(() =>
+            {
+                PlayClick();
+                _eventController.DoArmorRepair();
+            });
+            _malfunctionButton.onClick.AddListener(() =>
+            {
+                PlayClick();
+                _eventController.DoMalfEventWrapper();
+            });
+            _airdropButton.onClick.AddListener(() =>
+            {
+                PlayClick();
+                _eventController.DoAirdropEvent();
+            });
+            _triggerCleanupButton.onClick.AddListener(() =>
+            {
+                PlayClick();
+                _eventController.TriggerManualCleanup();
+            });
+            _blackoutButton.onClick.AddListener(() =>
+            {
+                PlayClick();
+                _eventController.DoBlackoutEventWrapper();
+            });
+            _lockdownButton.onClick.AddListener(() =>
+            {
+                PlayClick();
+                _eventController.DoLockDownEventWrapper();
+            });
+            _artilleryButton.onClick.AddListener(() =>
+            {
+                PlayClick();
+                _eventController.DoArtyEventWrapper();
+            });
+            _invasionButton.onClick.AddListener(() =>
+            {
+                PlayClick();
+                _eventController.StartInvasion();
+            });
+            _huntedButton.onClick.AddListener(() =>
+            {
+                PlayClick();
+                _eventController.DoHuntedEventWrapper();
+            });
+            _funnyButton.onClick.AddListener(() =>
+            {
+                PlayClick();
+                _eventController.DoFunnyWrapper();
+            });
+            _loyaltyLevelButton.onClick.AddListener(() =>
+            {
+                PlayClick();
+                _eventController.DoLLEvent();
+            });
+            _maxLoyaltyButton.onClick.AddListener(() =>
+            {
+                PlayClick();
+                _eventController.DoMaxLLEvent();
+            });
+            _correctRepButton.onClick.AddListener(() =>
+            {
+                PlayClick();
+                _eventController.CorrectRep();
+            });
+            _pmcExfilButton.onClick.AddListener(() =>
+            {
+                PlayClick();
+                _eventController.DoPmcExfilEventWrapper();
+            });
+            _exfilNowButton.onClick.AddListener(() =>
+            {
+                PlayClick();
+                _eventController.ExfilNow();
+            });
+            _runTrainButton.onClick.AddListener(() =>
+            {
+                PlayClick();
+                _eventController.RunTrainWrapper();
+            });
+            _logWeaponIDsButton.onClick.AddListener(() =>
+            {
+                PlayClick();
+                GetAllWeaponIDs();
+            });
+            _logItemIDsButton.onClick.AddListener(() =>
+            {
+                PlayClick();
+                GetAllItemIDs();
+            });
+            _spawnBossButton.onClick.AddListener(() =>
+            {
+                PlayClick();
+                Utils.SpawnBoss(_bossSpawnConfigs[_bossDropdown.value]);
+            });
+        }
+
+        private void OnDestroy()
+        {
+            if (_menuInstance != null)
+            {
+                Destroy(_menuInstance);
             }
         }
 
         private static void GetAllWeaponIDs()
         {
-            var weapons = Plugin._session.Profile.Inventory?.AllRealPlayerItems;
+            var weapons = GetSession()?.Profile.Inventory?.AllRealPlayerItems;
             weapons = weapons.Where(x => x is Weapon);
 
             foreach (var weapon in weapons)
             {
-                Plugin._log.LogInfo($"Template ID: {weapon.TemplateId}, locale name: {weapon.LocalizedName()}");
+                _log.LogInfo($"Template ID: {weapon.TemplateId}, locale name: {weapon.LocalizedName()}");
                 Utils.LogToServerConsole($"Template ID: {weapon.TemplateId}, locale name: {weapon.LocalizedName()}");
             }
         }
 
         private static void GetAllItemIDs()
         {
-            var items = Plugin._session.Profile.Inventory?.AllRealPlayerItems;
+            var items = GetSession()?.Profile.Inventory?.AllRealPlayerItems;
             items = items.Where(x => x is Item);
 
             foreach (var item in items)
             {
-                Plugin._log.LogInfo($"Template ID: {item.TemplateId}, locale name: {item.LocalizedName()}");
+                _log.LogInfo($"Template ID: {item.TemplateId}, locale name: {item.LocalizedName()}");
                 Utils.LogToServerConsole($"Template ID: {item.TemplateId}, locale name: {item.LocalizedName()}");
             }
-        }
-
-        private static void SpawnBoss(BossInvasionConfig bossConfig)
-        {
-            var spawner = Singleton<IBotGame>.Instance?.BotsController?.BotSpawner;
-            if (spawner == null)
-            {
-                return;
-            }
-
-            var bossZones = spawner.SpawnZones(false).Where(z => z.CanSpawnBoss).ToList();
-            if (bossZones.Count == 0)
-            {
-                return;
-            }
-
-            var zone = bossZones[new System.Random().Next(bossZones.Count)];
-
-            var wave = new BossLocationSpawn
-            {
-                BossName = bossConfig.BossName,
-                BossType = bossConfig.BossType,
-                BossChance = 100f,
-                BossPlayer = false,
-                BossDifficult = "normal",
-                BossDif = BotDifficulty.normal,
-                BossZone = zone.NameZone,
-                BornZone = zone.NameZone,
-                BossEscortType = bossConfig.BossEscorts,
-                EscortType = bossConfig.BossEscortType,
-                BossEscortAmount = bossConfig.BossEscortCount.ToString(),
-                EscortCount = bossConfig.BossEscortCount,
-                BossEscortDifficult = "normal",
-                EscortDif = BotDifficulty.normal,
-                Supports = bossConfig.AdditionalSupports,
-                ForceSpawn = true,
-                IgnoreMaxBots = true,
-                ShallSpawn = true,
-                Time = -1f,
-                TriggerType = SpawnTriggerType.none,
-                TriggerId = "",
-                TriggerName = "",
-            };
-
-            if (bossConfig.AdditionalSupports != null && bossConfig.AdditionalSupports.Length > 0)
-            {
-                wave.SubDatas = new List<BossLocationSpawnSubData>();
-                int totalEscorts = bossConfig.BossEscortCount;
-
-                foreach (var support in bossConfig.AdditionalSupports)
-                {
-                    var difficulty = (BotDifficulty)Enum.Parse(typeof(BotDifficulty), support.BossEscortDifficult[0]);
-                    var subData = new BossLocationSpawnSubData(support.BossEscortAmount, support.BossEscortType, difficulty);
-                    wave.SubDatas.Add(subData);
-                    totalEscorts += subData.BossEscortAmount;
-                }
-
-                wave.EscortCount = totalEscorts;
-            }
-
-            spawner.ActivateBotsByWave(wave);
         }
     }
 }

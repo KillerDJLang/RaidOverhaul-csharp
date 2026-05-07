@@ -1,11 +1,16 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Threading.Tasks;
 using EFT;
+using EFT.UI;
 using EFT.UI.BattleTimer;
 using EFT.UI.Map;
 using EFT.UI.Matchmaker;
 using HarmonyLib;
+using JsonType;
 using SPT.Reflection.Patching;
 using TMPro;
 
@@ -46,7 +51,27 @@ namespace RaidOverhaul.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(TarkovApplication).GetMethod("InternalStartGame", BindingFlags.Instance | BindingFlags.Public);
+            return AccessTools.Method(typeof(TarkovApplication), nameof(TarkovApplication.InternalStartGame));
+        }
+
+        [PatchPrefix]
+        private static void Prefix(ref string gameMap)
+        {
+            if (gameMap != "factory4_day" && gameMap != "factory4_night")
+            {
+                return;
+            }
+
+            bool isDaytime = RaidTime.GetCurrTime().Hour >= 6 && RaidTime.GetCurrTime().Hour < 18;
+
+            if (gameMap == "factory4_day")
+            {
+                gameMap = isDaytime ? "factory4_day" : "factory4_night";
+            }
+            else
+            {
+                gameMap = isDaytime ? "factory4_night" : "factory4_day";
+            }
         }
 
         [PatchPostfix]
@@ -66,7 +91,7 @@ namespace RaidOverhaul.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(EntryPointView).GetMethod("Show", BindingFlags.Instance | BindingFlags.Public);
+            return AccessTools.Method(typeof(EntryPointView), nameof(EntryPointView.Show));
         }
 
         [PatchPrefix]
@@ -80,23 +105,37 @@ namespace RaidOverhaul.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(LocationConditionsPanel).GetMethod("method_1", BindingFlags.Instance | BindingFlags.Public);
+            return AccessTools.Method(typeof(LocationConditionsPanel), nameof(LocationConditionsPanel.method_1));
         }
 
         [PatchPostfix]
-        private static void Postfix(ref TextMeshProUGUI ____currentPhaseTime, ref TextMeshProUGUI ____nextPhaseTime)
+        private static void Postfix(
+            TextMeshProUGUI ____currentPhaseTime,
+            TextMeshProUGUI ____nextPhaseTime,
+            bool ___bool_1,
+            EDateTime ___edateTime_0
+        )
         {
-            try
+            if (____currentPhaseTime == null)
             {
-                ____nextPhaseTime.text = RaidTime.GetInverseTime().ToString("HH:mm:ss");
+                return;
             }
-            catch (Exception ex)
+
+            if (___bool_1)
             {
-                Plugin._log.LogError(ex);
+                ____currentPhaseTime.SetMonospaceText(RaidTime.GetCurrTime().ToString("HH:mm:ss"), true);
+                if (____nextPhaseTime != null)
+                {
+                    ____nextPhaseTime.SetMonospaceText(RaidTime.GetInverseTime().ToString("HH:mm:ss"), true);
+                }
             }
-            finally
+            else
             {
-                ____currentPhaseTime.text = RaidTime.GetCurrTime().ToString("HH:mm:ss");
+                string time =
+                    (___edateTime_0 == EDateTime.PAST)
+                        ? RaidTime.GetInverseTime().ToString("HH:mm:ss")
+                        : RaidTime.GetCurrTime().ToString("HH:mm:ss");
+                ____currentPhaseTime.SetMonospaceText(time, true);
             }
         }
     }
@@ -105,7 +144,7 @@ namespace RaidOverhaul.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(TimerPanel).GetMethod("SetTimerText", BindingFlags.Instance | BindingFlags.Public);
+            return AccessTools.Method(typeof(TimerPanel), nameof(TimerPanel.SetTimerText));
         }
 
         [PatchPrefix]
@@ -126,7 +165,7 @@ namespace RaidOverhaul.Patches
         }
 
         [PatchPostfix]
-        private static void Postfix(RaidSettings raidSettings, bool takeFromCurrent, MatchMakerAcceptScreen __instance)
+        private static void Postfix(RaidSettings raidSettings, bool takeFromCurrent, LocationConditionsPanel __instance)
         {
             TextMeshProUGUI timePanel;
 
@@ -142,14 +181,9 @@ namespace RaidOverhaul.Patches
                 return;
             }
 
-            if (raidSettings.SelectedLocation.Id == "factory4_day")
+            if (raidSettings.SelectedLocation.Id == "factory4_day" || raidSettings.SelectedLocation.Id == "factory4_night")
             {
-                SetTimePanelText(timePanel, "15:28:00");
-            }
-
-            if (raidSettings.SelectedLocation.Id == "factory4_night")
-            {
-                SetTimePanelText(timePanel, "03:28:00");
+                SetTimePanelText(timePanel, RaidTime.GetDateTime().ToString("HH:mm:ss"));
             }
         }
 
@@ -166,34 +200,45 @@ namespace RaidOverhaul.Patches
         }
     }
 
-    /*
-        public class ExitTimerUIPatch : ModulePatch
+    public class ExitTimerUIPatch : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
         {
-            protected override MethodBase GetTargetMethod() => typeof(MainTimerPanel).GetMethod("UpdateTimer", BindingFlags.Instance | BindingFlags.Public);
-
-            [PatchTranspiler]
-            static IEnumerable<CodeInstruction> Transpile(IEnumerable<CodeInstruction> instructions)
-            {
-                int shift = 0;
-
-                instructions.ExecuteForEach((inst) =>
-                {
-                    if (shift == 2)
-                        inst.opcode = OpCodes.Ret;
-                    if (shift >= 3)
-                        inst.opcode = OpCodes.Nop;
-                    shift++;
-                });
-
-                return instructions;
-            }
+            return AccessTools.Method(typeof(MainTimerPanel), nameof(MainTimerPanel.UpdateTimer));
         }
-    */
+
+        [PatchTranspiler]
+        static IEnumerable<CodeInstruction> Transpile(IEnumerable<CodeInstruction> instructions)
+        {
+            var list = instructions.ToList();
+            for (int i = 0; i < 2 && i < list.Count; i++)
+            {
+                yield return list[i];
+            }
+
+            yield return new CodeInstruction(OpCodes.Ret);
+        }
+    }
+
     public class WatchPatch : ModulePatch
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(Watch).GetProperty("DateTime_0", BindingFlags.Instance | BindingFlags.Public).GetGetMethod(true);
+            return AccessTools.PropertyGetter(typeof(Watch), nameof(Watch.DateTime_0));
+        }
+
+        [PatchPostfix]
+        private static void Postfix(ref DateTime __result)
+        {
+            __result = RaidTime.GetDateTime();
+        }
+    }
+
+    public class LocationTimeUIPatch : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
+        {
+            return AccessTools.PropertyGetter(typeof(LocationTimeUIPanel), nameof(LocationTimeUIPanel.DateTime_0));
         }
 
         [PatchPostfix]

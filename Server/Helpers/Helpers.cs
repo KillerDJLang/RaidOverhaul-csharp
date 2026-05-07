@@ -25,10 +25,11 @@ public class ROHelpers(
     ItemHelper itemHelper,
     RandomUtil randomUtil,
     JsonUtil jsonUtil,
-    FileUtil fileUtil,
     ModHelper modHelper
 )
 {
+    private static readonly Assembly _assembly = Assembly.GetExecutingAssembly();
+
     public bool CheckForMod(string modGuid)
     {
         return sptModsList.Any(m => m.ModMetadata.ModGuid == modGuid);
@@ -45,20 +46,6 @@ public class ROHelpers(
     public int GenRandomCount(int min, int max)
     {
         return randomUtil.RandInt(min, max);
-    }
-
-    public void ProfileBackup(MongoId sessionID, Assembly assembly)
-    {
-        var modPath = modHelper.GetAbsolutePathToModFolder(assembly);
-        var year = DateTime.Now.Year.ToString();
-        var month = DateTime.Now.Month.ToString();
-        var day = DateTime.Now.Day.ToString();
-        var hour = DateTime.Now.Hour.ToString();
-        var minute = DateTime.Now.Minute.ToString();
-        var backupPath = Path.Combine(modPath, "profileBackup", sessionID, $"{year}/{month}/{day}", $"{sessionID}-{hour}-{minute}.json");
-        var profilePath = Path.Combine(modPath, "../", "../", "profiles", $"{sessionID}.json");
-
-        fileUtil.CopyFile(profilePath, backupPath, true);
     }
 
     public HandbookItem? GetItemInHandbook(string itemId)
@@ -103,7 +90,7 @@ public class ROHelpers(
                 {
                     return;
                 }
-                if (items[item].Properties?.Grids?.First().Properties?.Filters?.First().Filter is null)
+                if (items[item].Properties?.Grids?.First().Properties?.Filters?.First().Filter == null)
                 {
                     return;
                 }
@@ -123,7 +110,7 @@ public class ROHelpers(
         }
         var grids = container.Properties?.Grids?.First();
 
-        if (grids is null)
+        if (grids == null || grids.Properties == null)
         {
             return;
         }
@@ -148,22 +135,22 @@ public class ROHelpers(
         throw new ArgumentException($"'{key}' was not found in map.");
     }
 
-    public T LoadConfig<T>(Assembly assembly, string dataPath, string configName)
+    public T LoadConfig<T>(string dataPath, string configName)
     {
-        var pathToMod = modHelper.GetAbsolutePathToModFolder(assembly);
+        var pathToMod = modHelper.GetAbsolutePathToModFolder(_assembly);
         var finalPath = Path.Combine(pathToMod, dataPath);
         var config = modHelper.GetJsonDataFromFile<T>(finalPath, configName);
 
         return config;
     }
 
-    public void WriteConfigFile<T>(T data, Assembly assembly, string dataPath, string configName)
+    public void WriteConfigFile<T>(T data, string dataPath, string configName)
     {
         if (data == null)
         {
             return;
         }
-        var pathToMod = modHelper.GetAbsolutePathToModFolder(assembly);
+        var pathToMod = modHelper.GetAbsolutePathToModFolder(_assembly);
         var finalPath = Path.Combine(pathToMod, dataPath);
 
         if (!Directory.Exists(finalPath))
@@ -195,7 +182,7 @@ public class ROHelpers(
         }
     }
 
-    public void DumpDataMaps(Assembly assembly)
+    public void DumpDataMaps()
     {
         var dumpedDataPath = Path.Combine("db", "devFiles", "dumpedData");
         var itemMap = new SortedDictionary<string, MongoId>();
@@ -222,7 +209,7 @@ public class ROHelpers(
             }
         }
 
-        foreach (var defaultPreset in defaultPresets)
+        foreach (var defaultPreset in defaultPresets ?? [])
         {
             try
             {
@@ -237,8 +224,8 @@ public class ROHelpers(
 
         try
         {
-            WriteConfigFile<SortedDictionary<string, MongoId>>(itemMap, assembly, dumpedDataPath, "dumpedItemMap.json");
-            WriteConfigFile<SortedDictionary<string, Preset>>(presetMap, assembly, dumpedDataPath, "dumpedPresetMap.json");
+            WriteConfigFile(itemMap, dumpedDataPath, "dumpedItemMap.json");
+            WriteConfigFile(presetMap, dumpedDataPath, "dumpedPresetMap.json");
         }
         catch (Exception ex)
         {

@@ -21,10 +21,10 @@
         "items": [
           {
             "_id": "69d97e37d62af7a3e986a297",
-            "_tpl": "66292e79a4d9da25e683ab55",
+            "_tpl": "67c95a09708ee99e7a575da5",
             "upd": {
               "SpawnedInSession": true,
-              "StackObjectsCount": 1000
+              "StackObjectsCount": 1
             }
           }
         ],
@@ -55,6 +55,32 @@
           }
         ],
         "type": "Item"
+      },
+      {
+        "id": "69dd7ffe9fee26f47df7ece1",
+        "unknown": false,
+        "gameMode": [
+          "regular",
+          "pve"
+        ],
+        "availableInGameEditions": [],
+        "illustrationConfig": null,
+        "isHidden": false,
+        "target": "69dd800196b139a1d93bdd1a",
+        "value": 1,
+        "isEncoded": false,
+        "findInRaid": true,
+        "items": [
+          {
+            "_id": "69dd800196b139a1d93bdd1a",
+            "_tpl": "668b3c71042c73c6f9b00704",
+            "upd": {
+              "SpawnedInSession": true,
+              "StackObjectsCount": 10
+            }
+          }
+        ],
+        "type": "Item"
       }
     ],
     "conditions": {
@@ -66,7 +92,7 @@
           "visibilityConditions": [],
           "globalQuestCounterId": "",
           "parentId": "",
-          "value": 1,
+          "value": 3,
           "type": "Elimination",
           "oneSessionOnly": false,
           "completeInSeconds": 0,
@@ -115,7 +141,7 @@
           "visibilityConditions": [],
           "globalQuestCounterId": "",
           "parentId": "",
-          "value": 3,
+          "value": 10,
           "type": "Elimination",
           "oneSessionOnly": false,
           "completeInSeconds": 0,

@@ -114,17 +114,17 @@
                                         IsChecked="{Binding Config.EnableCustomItems, Mode=TwoWay}"
                                         ToolTip="Enables the custom items I've created in your game. These are available as a mix of in raid loot and trader purchases.&#x0a;Legions gear and the custom currency/containers are not affected by this option."
                                     />
+                                    <CheckBox
+                                        Content="Enable Time Changes"
+                                        IsChecked="{Binding Config.TimeChangesEnabled, Mode=TwoWay}"
+                                        ToolTip="Enables the time changes. Sets game time to match your IRL time. For map selection one option will be your time and one will be your time + 12 hours."
+                                    />
                                 </StackPanel>
                             </GroupBox>
 
                             <!-- Quality of Life -->
                             <GroupBox Header="Quality of Life">
                                 <StackPanel>
-                                    <CheckBox
-                                        Content="Backup Profile"
-                                        IsChecked="{Binding Config.BackupProfile, Mode=TwoWay}"
-                                        ToolTip="Let this mod save a backup of your profile into a folder in the mod folder in the case of a game breaking issue or if you just want to revert to a previous point in your playthrough."
-                                    />
                                     <CheckBox
                                         Content="Save Quest Items"
                                         IsChecked="{Binding Config.SaveQuestItems, Mode=TwoWay}"
@@ -915,6 +915,13 @@
                                         <TextBox
                                             Style="{StaticResource NumericBox}"
                                             Text="{Binding Weighting.InvasionEvent, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                        />
+                                    </DockPanel>
+                                    <DockPanel Margin="4,3">
+                                        <TextBlock Style="{StaticResource FieldLabel}" Text="Hunted Event" />
+                                        <TextBox
+                                            Style="{StaticResource NumericBox}"
+                                            Text="{Binding Weighting.HuntedEvent, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                                         />
                                     </DockPanel>
                                     <DockPanel Margin="4,8">

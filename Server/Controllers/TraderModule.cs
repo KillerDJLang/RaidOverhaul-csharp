@@ -26,8 +26,9 @@ public class ROTrader(
 )
 {
     private readonly TraderConfig _traderConfig = configServer.GetConfig<TraderConfig>();
-    private static ConfigFile? _config;
-    private static DebugFile? _debugConfig;
+    private readonly Assembly _assembly = Assembly.GetExecutingAssembly();
+    private ConfigFile _config = null!;
+    private DebugFile _debugConfig = null!;
 
     public void PassTraderConfigs(ConfigFile config, DebugFile debugConfig)
     {
@@ -37,8 +38,7 @@ public class ROTrader(
 
     public void BuildTrader()
     {
-        var assembly = Assembly.GetExecutingAssembly();
-        var pathToMod = helper.GetAbsolutePathToModFolder(assembly);
+        var pathToMod = helper.GetAbsolutePathToModFolder(_assembly);
         var databasePath = Path.Combine(pathToMod, "db");
         var questPath = Path.Combine(databasePath, "questFiles", "bossEnabled");
         var questPathNoBoss = Path.Combine(databasePath, "questFiles", "bossDisabled");
@@ -50,7 +50,11 @@ public class ROTrader(
         {
             if (_config.EnableCustomBoss)
             {
-                imageRouter.AddRoute(traderBase?.Avatar.Replace(".jpg", ""), traderImagePath);
+                if (traderBase == null)
+                {
+                    return;
+                }
+                imageRouter.AddRoute(traderBase.Avatar?.Replace(".jpg", "")!, traderImagePath);
                 traderHelper.SetTraderUpdateTime(_traderConfig, traderBase, 3600, 7200);
                 traderHelper.AddTraderWithEmptyAssortToDb(traderBase);
                 traderHelper.AddTraderToLocales(
@@ -63,11 +67,15 @@ public class ROTrader(
                     assortHelper.AddCustomItemsToTraderShop(helpers.FetchIdFromMap("ReqShop", ClassMaps.TraderMaps), _debugConfig);
                 }
                 assortHelper.GenerateTraderAssorts(helpers.FetchIdFromMap("ReqShop", ClassMaps.TraderMaps), _debugConfig);
-                questHelper.CreateCustomQuests(assembly, questPath);
+                questHelper.CreateCustomQuests(questPath);
             }
             else
             {
-                imageRouter.AddRoute(traderBaseNoBoss?.Avatar.Replace(".jpg", ""), traderImagePath);
+                if (traderBaseNoBoss == null)
+                {
+                    return;
+                }
+                imageRouter.AddRoute(traderBaseNoBoss.Avatar?.Replace(".jpg", "")!, traderImagePath);
                 traderHelper.SetTraderUpdateTime(_traderConfig, traderBase, 3600, 7200);
                 traderHelper.AddTraderWithEmptyAssortToDb(traderBaseNoBoss);
                 traderHelper.AddTraderToLocales(
@@ -80,7 +88,7 @@ public class ROTrader(
                     assortHelper.AddCustomItemsToTraderShop(helpers.FetchIdFromMap("ReqShop", ClassMaps.TraderMaps), _debugConfig);
                 }
                 assortHelper.GenerateTraderAssorts(helpers.FetchIdFromMap("ReqShop", ClassMaps.TraderMaps), _debugConfig);
-                questHelper.CreateCustomQuests(assembly, questPathNoBoss);
+                questHelper.CreateCustomQuests(questPathNoBoss);
             }
             ROLogger.Log(logger, "Requisition Shop finished loading", LogTextColor.Magenta);
         }

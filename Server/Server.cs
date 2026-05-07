@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using RaidOverhaulMain.Controllers;
 using RaidOverhaulMain.Helpers;
 using RaidOverhaulMain.Models;
@@ -29,8 +29,8 @@ public sealed record ModMetadata : AbstractModMetadata
     public override Dictionary<string, SemanticVersioning.Range>? ModDependencies { get; init; } =
         new()
         {
-            { "com.morebotsapi.tacticaltoaster", new SemanticVersioning.Range(">=1.1.0") },
-            { "com.wtt.commonlib", new SemanticVersioning.Range(">=2.0.18") },
+            { "com.morebotsapi.tacticaltoaster", new SemanticVersioning.Range(">=2.0.0") },
+            { "com.wtt.commonlib", new SemanticVersioning.Range(">=2.0.20") },
         };
     public override string? Url { get; init; }
     public override bool? IsBundleMod { get; init; } = true;
@@ -39,99 +39,163 @@ public sealed record ModMetadata : AbstractModMetadata
 
 [Injectable(InjectionType = InjectionType.Singleton, TypePriority = OnLoadOrder.PostDBModLoader + 10)]
 public sealed class ROMain(
-    ISptLogger<ROMain> logger,
     ROStaticRouter roStaticRouter,
     ROCustomItems roCustomItems,
     ROBossHelper roBossHelper,
     RODbEdits roDbEdits,
     ROTrader roTrader,
     ROHelpers helpers,
-    MoreBotsServer.MoreBotsAPI moreBotsLib,
-    MoreBotsServer.Services.FactionService factionService,
-    MoreBotsServer.Services.MoreBotsCustomBotTypeService customBotTypeService,
-    WTTServerCommonLib.WTTServerCommonLib commonLib,
-    IReadOnlyList<SptMod> modList
+    WTTServerCommonLib.WTTServerCommonLib commonLib
 ) : IOnLoad
 {
+    internal static ConfigFile Config { get; private set; } = null!;
+    internal static DebugFile DebugConfig { get; private set; } = null!;
+
     public async Task OnLoad()
     {
         var assembly = Assembly.GetExecutingAssembly();
         var devFilesPath = Path.Combine("db", "devFiles");
         var hideoutCraftsPath = Path.Combine("db", "itemGen", "hideoutCrafts");
-        var config = helpers.LoadConfig<ConfigFile>(assembly, "config", "config.json");
-        var debugConfig = helpers.LoadConfig<DebugFile>(assembly, devFilesPath, "debugOptions.json");
-        var eventsConfig = helpers.LoadConfig<EventsConfigFile>(assembly, "config", "eventWeightings.json");
-        var seasonsConfig = helpers.LoadConfig<SeasonalProgression>(assembly, devFilesPath, "seasonsProgressionFile.json");
-        var botLoadouts = Path.Combine("db", "bots", "botLoadouts");
-        var typeList = new List<string> { "bosslegion", "legionnaire" };
-        var typeDictionary = new Dictionary<int, string>() { { 199, "bosslegion" }, { 200, "legionnaire" } };
 
-        if (debugConfig.DebugMode && debugConfig.DumpData)
+        Config = helpers.LoadConfig<ConfigFile>("config", "config.json");
+        DebugConfig = helpers.LoadConfig<DebugFile>(devFilesPath, "debugOptions.json");
+        var eventsConfig = helpers.LoadConfig<EventsConfigFile>("config", "eventWeightings.json");
+
+        if (DebugConfig.DebugMode && DebugConfig.DumpData)
         {
-            helpers.DumpDataMaps(assembly);
+            helpers.DumpDataMaps();
         }
-        roTrader.PassTraderConfigs(config, debugConfig);
-        roDbEdits.PassDbConfigs(config);
-        roCustomItems.PassCustomItemConfigs(config);
-        roStaticRouter.PassRouterConfigs(config, seasonsConfig, debugConfig, eventsConfig);
+
+        roTrader.PassTraderConfigs(Config, DebugConfig);
+        roDbEdits.PassDbConfigs(Config, DebugConfig);
+        roCustomItems.PassCustomItemConfigs(Config);
+        roStaticRouter.PassRouterConfigs(Config, DebugConfig, eventsConfig);
+        roBossHelper.PassBossConfig(DebugConfig);
 
         await roCustomItems.BuildCustomItems();
         roTrader.BuildTrader();
         roDbEdits.BuildDbEdits();
         await commonLib.CustomHideoutRecipeService.CreateHideoutRecipes(assembly, hideoutCraftsPath);
+        await commonLib.CustomBuffService.CreateCustomBuffs(assembly, Path.Combine("db", "itemGen", "customBuffs"));
 
-        if (config.EnableCustomBoss)
+        await Task.CompletedTask;
+    }
+}
+
+[Injectable(InjectionType = InjectionType.Singleton, TypePriority = MoreBotsServer.MoreBotsLoadOrder.LoadFactions)]
+public sealed class ROFactions(MoreBotsServer.Services.FactionService factionService) : IOnLoad
+{
+    public async Task OnLoad()
+    {
+        factionService.Factions.Add("wolves", new Faction() { Name = "wolves", BotTypes = { (WildSpawnType)201, (WildSpawnType)202 } });
+
+        if (ROMain.Config.EnableCustomBoss)
+        {
+            factionService.Factions.Add("legion", new Faction() { Name = "legion", BotTypes = { (WildSpawnType)199, (WildSpawnType)200 } });
+        }
+
+        await Task.CompletedTask;
+    }
+}
+
+[Injectable(InjectionType = InjectionType.Singleton, TypePriority = MoreBotsServer.MoreBotsLoadOrder.LoadBots)]
+public sealed class ROBotLoader(
+    ISptLogger<ROBotLoader> logger,
+    MoreBotsServer.MoreBotsAPI moreBotsLib,
+    MoreBotsServer.Services.FactionService factionService,
+    MoreBotsServer.Services.MoreBotsCustomBotTypeService customBotTypeService,
+    WTTServerCommonLib.WTTServerCommonLib commonLib,
+    IReadOnlyList<SptMod> modList,
+    ROBossHelper roBossHelper
+) : IOnLoad
+{
+    public async Task OnLoad()
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+        var botLoadouts = Path.Combine("db", "bots", "botLoadouts");
+        var legionTypeList = new List<string> { "bosslegion", "legionnaire" };
+        var wolvesTypeList = new List<string> { "wolfsupport", "wolflead" };
+        var legionTypeDictionary = new Dictionary<int, string>() { { 199, "bosslegion" }, { 200, "legionnaire" } };
+        var wolvesTypeDictionary = new Dictionary<int, string>() { { 201, "wolflead" }, { 202, "wolfsupport" } };
+
+        await moreBotsLib.LoadBotsShared(assembly, "wolflead", new List<string> { "wolflead" });
+        await moreBotsLib.LoadBotsShared(assembly, "wolfsupport", new List<string> { "wolfsupport" });
+        await commonLib.CustomBotLoadoutService.CreateCustomBotLoadouts(assembly, Path.Combine(botLoadouts, "wolves"));
+
+        customBotTypeService.AddCustomWildSpawnTypeNames(wolvesTypeDictionary);
+
+        factionService.AddEnemyByFaction(wolvesTypeList, "savage");
+        factionService.AddEnemyByFaction(wolvesTypeList, "usec");
+        factionService.AddEnemyByFaction(wolvesTypeList, "bear");
+        factionService.AddEnemyByFaction(wolvesTypeList, "infected");
+        factionService.AddRevengeByFaction(wolvesTypeList, "wolves");
+
+        if (modList.Any(mod => mod.ModMetadata.ModGuid == "com.ruafcomehome.tacticaltoaster"))
+        {
+            factionService.AddEnemyByFaction(wolvesTypeList, "ruaf");
+        }
+
+        if (modList.Any(mod => mod.ModMetadata.ModGuid == "com.untargh.tacticaltoaster"))
+        {
+            factionService.AddEnemyByFaction(wolvesTypeList, "untar");
+        }
+
+        if (modList.Any(mod => mod.ModMetadata.ModGuid == "com.blackdiv.tacticaltoaster"))
+        {
+            factionService.AddEnemyByFaction(wolvesTypeList, "blackdiv");
+        }
+
+        if (ROMain.Config.EnableCustomBoss)
         {
             await commonLib.CustomAchievementService.CreateCustomAchievements(assembly, Path.Join("db", "achievements"));
             await commonLib.CustomLocaleService.CreateCustomLocales(assembly, Path.Combine("db", "locales", "bossEnabled"));
 
-            factionService.Factions.Add("legion", new Faction() { Name = "legion", BotTypes = { (WildSpawnType)199, (WildSpawnType)200 } });
-
-            if (config.EnableCustomItems)
+            if (ROMain.Config.EnableCustomItems)
             {
                 await moreBotsLib.LoadBotsShared(assembly, "legion", new List<string> { "bosslegion" });
                 await moreBotsLib.LoadBotsShared(assembly, "legionnaire", new List<string> { "legionnaire" });
                 await commonLib.CustomBotLoadoutService.CreateCustomBotLoadouts(assembly, Path.Combine(botLoadouts, "customItems"));
             }
-            else if (!config.EnableCustomItems)
+            else
             {
                 await moreBotsLib.LoadBotsShared(assembly, "legionNoCustomItems", new List<string> { "bosslegion" });
                 await moreBotsLib.LoadBotsShared(assembly, "legionnaireNoCustomItems", new List<string> { "legionnaire" });
                 await commonLib.CustomBotLoadoutService.CreateCustomBotLoadouts(assembly, Path.Combine(botLoadouts, "customItemsDisabled"));
             }
 
-            customBotTypeService.AddCustomWildSpawnTypeNames(typeDictionary);
+            customBotTypeService.AddCustomWildSpawnTypeNames(legionTypeDictionary);
 
-            factionService.AddEnemyByFaction(typeList, "savage");
-            factionService.AddEnemyByFaction(typeList, "usec");
-            factionService.AddEnemyByFaction(typeList, "bear");
-            factionService.AddEnemyByFaction(typeList, "infected");
+            factionService.AddEnemyByFaction(legionTypeList, "savage");
+            factionService.AddEnemyByFaction(legionTypeList, "usec");
+            factionService.AddEnemyByFaction(legionTypeList, "bear");
+            factionService.AddEnemyByFaction(legionTypeList, "infected");
+            factionService.AddEnemyByFaction(legionTypeList, "wolves");
             factionService.AddEnemyByFaction("savage", "legion");
             factionService.AddEnemyByFaction("usec", "legion");
             factionService.AddEnemyByFaction("bear", "legion");
             factionService.AddEnemyByFaction("infected", "legion");
-            factionService.AddRevengeByFaction(typeList, "legion");
+            factionService.AddEnemyByFaction(wolvesTypeList, "legion");
+            factionService.AddRevengeByFaction(legionTypeList, "legion");
 
             if (modList.Any(mod => mod.ModMetadata.ModGuid == "com.ruafcomehome.tacticaltoaster"))
             {
-                factionService.AddEnemyByFaction(typeList, "ruaf");
+                factionService.AddEnemyByFaction(legionTypeList, "ruaf");
             }
 
             if (modList.Any(mod => mod.ModMetadata.ModGuid == "com.untargh.tacticaltoaster"))
             {
-                factionService.AddEnemyByFaction(typeList, "untar");
+                factionService.AddEnemyByFaction(legionTypeList, "untar");
             }
 
             if (modList.Any(mod => mod.ModMetadata.ModGuid == "com.blackdiv.tacticaltoaster"))
             {
-                factionService.AddEnemyByFaction(typeList, "blackdiv");
+                factionService.AddEnemyByFaction(legionTypeList, "blackdiv");
             }
 
-            roBossHelper.SetBossSpawns((double)10, debugConfig);
+            roBossHelper.SetBossSpawns(ROMain.Config.UseLegionGlobalSpawnChance ? ROMain.Config.GlobalSpawnChance : 5.0);
             ROLogger.Log(logger, "Custom bots finished loading", LogTextColor.Magenta);
         }
-
-        if (!config.EnableCustomBoss)
+        else
         {
             await commonLib.CustomLocaleService.CreateCustomLocales(assembly, Path.Combine("db", "locales", "bossDisabled"));
         }
