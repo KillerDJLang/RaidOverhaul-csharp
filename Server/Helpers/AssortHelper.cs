@@ -239,6 +239,59 @@ public class ROAssortHelper(
         }
     }
 
+    // Rebuilds the Requisitions Office shop from scratch: a fresh randomised selection of items
+    // plus the currency-exchange offers, all at full stock — the same content BuildTrader produces
+    // at server start. This is what restocks the trader each cycle (driven by ROTraderRestock).
+    //
+    // It is needed because SPT's own restock does not refill this trader. When a trader's timer
+    // expires, TraderController.Update() calls TraderAssortHelper.ResetExpiredTrader(), which sets
+    // trader.Assort.Items = GetPristineTraderAssorts(id) — and GetPristineTraderAssorts clones the
+    // *current live* DB assort (databaseService.GetTrader(id).Assort) back onto itself. Every
+    // purchase has already decremented that same live assort in place (TradeHelper.BuyItem does
+    // itemPurchased.Upd.StackObjectsCount -= buyCount on the DB assort), so the "restore" is a
+    // no-op: the timer resets but the depleted stock is never refilled. Only a server restart,
+    // which re-runs OnLoad/BuildTrader, brings the shop back. (Vanilla traders avoid this by
+    // shipping huge StackObjectsCount + UnlimitedCount so their shared pool never empties.)
+    //
+    // The new inventory is built into a staging assort and only swapped onto the trader once it is
+    // ready, so the previous inventory keeps serving until then and a failed regen never leaves the
+    // shop empty.
+    public void RegenerateTraderAssorts(string traderId)
+    {
+        var trader = databaseService.GetTrader(traderId);
+        if (trader?.Assort is null)
+        {
+            return;
+        }
+
+        var previous = trader.Assort;
+
+        // GenerateTraderAssorts/AddCustomItemsToTraderShop read databaseService.GetTrader(traderId)
+        // .Assort and append to it, so point the trader at a fresh staging assort while we build.
+        trader.Assort = new TraderAssort
+        {
+            Items = [],
+            BarterScheme = new Dictionary<MongoId, List<List<BarterScheme>>>(),
+            LoyalLevelItems = new Dictionary<MongoId, int>(),
+        };
+
+        try
+        {
+            if (ROMain.Config.EnableCustomItems)
+            {
+                AddCustomItemsToTraderShop(traderId, ROMain.DebugConfig);
+            }
+
+            GenerateTraderAssorts(traderId, ROMain.DebugConfig);
+        }
+        catch
+        {
+            // Restore the inventory that was serving before, so a failed regen never empties the shop.
+            trader.Assort = previous;
+            throw;
+        }
+    }
+
     public void AddCustomItemsToTraderShop(string traderId, DebugFile debugConfig)
     {
         var baseTraderAssort = databaseService.GetTrader(traderId)?.Assort;
